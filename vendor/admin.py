@@ -1,0 +1,36 @@
+from django.contrib import admin
+from vendor.models import Vendor, OpeningHour, StoreType, AdBanner
+from django.utils.html import format_html
+
+
+class StoreTypeAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug': ('name',)}
+
+
+class VendorAdmin(admin.ModelAdmin):
+    list_display = ('user', 'vendor_name', 'store_type', 'is_approved', 'created_at')
+    list_display_links = ('user', 'vendor_name')
+    list_editable = ('is_approved',)
+
+
+class OpeningHourAdmin(admin.ModelAdmin):
+    list_display = ('vendor', 'day', 'from_hour', 'to_hour')
+
+
+class AdBannerAdmin(admin.ModelAdmin):
+    list_display = ('thumbnail', 'vendor', 'created_at', 'clickmall_top_collection', 'is_active')
+    list_display_links = ('vendor', 'thumbnail')
+    list_editable = ('is_active', 'clickmall_top_collection')
+
+
+    def thumbnail(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="width: 50px; height: 50px; object-fit: cover;" />', obj.image.url)
+        return "No Image"
+    thumbnail.short_description = 'Thumbnail'
+
+
+admin.site.register(Vendor, VendorAdmin)
+admin.site.register(OpeningHour, OpeningHourAdmin)
+admin.site.register(StoreType, StoreTypeAdmin)
+admin.site.register(AdBanner, AdBannerAdmin)

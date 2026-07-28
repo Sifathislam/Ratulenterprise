@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+{% include 'includes/alerts.html' %}
+
+<style>
+    input{
+    border: 1px solid #ececec;
+    border-radius: 10px;
+    height: unset !important;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    padding-left: 20px;
+    font-size: 16px;
+    width: unset !important;
+    }
+
+   
+    @media only screen and (max-width: 575px) {
+    .custom-day-class option{
+        font-size: 10px !important;
+        width: 30px !important;
+        overflow: hidden !important;
+
+    }
+    .custom-from-hour-class option{
+        font-size: 10px !important;
+        width: 30px !important;
+        overflow: hidden !important;
+    }
+    .custom-to-hour-class option{
+        font-size: 10px !important;
+        width: 30px !important;
+        overflow: hidden !important;
+    }
+  }
+  .remove_hour{
+    color: red !important;
+  }
+
+</style>
+<!-- Main Section Start -->
+<div class="main-section">
+    {% include 'includes/cover.html' %}
+    <div class="page-section account-header buyer-logged-in">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                    <!-- Load the sidebar here -->
+                    {% include 'includes/v_sidebar.html' %}
+                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                    <div class="user-dashboard loader-holder">
+                        <div class="user-holder">
+                            <h5 class="text-uppercase">Opening Hours</h5>
+							<hr>
+                          
+                            <table class="table opening_hours" style="width: 500px; border: none !important;">
+                                <tbody>
+                                    {% for hour in opening_hours %}
+                                        <tr id="hour-{{hour.id}}">
+                                            <td><b>{{ hour }}</b></td>
+                                            <td>{% if hour.is_closed %}Closed{% else %}{{ hour.from_hour }} - {{ hour.to_hour }}{% endif %}</td>
+                                            <td><a href="#" class="remove_hour" data-url="{% url 'remove_opening_hours' hour.id %}">Remove</a></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+
+                            <br>
+
+                            <form id="opening_hours">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        {{ form.day }}
+                                    </div>
+                                    <div class="col-md-2">
+                                        {{ form.from_hour }}
+                                    </div>
+                                    <div class="col-md-2">
+                                        {{ form.to_hour }}
+                                    </div>
+                                    <div class="col-md-3">
+                                        {{ form.is_closed }} Set as Closed
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="hidden" value="{% url 'add_opening_hours' %}" id="add_hour_url">
+                                        <button class="btn update_color add_hour p-2">Add Hours</button>
+                                    </div>
+                                </div>
+                            </form>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Section End -->
+{% endblock %}

@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Ratulenterprise Multi-Vendor Ecommerce Marketplace</title>
+	<!-- Google Font Family Link Start -->
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Montserrat:400,700">
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,800">
+	<!-- Google Font Family Link End -->
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+	<!-- CSS -->
+	<link rel="stylesheet" href="{% static 'assets/css/plugins/animate.min.css' %}" />
+	
+	<link rel="stylesheet" href="{% static 'assets/css/main2cc5.css' %}" />
+	 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> 
+	
+	<!-- JAVASCRIPT -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	
+	
+	
+	<link rel="stylesheet" href="{% static 'css/iconmoon.css' %}">
+	
+	<link rel="stylesheet" href="{% static 'css/custom.css' %}">
+	
+	
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	<script src="{% static 'js/custom.js' %}"></script>
+	<!-- Inside <head> -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/magnific-popup@1.1.0/dist/magnific-popup.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/magnific-popup@1.1.0/dist/jquery.magnific-popup.min.js"></script>
+
+<!-- Include the PayPal JavaScript SDK -->
+{% comment %} <script src="https://www.paypal.com/sdk/js?client-id=&currency=USD"></script> {% endcomment %}
+<script src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&components=buttons&enable-funding=paylater,card&disable-funding=venmo" data-sdk-integration-source="integrationbuilder_sc"></script>
+
+<!-- Include Datatables plugin script and css -->
+<link rel="stylesheet" href="//cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+<script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.2/min/dropzone.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.2/min/dropzone.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	
+	
+	<script>
+		$(document).ready( function () {
+			$('#myOrdersTable').DataTable({
+				"order": [[4, "desc"]] // Sort by the 5th column (index 4: "Date") in descending order
+			});
+		} );
+		
+		$(document).ready( function () {
+			$('#myProductsTable').DataTable({
+				"id": [[4, "desc"]] // Sort by the 5th column (index 4: "Date") in descending order
+			});
+		} );
+		  $(document).ready(function () {
+    $('.popup-link').magnificPopup({
+		type: 'inline',
+		midClick: true
+    });
+});
+</script>
+
+<style>
+	body, .main-section p, .mce-content-body p{
+			font:Normal  14px/24px "Open Sans", sans-serif;letter-spacing: 0px;text-transform: none;color: #515151 !important;
+		}
+		a {
+		text-decoration: none;
+		}
+	</style>
+	
+</head>
+
+<body>
+	
+	<!-- LOAD NAVBAR HERE -->
+    {% include 'includes/navbar.html' %}
+	
+    <!-- LOAD CONTENT HERE -->
+    {% block content %}
+	<!-- CONTENT GOES HERE -->
+    {% endblock %}
+
+    <!-- LOAD FOOTER HERE -->
+    {% include 'includes/footer.html' %}
+	
+	
+</body>
+</html>
+

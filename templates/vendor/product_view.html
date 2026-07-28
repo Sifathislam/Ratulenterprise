@@ -1,0 +1,1091 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+  .nav-item {
+    background-color: transparent;
+    transition: background-color 0.3s; /* Smooth transition */
+    border: none !important;
+  }
+  
+  /* Style the active nav-link's parent li */
+  .nav-link.active {
+    background-color: #dc3545 !important; /* Bootstrap "danger" color */
+    color: white !important; /* To make the text stand out */
+    border: none !important;
+  }
+/* Responsive style for the new seller/cart card */
+@media (max-width: 600px) {
+  .product-seller-cart-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 8px;
+    gap: 12px;
+  }
+  .product-seller-cart-card > a {
+    width: 50%;
+    justify-content: center;
+  }
+}
+
+
+/* Hide by default */
+.mobile-fixed-cart-bar { display: none !important; }
+
+/* Show only on mobile */
+@media (max-width: 600px) {
+  .mobile-fixed-cart-bar {
+    display: block !important;
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    width: 100vw;
+    z-index: 1000;
+    padding-bottom: env(safe-area-inset-bottom); /* for iOS safe area */
+}
+.product-extra-link2{
+    display: none !important;
+}
+.mobile-fixed-cart-bar .cart-bar-inner {
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 12px 16px 10px 16px;
+    border-top: 1px solid #eee;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.10);
+  }
+  .mobile-fixed-cart-bar .mrp-label {
+    font-size: 18px;
+    color: #222;
+    font-weight: 500;
+  }
+  .mobile-fixed-cart-bar .add-to-cart-btn {
+    background: #1b216a;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 30px;
+    box-shadow: 0 2px 8px rgba(245,0,87,0.06);
+    transition: background 0.2s;
+  }
+  .mobile-fixed-cart-bar .add-to-cart-btn:disabled {
+    background: #ccc;
+    color: #888;
+  }
+}
+/* Hide the mobile cart info by default, show it only on screens <= 600px */
+.mobile-cart-info { display: none; }
+@media (max-width: 600px) {
+  .mobile-cart-info { display: block !important; }
+  #product_count_main{display: none !important;}
+}
+.vendor-visit-link {
+  background-color: #3a4a99 !important; /* light blue */
+  padding: 5px 10px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.vendor-visit-link a {
+  color: white !important;
+  text-decoration: none;
+}
+.quantity-box {
+    display: flex;
+    z-index: 2;
+    background-color: #ed3595;
+    border-radius: 5px;
+    font-weight: bold;
+    color: #ffdff0;
+    gap: 8px;
+    font-size: 18px;
+    padding: 13px 10px;
+    width: 179px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.quantity-box a {
+    text-decoration: none;
+    color: #ffdff0;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.quantity-box label {
+    margin: 0;
+    font-size: 18px;
+    color: white;
+    margin-left: 25px;
+    margin-right: 25px;
+}
+.dktp-quantity-box{
+   width: 215px !important;
+    background: whitesmoke;
+    display: flex;
+    z-index: 2;
+    font-weight: bold;
+    color: black;
+    gap: 8px;
+    font-size: 18px;
+    padding: 13px 10px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 1px solid #0000001f;
+    border-radius: 25px;
+    margin-bottom: 10px;
+    font-weight: 200;
+}
+.dktp-quantity-box span {
+    text-decoration: none;
+    font-weight: 200;
+    font-size: 12px;
+}
+.dktp-quantity-box span i{
+    color: black !important;
+    font-weight:200;
+}
+
+.dktp-quantity-box label {
+    margin: 0;
+    font-size: 18px;
+    color: black;
+    margin-left: 45px;
+    margin-right: 45px;
+}
+.register-now-v{
+  text-decoration: underline
+}
+.variant-btn {
+  border:1px solid #000000;
+  min-width: 88px;
+  border-radius: 8px;
+  position: relative;
+  background: #fff;
+  color: #222;
+  font-weight: 500;
+  padding: .5rem !important;
+  line-height: 1;
+  cursor: pointer !important;
+  outline: none;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+  overflow: hidden;
+  background: #fff !important;
+  border-radius: .5rem !important;
+}
+.variant-btn.selected,
+.variant-btn:focus {
+  background: #ffe7f44f;
+  color: #dc3575;
+  border: 2px solid #dc3575;
+}
+.variant-btn:not(:last-child) {
+  margin-right: 8px;
+}
+.variant-btn.disabled-btn {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+</style>
+{% include 'includes/alerts.html' %}
+  <!-- content -->
+  <main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container-fluid">
+            <div class="breadcrumb" style="margin-bottom:0 !important">
+                <a href="/" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                <span></span> <a href="{% url 'filter_by_category' category_id=product.category.id %}">{{ product.category }}</a> <span></span> {{ product.product_name }}
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid mb-30">
+        <div class="row">
+            <div class="col-xl-11 col-lg-12 m-auto">
+                <div class="row">
+                    <div class="col-xl-9">
+                        <div class="product-detail accordion-detail">
+                            <div class="row mb-50 mt-30">
+                                <div class="col-md-6 col-sm-12 col-xs-12 mb-md-0 mb-sm-5">
+                                  <div class="detail-gallery">
+                                    <span class="zoom-icon"><i class="fi-rs-search"></i></span>
+                                
+                                    <!-- MAIN SLIDES -->
+                                    <div class="product-image-slider">
+                                        <figure class="border-radius-10">
+                                            {% if product.image %}
+                                              <img src="{{ product.image.url }}" alt="product image" />
+                                            {% else %}
+                                              <img src="{% static 'images/placeholder.jpg' %}" alt="No image available"  />
+                                            {% endif %}
+
+                                        </figure>
+                                        {% for img in product_gallery %}
+                                        <figure class="border-radius-10">
+                                            <img src="{{ img.image.url }}" alt="product gallery image" />
+                                        </figure>
+                                        {% endfor %}
+                                    </div>
+                                
+                                    <!-- THUMBNAILS -->
+                                    <div class="slider-nav-thumbnails">
+                                  {% if product.image %}
+                                      <div><img src="{{ product.image.url }}" alt="product thumbnail" /></div>
+                                  {% else %}
+                                      <div><img src="{% static 'images/placeholder.jpg' %}" alt="No product thumbnail" /></div>
+                                  {% endif %}
+
+                                  {% for img in product_gallery %}
+                                      {% if img.image %}
+                                          <div><img src="{{ img.image.url }}" alt="product gallery thumbnail" /></div>
+                                      {% else %}
+                                          <div><img src="{% static 'images/placeholder.jpg' %}" alt="No gallery image" /></div>
+                                      {% endif %}
+                                  {% endfor %}
+                              </div>
+
+                                </div>
+                                    <!-- End Gallery -->
+                                </div>
+                                <div class="col-md-6 col-sm-12 col-xs-12">
+                                    <div class="detail-info pr-10 pl-10">
+                                        <span class=" vendor-visit-link mb-2"> <a href="{% url 'vendor_detail' product.vendor.vendor_slug %}" >Visit {{ product.vendor.vendor_name }}</a> </span>
+                                        <h2 class="title-detail">{{ product.product_name }}</h2>
+                                        
+                                        <div class="clearfix product-price-cover">
+                                            <div class="product-price primary-color float-left" style="margin-bottom:10px; margin-top:10px;">
+                                                <span class="current-price text-brand">₹{{ product.sales_price }}</span>
+                                                <span>
+                                                  {% if product.get_discount_percentage > 0 %}
+                                                    <span class="save-price font-md color3 ml-15">{{product.get_discount_percentage}}% Off</span>
+                                                  {% endif %}
+                                                    <span class="old-price font-md ml-15">₹{{ product.regular_price }}</span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="short-desc mb-15">
+                                            <p class="font-md">{{ product.product_desc | truncatechars:400}}</p>
+                                        </div>
+                                        {% if product_variant_map %}
+                                        <hr class='mb-0 mt-0 '>
+                                          <div class="product-variants-section" style="margin-top: 14px;">
+                                            {% for attr_group in product_variant_map %}
+                                              <div class="variant-attribute-group" style="margin-bottom: 18px;">
+                                                <div class="variant-attribute-label" style="font-weight: 600; font-size: 15px; margin-bottom: 5px;">
+                                                  {{ attr_group.attribute.name }}
+                                                </div>
+                                                <div class="variant-value-buttons" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                                                  {% for variant_value in attr_group.values %}
+                                                    <button
+                                                      type="button"
+                                                      class="variant-btn{% if variant_combinations and forloop.first %} selected{% endif %}"
+                                                      data-attribute="{{ attr_group.attribute.name }}"
+                                                      data-value="{{ variant_value.value }}"
+                                                      data-value-id="{{ variant_value.id }}"
+                                                      onclick="selectVariantValue(this)"
+                                                    >{{ variant_value.value }}</button>
+                                                  {% endfor %}
+                                                </div>
+                                              </div>
+                                            {% endfor %}
+                                          </div>
+                                        {% endif %}
+                                         {% if product.qty <= 0 %}
+                                        <h4 class="text-danger">Out of Stock</h4>
+                                        {% else %}
+                                        <div class="detail-extralink mb-10 d-flex">
+                                            <!-- Fixed Add to Cart Bar: Only shown on mobile -->
+                                            <div class="mobile-fixed-cart-bar">
+                                               <!-- Only visible on mobile screens -->
+                                                <div class="mobile-cart-info" style="display:none;">
+                                                <div class="product-seller-cart-card" style="margin-top: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 16px; display: flex; align-items: center; justify-content: space-between;">
+                                                    <a href="{% url 'cart' %}" style="display: flex; flex-direction: column; align-items: center; background: #63a94f; color: #fff; padding: 8px 18px; border-radius: 30px; font-weight: 500; text-decoration: none; font-size: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                                                    <span style="display: flex; align-items: center;color: #fff">
+                                                        <i class="fi-rs-shopping-cart" style="margin-right: 8px;"></i>
+                                                        View Cart
+                                                        <i class="fi-rs-arrow-right ml-2"></i>
+                                                    </span>
+                                                    <span style="font-size: 13px; font-weight: 400;color: #fff">
+                                                        {% if chkCart_count %} <span id="qty-mb-{{ product.id }}">{{ chkCart_count }}</span> Item{{ chkCart_count|pluralize }}{% else %}<span id="qty-mb-{{ product.id }}">0</span> Item{% endif %}
+                                                    </span>
+                                                    </a>
+                                                </div>
+                                                </div>
+                                            <div class="cart-bar-inner">
+                                                <span class="mrp-label">MRP <b>₹{{ product.sales_price }}</b></span>
+                                                {% if product.qty > 0 %}
+                                                <button  class="button add-to-cart-btn add_to_cart"  style="{% if product.id in cart_product_ids %}display:none;{% endif %}" id="mb-add_to_cart_btn-{{product.id}}" data-id="{{ product.id }}" data-url="{% url 'add_to_cart' product.id %}"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
+                                                  <!-- Quantity controls -->
+                                                  <div class="quantity-box"
+                                                      id="quantity-btn-box-{{ product.id }}"
+                                                      style="{% if product.id not in cart_product_ids %}display:none;{% endif %}">
+                                                    <a href="#" class="decrease_cart" data-id="{{ product.id }}" data-url="{% url 'decrease_cart' product.id %}">
+                                                      <i class="icon-minus text-white"style="cursor: pointer;"></i>
+                                                    </a>
+                                                    <label id="mb-qty-{{ product.id }}">
+                                                      {% for item in cart_items %}
+                                                         {% if product.id == item.product.id and not item.product_variant_group %}
+                                                          {{ item.quantity }}
+                                                        {% endif %}
+                                                      {% endfor %}
+                                                    </label>
+                                                    <a href="#" class="add_to_cart" data-id="{{ product.id }}" data-url="{% url 'add_to_cart' product.id %}">
+                                                      <i class="icon-plus text-white"style="cursor: pointer;"></i>
+                                                    </a>
+                                                </div>
+                                                {% else %}
+                                                <button class="button button-add-to-cart add_to_cart" disabled style="background:#ccc;color:#666;">Out of Stock</button>
+                                                {% endif %}
+                                            </div>
+                                            </div>
+                                            <div class="detail-qty border radius"id="dkstp-qty-input-{{product.id}}"style="{% if product.id in cart_product_ids %}display:none;{% endif %}">
+                                                <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"type="button" id="decrease-quantity" data-mdb-ripple-color="dark"style="cursor: pointer;"></i></a>
+                                                   <input type="text" id="main-pv-quantity-input" class="qty-val" value="1" aria-label="Product quantity" aria-describedby="quantity-controls" readonly/>
+                                                <a href="#" class="qty-up" type="button" id="increase-quantity" data-mdb-ripple-color="dark"><i class="fi-rs-angle-small-up"style="cursor: pointer;"></i></a>
+                                            </div>
+                                            <div class="product-extra-link2">
+                                                {% if product.qty > 0 %}
+                                                <button  class="button button-add-to-cart add_to_cart" style="{% if product.id in cart_product_ids %}display:none;{% endif %}" id="add_to_cart_btn-{{product.id}}" data-id="{{ product.id }}" data-url="{% url 'add_to_cart' product.id %}"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
+                                                  <!-- Quantity controls -->
+                                                  <div class="dktp-quantity-box"
+                                                      id="dkstp-quantity-btn-box-{{ product.id }}"
+                                                      style="{% if product.id not in cart_product_ids %}display:none;{% endif %}">
+                                                    <span class="decrease_cart text-dark" data-id="{{ product.id }}" data-url="{% url 'decrease_cart' product.id %}">
+                                                      <i class="icon-minus text-dark" style="cursor: pointer;"></i>
+                                                    </span>
+                                                    <label id="dkstp-qty-{{ product.id }}">
+                                                     0
+                                                    </label>
+                                                    <span class="add_to_cart text-dark" data-id="{{ product.id }}" data-url="{% url 'add_to_cart' product.id %}">
+                                                      <i class="icon-plus text-dark" style="cursor: pointer;"></i>
+                                                    </span>
+                                                </div>
+                                                {% else %}
+                                                <button class="button button-add-to-cart add_to_cart" disabled style="background:#ccc;color:#666;">Out of Stock</button>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                         {% endif %}
+                                         <hr class='mb-3'>
+                                        <div>
+                                            <h4 class="mb-0"style="font-size: 1rem !important; color:#484747; font-weight:bold;">Key Attributes</h4>
+                                            <table style="font-size: 14px;">
+                                                {% for attr in product.attributes.all|slice:":3" %}
+                                                    <tr style="line-height: 1.2;">
+                                                        <td style="font-weight: 600; padding:8px 0px 5px 0;">{{ attr.attribute.name }}</td>
+                                                        <td style="padding: 2px 0;">{{ attr.value }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </table>
+                                            <a href="#product-spec-section" class=" d-inline-block" style="cursor: pointer; font-weight: 500; text-decoration:underline;">
+                                                View all attributes
+                                            </a>
+                                        </div>
+
+                                        </div>
+                                    <!-- Detail Info -->
+                                </div>
+                            </div>
+                          {% if product.product_desc or product.full_specification or product.attributes.all %}
+                            <div class="product-info" id="product-spec-section">
+                                <div class="tab-style3">
+                                  {% if product.product_desc or product.full_specification %}
+                                    <ul class="nav nav-tabs text-uppercase">
+                                        <li class="nav-item">
+                                            <a class="mb-1" data-bs-toggle="tab">About Product</a>
+                                        </li>
+                                    </ul>
+                                    {% endif %}
+                                    <div class="tab-content shop_info_tab entry-main-content">
+                                      {% if product.product_desc or product.full_specification %}
+                                        <div class="tab-pane fade show active">
+                                            <div class="">
+                                               {{ product.product_desc }}
+                                            </div>
+
+                                            <div class="">
+                                              {{ product.full_specification }}
+                                           </div>
+                                           {% endif %}
+                                        </div>
+                                      {% if product.attributes.all %} 
+                                            <ul class="nav nav-tabs text-uppercase mt-5 mb-3">
+                                                <li class="nav-item">
+                                                    <a class="mb-1" data-bs-toggle="tab">Product Details</a>
+                                                </li>
+                                            </ul>
+                                                <!-- Full Attributes Table Styled -->
+                                          <div style="border: 1px solid #ddd; border-radius: 4px; overflow: hidden;">
+                                            <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
+                                                <tbody>
+                                                  {% for attr in product.attributes.all %}
+                                                    <tr style="background-color: {% cycle '#ffffff' '#f2f2f2' %};">
+                                                        <td style="width: 30%; font-weight: 600; padding: 12px 16px; vertical-align: top; color: #333;">
+                                                            {{ attr.attribute.name }}
+                                                        </td>
+                                                        <td style="padding: 12px 16px; vertical-align: top; color: #444;">
+                                                            {{ attr.value }}
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                      {% endif %}
+                                     </div>
+                                </div>
+                            </div>
+                          {% endif %}
+                            <div class="row mt-60">
+                                <div class="col-12">
+                                    <h2 class="section-title style-1 mb-30">Related products</h2>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row related-products">
+                                      {% if similar_products %}
+                                      {% for similar_product in similar_products %}
+                                        <div class="col-lg-3 col-md-4 col-6 col-sm-6">
+                                            <div class="product-cart-wrap hover-up mb-3" >
+                                                <div class="product-img-action-wrap" style="height: 200px !important;">
+                                                    <div class="product-img product-img-zoom">
+                                                        <a href="{% url 'view_product' similar_product.vendor.vendor_slug similar_product.slug %}" tabindex="0">
+                                                        {% if similar_product.image %}
+                                                          <img class="default-img" src="{{ similar_product.image.url }}" alt="" />
+                                                        {% else %}
+                                                          <img class="default-img" src="{% static 'images/placeholder.jpg' %}" alt="No image available" />
+                                                        {% endif %}
+                                                      </a>
+
+                                                    </div>
+                                                    
+                                                    
+                                                </div>
+                                                <div class="product-content-wrap">
+                                                    <h2><a href="{% url 'view_product' product.vendor.vendor_slug similar_product.slug %}" tabindex="0">{{ similar_product.product_name|truncatechars:30 }}</a></h2>
+                                                    
+                                                    <div class="product-price">
+                                                        <span>₹{{similar_product.sales_price}}</span>
+                                                        <span class="old-price">₹{{similar_product.regular_price}}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                      {% endfor %}
+                                      {% else %}
+                                        <div class="col-12">
+                                            <h5>No Related Products Available</h5>
+                                        </div>
+                                      {% endif %}
+                                        
+                                        
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 primary-sidebar sticky-sidebar mt-30">
+                        
+                        
+                        
+                        {% comment %} <div class="sidebar-widget widget-delivery mb-30 bg-grey-9 box-shadow-none">
+                            {% if user.is_authenticated %}
+                            <h5 class="section-title style-3 mb-10">Delivery</h5>
+                            
+                            {% if address %}    
+                            <ul>
+                                <li>
+                                    <i class="fi fi-rs-marker mr-10 text-brand"></i>
+                                   <span>
+                                        {% if address.street_address %}
+                                            {{ address.street_address }}<br>
+                                        {% endif %}
+                                        {% if address.city %}
+                                            {{ address.city }},
+                                        {% endif %}
+                                        {% if address.state %}
+                                            {{ address.state }}
+                                        {% endif %}
+                                        {% if address.postcode %}
+                                            {{ address.postcode }}<br>
+                                        {% endif %}
+                                        {% if address.country %}
+                                            {{ address.country }}
+                                        {% endif %}
+                                        
+                                    </span>
+                                     <a href="{% url 'address_book' %}" class="change float-end ">Set from here</a>
+                                </li>
+                                <!-- <li class="hr"><span></span></li> -->
+                            </ul>
+                            {% else %}
+                             <ul>
+                                <li>
+                                    <i class="fi fi-rs-marker mr-10 text-brand"></i>
+                                    <span>
+                                       Set your delivery address 
+                                    </span>
+                                    <a href="{% url 'address_book' %}" class="change float-end">Set from here</a>
+                                </li>
+                                <!-- <li class="hr"><span></span></li> -->
+                            </ul>
+                            {% endif %}
+                                
+                            <!-- <h5 class="section-title style-3 mb-20">Return & Warranty</h5> -->
+                            <!-- <ul>
+                                <li>
+                                    <i class="fi fi-rs-shield-check mr-10 text-brand"></i>
+                                    <span> 100% Authentic </span>
+                                </li>
+                                <li>
+                                    <i class="fi fi-rs-time-forward-ten mr-10 text-brand"></i>
+                                    <span> 10 Days Return </span>
+                                </li>
+                                <li>
+                                    <i class="fi fi-rs-diploma mr-10 text-brand"></i>
+                                    <span> 12 Months Warranty </span>
+                                </li>
+                            </ul> -->
+                            {% else %}
+                            <h6><a href="{% url 'login' %}">Login</a> to see your address</h6>
+                            {% endif %}
+                        </div> {% endcomment %}
+
+                       <div class="sidebar-widget widget-vendor mb-30 bg-grey-9 box-shadow-none">
+                          <h5 class="section-title style-3 mb-20">Seller</h5>
+                          <div class="vendor-logo d-flex mb-30 align-items-center">
+                            {% if product.vendor and product.vendor.user_profile and product.vendor.user_profile.profile_picture %}
+                              <img src="{{ product.vendor.user_profile.profile_picture.url }}" width="40px" alt="{{ product.vendor.vendor_name }}" style="border-radius: 10px;" />
+                            {% else %}
+                              <img src="{% static 'images/default-profile-new.png' %}" width="40px" alt="{% if product.vendor %}{{ product.vendor.vendor_name }}{% else %}Seller{% endif %}">
+                            {% endif %}
+                            <div class="vendor-name ml-15">
+                              <h6>
+                                {% if product.vendor %}
+                                  <a href="{% url 'vendor_detail' product.vendor.vendor_slug %}">{{ product.vendor.vendor_name|truncatechars:18 }}</a>
+                                {% else %}
+                                  <span>Unknown Seller</span>
+                                {% endif %}
+                              </h6>
+                            </div>
+                          </div>
+                          <ul class="contact-infor" style="padding:0;">
+                            <li>
+                              <img src="{% static 'assets/imgs/theme/icons/icon-location.svg' %}" alt="" /><strong>Address: </strong>
+                              <span>
+                                {% if product.vendor and product.vendor.user_profile and product.vendor.user_profile.address %}
+                                  {{ product.vendor.user_profile.address }}
+                                {% else %}
+                                  Not available
+                                {% endif %}
+                              </span>
+                            </li>
+                          </ul>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+  
+
+  
+  <!-- JavaScript to handle tab functionality -->
+  <script>
+
+// JavaScript for Image Gallery
+document.addEventListener('DOMContentLoaded', function() {
+  const mainImage = document.getElementById('main-image');
+  const mainImageLink = document.getElementById('main-image-link');
+  const thumbnails = document.querySelectorAll('.gallery-thumbnail img');
+
+  thumbnails.forEach(thumbnail => {
+    thumbnail.addEventListener('click', function(event) {
+      event.preventDefault();
+      const newImageUrl = this.getAttribute('data-full-url');
+      mainImage.src = newImageUrl;
+      mainImageLink.href = newImageUrl;
+    });
+  });
+});
+
+// Function to Add Product to Cart
+function addProductToCart(url, productId, quantity) {
+  fetch(url, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+      },
+      body: JSON.stringify({
+          product_id: productId,
+          quantity: parseInt(quantity)
+      })
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.success) {
+        console.log('Product added to cart:', data);
+        $('#cart_count').text(data.cart_counter);
+        $('#product_count_main').show();
+        $('#product_count').text(data.chkCart_count);
+        if (data.status == 'stock_out') {
+            console.log(data.message);
+          swal("Info",data.message, "info");
+        } else {
+        }
+
+      } else {
+          swal("Info", data.message || "Something went wrong!", "info");
+      }
+  })
+  .catch(error => {
+      console.error('Error:', error);
+      swal("Error", "Something went wrong!", "error");
+  });
+}
+
+// Utility function to get CSRF token
+function getCookie(name) {
+  var cookieValue = null;
+  if (document.cookie && document.cookie != '') {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+          var cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) == (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
+  }
+  return cookieValue;
+}
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Select tab buttons and content
+      const tabs = document.querySelectorAll('.nav-link');
+      const tabContents = document.querySelectorAll('.tab-pane');
+  
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          // Remove active class from all tabs
+          tabs.forEach(t => t.classList.remove('active'));
+          // Hide all tab content
+          tabContents.forEach(content => content.style.display = 'none');
+          
+          // Activate the clicked tab
+          tab.classList.add('active');
+          // Display the associated content
+          const targetContent = document.getElementById(tab.getAttribute('data-target'));
+          if (targetContent) {
+            targetContent.style.display = 'block';
+          }
+        });
+      });
+    });
+
+    document.querySelectorAll('.nav-link').forEach(button => {
+      button.addEventListener('click', function() {
+        // Remove active class from all buttons
+        document.querySelectorAll('.nav-link').forEach(btn => {
+          btn.classList.remove('active');
+          btn.parentElement.style.backgroundColor = 'transparent'; // Reset background color
+        });
+        
+        // Add active class to the clicked button
+        this.classList.add('active');
+        this.parentElement.style.backgroundColor = '#dc3545'; // Set background color to Bootstrap danger
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const decreaseButton = document.getElementById('decrease-quantity');
+      const increaseButton = document.getElementById('increase-quantity');
+      const quantityInput = document.getElementById('main-pv-quantity-input');
+      const maxStock = {{ product.qty|default:0 }};  // Max available stock, passed from the backend
+    
+      quantityInput.setAttribute("readonly", true);
+      quantityInput.addEventListener("keydown", (e) => e.preventDefault());
+
+      decreaseButton.addEventListener('click', function() {
+        let currentQuantity = parseInt(quantityInput.value);
+        
+        if (currentQuantity > 1) {
+          quantityInput.value = currentQuantity - 1;
+        }
+      });
+    
+      increaseButton.addEventListener('click', function() {
+        let currentQuantity = parseInt(quantityInput.value);
+        
+        if (currentQuantity < maxStock) {
+          quantityInput.value = currentQuantity + 1;
+
+        }
+      });
+    });
+  </script>
+  <script>
+window.attributeGroups = {{ product_variant_map_json|safe }};
+</script>
+<script>
+  const variantCombinations = {{ variant_combinations_json|safe }};
+  console.log('Variant Combinations:', variantCombinations);
+  const defaultProductPrice = {{ product.sales_price }};
+  {% if product.image %}
+    const defaultProductImage = "{{ product.image.url }}";
+  {% else %}
+    const defaultProductImage = "";
+  {% endif %}
+
+  const productId = "{{ product.id }}";
+
+  // Utility function to get CSRF token
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  // Update cart display across desktop and mobile views
+  function updateCartDisplay(productId, quantity, hasItems) {
+    // Desktop view elements
+    const desktopQtyLabel = document.getElementById(`dkstp-qty-${productId}`);
+    const desktopAddBtn = document.getElementById(`add_to_cart_btn-${productId}`);
+    const desktopQtyBox = document.getElementById(`dkstp-quantity-btn-box-${productId}`);
+    const desktopQtyInput = document.getElementById(`dkstp-qty-input-${productId}`);
+    
+    // Mobile view elements
+    const mobileQtyLabel = document.getElementById(`mb-qty-${productId}`);
+    const mobileAddBtn = document.getElementById(`mb-add_to_cart_btn-${productId}`);
+    const mobileQtyBoxView = document.getElementById(`qty-mb-${productId}`);
+    const mobileQtyBox = document.getElementById(`quantity-btn-box-${productId}`);
+
+    
+    if (hasItems) {
+      // Update quantity display
+      if (desktopQtyLabel) desktopQtyLabel.textContent = quantity;
+      if (mobileQtyLabel) mobileQtyLabel.textContent = quantity;
+      if (mobileQtyBoxView) mobileQtyBoxView.textContent = quantity;
+      
+      // Show quantity controls, hide add button
+      if (desktopAddBtn) desktopAddBtn.style.display = 'none';
+      if (desktopQtyInput) desktopQtyInput.style.display = 'none';
+      if (desktopQtyBox) desktopQtyBox.style.display = 'flex';
+      if (mobileAddBtn) mobileAddBtn.style.display = 'none';
+      if (mobileQtyBox) mobileQtyBox.style.display = 'flex';
+    } else {
+      // Show add button, hide quantity controls
+      if (desktopAddBtn) desktopAddBtn.style.display = 'block';
+      if (desktopQtyInput) desktopQtyInput.style.display = 'block';
+      if (desktopQtyBox) desktopQtyBox.style.display = 'none';
+      if (mobileAddBtn) mobileAddBtn.style.display = 'block';
+      if (mobileQtyBox) mobileQtyBox.style.display = 'none';
+    }
+    
+    // Update the cart count summary
+    const productCountElement = document.getElementById('product_count');
+    if (productCountElement) {
+      productCountElement.textContent = quantity;
+    }
+  }
+
+  // Get cart count from server
+  function getCartCount(productId, selectedValueIds = []) {
+    fetch("{% url 'get_cart_count' %}", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCookie('csrftoken'),
+      },
+      body: JSON.stringify({
+        product_id: productId,
+        attributes: selectedValueIds,
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        updateCartDisplay(productId, data.quantity, data.has_items);
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching cart count:', error);
+    });
+  }
+// Returns array of value IDs in UI order for the "first" valid combination by columns
+function getFirstColumnOrderCombination(variantCombinations, attributeGroups) {
+  if (!variantCombinations.length || !attributeGroups.length) return [];
+
+  // attributeGroups: [{attribute: {name: ...}, values: [{id, value}, ...]}, ...]
+  // We want: for the first value of the first group, try all values of the second, etc., until a valid combo is found
+  function findCombination(level, selected) {
+    if (level === attributeGroups.length) {
+      // Check if this combination exists and is in stock
+      const selectedIds = attributeGroups.map((g, i) => selected[i]);
+      const match = variantCombinations.find(
+        (combo) =>
+          combo.in_stock &&
+          selectedIds.every((id) => combo.attributes.includes(id)) &&
+          combo.attributes.length === selectedIds.length // full match
+      );
+      return match ? selectedIds : null;
+    }
+    // Try each value in this attribute group
+    for (const value of attributeGroups[level].values) {
+      selected[level] = value.id;
+      const result = findCombination(level + 1, selected);
+      if (result) return result;
+    }
+    return null;
+  }
+
+  // Start with first value in first group, try all combinations
+  return findCombination(0, []);
+}
+
+function initializeVariantButtons() {
+  if (variantCombinations.length === 0) {
+    document.querySelectorAll('.variant-btn').forEach(button => {
+      button.disabled = true;
+      button.classList.remove('selected');
+      button.classList.add('disabled-btn');
+    });
+    return;
+  }
+
+  const attributeGroups = window.attributeGroups || [];
+ 
+  const firstCombo = getFirstColumnOrderCombination(variantCombinations, attributeGroups);
+
+  let selectedIds = firstCombo && firstCombo.length ? firstCombo : (variantCombinations.find(c => c.in_stock) || {}).attributes || [];
+
+  // Select buttons based on selectedIds
+  document.querySelectorAll('.variant-btn').forEach(button => {
+    button.classList.remove('selected');
+    if (selectedIds.includes(button.getAttribute('data-value-id'))) {
+      button.classList.add('selected');
+    }
+  });
+
+  updateVariantSelection();
+  disabledZeroStockButtons();
+}
+
+function disabledZeroStockButtons() {
+   // Update buttons based on current selection
+  document.querySelectorAll('.variant-attribute-group').forEach((group, groupIndex) => {
+    const attr = group.querySelector('.variant-btn').getAttribute('data-attribute');
+
+    group.querySelectorAll('.variant-btn').forEach(button => {
+      const valueId = button.getAttribute('data-value-id');
+    
+      const isValid = variantCombinations.some(combo => {
+        console.log('Testing combo:', combo);
+        return combo.in_stock && combo.attributes.includes(valueId) &&
+               combo.attributes.length >= (groupIndex + 1); // supports partial selection
+      });
+      if (groupIndex === 0) {
+      button.disabled = !isValid;
+      console.log("button", button.disabled)
+      button.setAttribute('aria-disabled', !isValid);
+      button.classList.toggle('disabled-btn', !isValid);
+       }
+    });
+  });
+}
+  // Update product details when variant changes
+  function updateProductDetails(variantData) {
+    // Update price
+    document.querySelector('.current-price').textContent = `₹${variantData.price || defaultProductPrice}`;
+    
+    // Update image if available
+    if (variantData.image) {
+      document.querySelector('.product-image-slider img').src = variantData.image;
+    } else if (defaultProductImage) {
+      document.querySelector('.product-image-slider img').src = defaultProductImage;
+    }
+    
+    // Update stock status
+    const inStock = variantData.in_stock !== false;
+    document.querySelectorAll('.add_to_cart').forEach(btn => {
+      btn.disabled = !inStock;
+    });
+    
+    // Update quantity input max value
+    const quantityInput = document.getElementById('main-pv-quantity-input');
+    if (quantityInput && variantData.stock && variantData.stock > 0) {
+      quantityInput.max = variantData.stock;
+    }
+  }
+function updateVariantSelection() {
+  const selectedValues = {};
+  const attributeGroups = window.attributeGroups || [];
+
+  // Get selected values from each group
+  document.querySelectorAll('.variant-attribute-group').forEach(group => {
+    const selectedBtn = group.querySelector('.variant-btn.selected');
+    if (selectedBtn) {
+      const attr = selectedBtn.getAttribute('data-attribute');
+      const valId = selectedBtn.getAttribute('data-value-id');
+      selectedValues[attr] = valId;
+    }
+  });
+
+  // Update buttons based on current selection
+  document.querySelectorAll('.variant-attribute-group').forEach((group, groupIndex) => {
+    const attr = group.querySelector('.variant-btn').getAttribute('data-attribute');
+
+    group.querySelectorAll('.variant-btn').forEach(button => {
+      const valueId = button.getAttribute('data-value-id');
+
+      if (groupIndex === 0) {
+        // First group: Always enabled
+        button.disabled = false;
+        button.setAttribute('aria-disabled', false);
+        button.classList.remove('disabled-btn');
+        return;
+      }
+
+      // For subsequent groups: test possible combinations with earlier selections + this value
+      const testSelection = { ...selectedValues, [attr]: valueId };
+      const testSelectedIds = [];
+
+      for (let i = 0; i <= groupIndex; i++) {
+        const gAttr = attributeGroups[i].attribute.name;
+        if (testSelection[gAttr]) testSelectedIds.push(testSelection[gAttr]);
+      }
+
+      const isValid = variantCombinations.some(combo => {
+        return combo.in_stock && testSelectedIds.every(id => combo.attributes.includes(id));
+      });
+
+      button.disabled = !isValid;
+      button.setAttribute('aria-disabled', !isValid);
+      button.classList.toggle('disabled-btn', !isValid);
+    });
+  });
+
+  // Find matching variant for current selection
+  const selectedValueIds = Object.values(selectedValues);
+  const selectedVariant = variantCombinations.find(combo => {
+    return combo.attributes.every(attrId => selectedValueIds.includes(attrId)) &&
+           combo.attributes.length === selectedValueIds.length;
+  });
+
+  if (selectedVariant) {
+    updateProductDetails(selectedVariant);
+  } else {
+    updateProductDetails({
+      price: defaultProductPrice,
+      image: defaultProductImage,
+      in_stock: true
+    });
+  }
+
+  getCartCount(productId, selectedValueIds);
+}
+
+function selectVariantValue(btn) {
+  if (variantCombinations.length === 0) return;
+
+  const groups = Array.from(document.querySelectorAll('.variant-attribute-group'));
+  const group = btn.closest('.variant-attribute-group');
+  const groupIdx = groups.indexOf(group);
+
+  // Deselect all in the current group, then select the clicked one
+  group.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+
+  // For all groups after this one:
+  let currentSelections = [...groups.slice(0, groupIdx + 1)].map(g => {
+    const sel = g.querySelector('.variant-btn.selected');
+    return sel ? sel.getAttribute('data-value-id') : null;
+  });
+
+  for (let i = groupIdx + 1; i < groups.length; i++) {
+    // Deselect all in this group
+    groups[i].querySelectorAll('.variant-btn').forEach(b => b.classList.remove('selected'));
+    // Find the first enabled button (valid for the current selection)
+    // Build up a partial selection to this point
+    let found = false;
+    for (const btnCandidate of groups[i].querySelectorAll('.variant-btn')) {
+      // Test: would this full selection be valid?
+      const testSelection = [...currentSelections, btnCandidate.getAttribute('data-value-id')];
+      // We need to check if there exists a variantCombination with all these values in attributes
+      const isValid = variantCombinations.some(combo =>
+        combo.in_stock &&
+        testSelection.every(val => combo.attributes.includes(val)) &&
+        combo.attributes.length >= testSelection.length // supports partial selection
+      );
+      if (isValid) {
+        btnCandidate.classList.add('selected');
+        currentSelections.push(btnCandidate.getAttribute('data-value-id'));
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      // No valid selection in this group, break the chain
+      break;
+    }
+  }
+
+  updateVariantSelection();
+  disabledZeroStockButtons()
+}
+  // Initialize everything on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    initializeVariantButtons();
+    
+    // Set up click handlers for variant buttons
+    document.querySelectorAll('.variant-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        selectVariantValue(this);
+      });
+    });
+    
+    // Initial cart count check
+    const selectedValueIds = getDefaultSelectedVariantIds();
+    console.log('Default selected value IDs:', selectedValueIds);
+    getCartCount(productId, selectedValueIds.length > 0 ? selectedValueIds : null);
+  });
+
+  // Get default selected variant IDs
+  function getDefaultSelectedVariantIds() {
+    const selectedValueIds = [];
+    
+    if (document.querySelector('.variant-attribute-group')) {
+      document.querySelectorAll('.variant-attribute-group').forEach(group => {
+        const selectedBtn = group.querySelector('.variant-btn.selected');
+        if (selectedBtn) {
+          selectedValueIds.push(selectedBtn.getAttribute('data-value-id'));
+        }
+      });
+    }
+    
+    return selectedValueIds;
+  }
+</script>
+{% endblock %}

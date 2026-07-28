@@ -1,0 +1,139 @@
+# Create your models here.
+from django.db import models
+from decimal import Decimal
+from colorfield.fields import ColorField
+from django.conf import settings
+from django.shortcuts import redirect
+import pandas as pd
+from inventory.models import product as Product
+
+
+class Cart(object):
+    def __init__(self, request):
+        self.request            = request
+        self.session            = request.session
+        self.register_counter   = settings.CART_SESSION_ID 
+        cart = self.session.get(self.register_counter)
+        if not cart:
+            # save an empty cart in the session
+            cart = self.session[self.register_counter] = {}
+        self.cart = cart
+
+    def add(self, product, quantity, action=None):
+        """
+        Add a product to the cart or update its quantity.
+
+        """
+        print(product)
+        print(quantity)
+
+
+        
+        product_id = str(product.id)
+        if product_id in self.cart.keys():
+           print("Print qty form cart func: ", self.cart[product_id]['quantity'])
+           quantity = Decimal(self.cart[product_id]['quantity']) + Decimal(quantity)  
+
+           print(" After Print qty form cart func: ", self.cart[product_id]['quantity'])
+           self.cart[product_id]['quantity'] = str(quantity)
+           self.cart[product_id]['price'] = str((product.sales_price * quantity))
+           if self.cart[product_id]['quantity'] == 0:
+                self.remove(product)
+                return
+        else:
+            self.cart[product_id] = {
+                                        'product_id':product_id,
+                                        'barcode' : product.barcode,
+                                        'name': product.product_name,
+                                        'price': str((product.sales_price * quantity)),
+                                        'quantity' : str(quantity),
+                                        'hsn_number':product.hsn_number,
+                                        'model_number':product.model_number,
+                                        'unit_type':product.unit_type
+
+                                        }
+        self.cart[product_id]['tax_value'] = f"{product.sales_price * Decimal(self.cart[product_id]['quantity'])* (product.tax_category.tax_percentage/100):.2f}"
+        self.cart[product_id]['deposit_value'] = f"{Decimal(self.cart[product_id]['quantity']) * product.deposit_category.deposit_value:.2f}"
+        self.cart[product_id]['line_total'] = f"{(product.sales_price * Decimal(self.cart[product_id]['quantity'])):.2f}"
+        self.cart[product_id]['regular_price'] = f"{(product.regular_price * Decimal(self.cart[product_id]['quantity'])):.2f}"
+        self.cart[product_id]['sales_price'] = f"{(product.sales_price):.2f}"
+        self.cart[product_id]['tax_category_name'] = f"{product.tax_category.tax_category}"
+        self.cart[product_id]['tax_percentage'] = f"{product.tax_category.tax_percentage}"
+        self.save()
+
+    
+    def save(self):
+        # update the session cart
+        self.session[self.register_counter] = self.cart
+        # mark the session as "modified" to make sure it is saved
+        self.session.modified = True
+
+    def remove(self, product):
+        """
+        Remove a product from the cart.
+        """
+        product_id = product.id
+        if product_id in self.cart:
+            del self.cart[product_id]
+            self.save()
+
+    def decrement(self, product):
+        for key, value in self.cart.items():
+            if key == str(product.id):
+
+                value['quantity'] = value['quantity'] - 1
+                if(value['quantity'] < 1):
+                    return redirect('cart:cart_detail')
+                self.save()
+                break
+            else:
+                print("Something Wrong")
+
+    def clear(self):
+        # empty cart
+        self.session[self.register_counter] = {}
+        self.session.modified = True
+
+    def isNotEmpty(self):
+        return bool(len(self.cart))
+    
+    def cartTotal(self):
+        return round(pd.DataFrame(self.cart).T["line_total"].astype(float).sum(),2)
+    def get_items(self):
+        """
+        Get all items in the cart.
+        """
+        items = []
+        for product_id, item_data in self.cart.items():
+            items.append({
+                "product_id": product_id,
+                **item_data  # Merge item data into the dictionary
+            })
+        return items
+    def returns(self):
+        for key, value in self.cart.items():
+            value['quantity'] = float(value['quantity']) * (-1)
+            value['tax_value'] =float(value['tax_value']) if float(value['tax_value'])==0.0 else float(value['tax_value']) * (-1) 
+            value['deposit_value'] = float(value['deposit_value']) if float(value['deposit_value']) == 0.0 else float(value['deposit_value']) * (-1) 
+            value['regular_price'] = float(value['regular_price']) * (-1)
+            value['line_total'] = float(value['line_total']) * (-1)
+        self.save()
+
+
+# Create your models here.transaction_dt
+class displayed_items(models.Model):
+    barcode          = models.CharField(unique=True,max_length=16,blank = False,null=False)
+    display_name     = models.CharField(max_length=125, blank = False, null = False)
+    display_info     = models.CharField(max_length=125, blank = True, null = False, default = "")
+    display_color    = ColorField(default='#575757')
+    variable_price   = models.BooleanField(blank = False,null=False)
+    
+    def __str__(self):
+        return self.barcode
+
+    def save(self,*args, **kwargs):
+        if Product.objects.filter(barcode=self.barcode).first():
+            return super().save(*args, **kwargs)
+        return False
+    class Meta:
+        verbose_name_plural = "Displayed Item"

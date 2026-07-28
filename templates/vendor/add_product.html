@@ -1,0 +1,469 @@
+{% extends 'base.html' %} 
+{% load static %}
+ {% block content %} 
+ {% include 'includes/alerts.html' %}
+<style>
+  input {
+    border: unset;
+    border-radius: unset;
+    height: unset !important;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    padding-left: 20px;
+    font-size: 12px;
+  }
+  .upload-preview-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .thumbnail {
+    width: 100px;
+    height: 100px;
+    border-radius: 4px;
+    position: relative;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    overflow: hidden;
+  }
+
+  #image-placeholder-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #999;
+    font-size: 14px;
+    user-select: none;
+    text-align: center;
+    width: 100%;
+    padding: 0 5px;
+  }
+
+  #image-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .custom-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    background-color: #ffffff;
+    color: #777;
+    border: 1px solid #ced4da;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px !important;
+    user-select: none;
+    height: 50px;
+    transition: background-color 0.2s ease;
+  }
+
+  .custom-upload-btn:hover {
+    background-color: #f2f2f2;
+  }
+
+  .custom-upload-btn i {
+    font-size: 18px;
+    color: #777;
+  }
+
+  .form-label {
+    font-size: 20px;
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+  .btn-outline-update_color {
+  color: #181970 !important;
+  border: 1px solid #181970 !important;
+  background-color: transparent !important;
+}
+
+.btn-outline-update_color:hover {
+  background-color: #007bff !important;
+  color: white !important;
+}
+  
+</style>
+<!-- Main Section Start -->
+<div class="main-section">
+  {% include 'includes/cover.html' %}
+  <div class="page-section account-header buyer-logged-in">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+          <!-- Load the sidebar here -->
+          {% include 'includes/v_sidebar.html' %}
+        </div>
+        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+          <div class="user-dashboard loader-holder">
+            <div class="user-holder">
+              <h5 class="text-uppercase">Manage Categories</h5>
+              <hr />
+              <button class="btn btn-secondary" onclick="history.back()">
+                <i class="fa fa-angle-left" aria-hidden="true"></i> Back
+              </button>
+              <br /><br />
+              <h6>Add New Product</h6>
+              <form
+                action="{% url 'add_product' %}"
+                method="POST"
+                enctype="multipart/form-data"
+              >
+                {% csrf_token %}
+                <div class="form-fields-set">
+                  <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                      <div class="field-holder">
+                        <label>Barcode </label>
+                        {{ form.barcode }}
+                      </div>
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                      <div class="field-holder">
+                        <label>Category *</label>
+                        {{ form.category }}
+                      </div>
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                      <div class="field-holder">
+                        <label>Subcategory </label>
+                        {{ form.subcategory }}
+                      </div>
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                      <div class="field-holder">
+                        <label>Product Title *</label>
+                        {{ form.product_name }}
+                      </div>
+                    </div>
+                    <div class="col-lg-12">
+                      <div class="field-holder">
+                        <label class="form-label">Image</label>
+                        <div class="upload-preview-wrapper">
+                          <div id="image-preview-box" class="thumbnail">
+                            <span id="image-placeholder-text"
+                              >500 × 500 pixels</span
+                            >
+                            <img id="image-preview" src="" alt="Preview" />
+                          </div>
+
+                          <label for="image-upload" class="custom-upload-btn">
+                            <i class="fas fa-upload"></i>
+                            <span>Upload Product Image</span>
+                          </label>
+                            <div class="col-lg-12">
+                        <small style="color: #888;  margin-top: 8px;">
+                        Recommended resolution: 500x500 pixels. Ensure the image is in square format for best results
+                        </small>
+                      </div>
+                           <input
+                            type="file"
+                            id="image-upload"
+                            name="image"
+                            accept="image/*"
+                            style="display: none"
+                          />
+
+                        </div>
+                        {% if form.image.errors %}
+                      <ul class="errorlist" style="color: red; margin-top: 4px;">
+                        {% for error in form.image.errors %}
+                          <li>{{ error }}</li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                      </div>
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                      <div class="field-holder">
+                        <label>Description</label>
+                        {{ form.product_desc }}
+                      </div>
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                      <div class="field-holder">
+                        <label>Full Specification</label>
+                        {{ form.full_specification }}
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                      <div class="field-holder">
+                        <label>HSN Code</label>
+                        {{ form.hsn_number }}
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                      <div class="field-holder">
+                        <label>Model Number</label>
+                        {{ form.model_number }}
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                      <div class="field-holder">
+                        <label>Purchase Price</label>
+                        {{ form.cost_price }}
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                      <div class="field-holder">
+                        <label>Regular Price *</label>
+                        {{ form.regular_price }}
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                      <div class="field-holder">
+                        <label>Sale Price (Optional)</label>
+                        {{ form.sales_price }}
+                      </div>
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                      <div class="field-holder">
+                        <label>Unit Type</label>
+                        {{ form.unit_type }}
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                      <div class="field-holder">
+                        <label>Stock</label>
+                        {{ form.qty }}
+                      </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                      <div class="field-holder">
+                        <label>Tax Category</label>
+                        {{ form.tax_category }}
+                      </div>
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                      <div class="field-holder">
+                        <label>Product Attributes</label>
+                        <div id="attributes-wrapper"></div>
+                        <button type="button" class="btn btn-sm mt-2 text-light" style="background-color: #181970;" id="add-attribute-btn">
+                          <i class="fa fa-plus"></i> Add Attribute
+                        </button>
+                        <small style="color: #888;">Add product attributes and their values (e.g. Brand, Material).</small>
+                      </div>
+                    </div>
+                    <div>
+                      <h3>Upload Gallery Images</h3>
+                      {{ formset.management_form }} {% for form in formset %}
+                      <div class="mb-3">
+                        {{ form.image.label }} {{ form.image }}
+                      </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+
+                {% comment %} {% for field in form %} {% for error in field.errors %}
+                <li style="color: red">{{ error }}</li>
+                {% endfor %} {% endfor %} {% endcomment %}
+
+                <div class="d-flex justify-content-end gap-3 mb-3">
+                  <button type="submit" name="action" value="create" class="btn btn-outline-update_color me-2">
+              <i class="fa fa-check" aria-hidden="true"></i> Save
+            </button>
+                  
+                  <button type="submit" name="action" value="next" class="btn update_color">
+                    Create Variant <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Main Section End -->
+
+<!-- Add JavaScript for dynamic subcategory loading -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Dynamic Subcategory Loading
+    const categorySelect = document.querySelector('[name="category"]');
+    const subcategorySelect = document.querySelector('[name="subcategory"]');
+    categorySelect.addEventListener("change", function () {
+      const categoryId = categorySelect.value;
+      if (categoryId) {
+        fetch(`/vendor/get-subcategories/${categoryId}/`)
+          .then((response) => response.json())
+          .then((data) => {
+            subcategorySelect.innerHTML =
+              '<option value="">Select Subcategory</option>';
+            data.subcategories.forEach((subcategory) => {
+              subcategorySelect.innerHTML += `<option value="${subcategory.id}">${subcategory.name}</option>`;
+            });
+          });
+      } else {
+        subcategorySelect.innerHTML =
+          '<option value="">Select Subcategory</option>';
+      }
+    });
+
+    // Image Preview Handler
+    const imageInput = document.getElementById("image-upload");
+    const imagePreview = document.getElementById("image-preview");
+    const placeholderText = document.getElementById("image-placeholder-text");
+
+    imageInput.addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imagePreview.src = e.target.result;
+          imagePreview.style.display = "block";
+          placeholderText.style.display = "none";
+        };
+        reader.readAsDataURL(file);
+      } else {
+        imagePreview.src = "";
+        imagePreview.style.display = "none";
+        placeholderText.style.display = "flex";
+      }
+    });
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const allAttributes = {{ all_attributes|safe }};
+    const wrapper = document.getElementById('attributes-wrapper');
+    const addBtn = document.getElementById('add-attribute-btn');
+    const categorySelect = document.querySelector('[name="category"]');
+    let attrIdx = 0;
+
+    function createExistingAttributeRow(idx, attr) {
+      const row = document.createElement('div');
+      row.className = 'd-flex align-items-center mb-2 attribute-row';
+      row.dataset.idx = idx;
+
+      const hiddenId = document.createElement('input');
+      hiddenId.type = 'hidden';
+      hiddenId.name = 'existing_attribute_ids[]';
+      hiddenId.value = attr.id;
+      row.appendChild(hiddenId);
+
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.name = `attribute_name_${idx}`;
+      nameInput.className = 'form-control me-2 attr-name';
+      nameInput.value = attr.name;
+      nameInput.readOnly = true;
+      nameInput.style.backgroundColor = '#f0f0f0';
+      row.appendChild(nameInput);
+
+      const valueInput = document.createElement('input');
+      valueInput.type = 'text';
+      valueInput.name = `attribute_value_${idx}`;
+      valueInput.placeholder = 'Enter value';
+      valueInput.className = 'form-control ms-2';
+      row.appendChild(valueInput);
+
+      const removeFlag = document.createElement('input');
+      removeFlag.type = 'hidden';
+      removeFlag.name = `attribute_removed_${idx}`;
+      removeFlag.value = '0';
+      row.appendChild(removeFlag);
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'btn btn-link text-danger ms-2';
+      removeBtn.innerHTML = '<i class="fa fa-times"></i>';
+      removeBtn.onclick = () => {
+        removeFlag.value = '1';
+        row.classList.add('d-none');
+      };
+      row.appendChild(removeBtn);
+
+      return row;
+    }
+
+    function createNewAttributeRow(idx) {
+      const row = document.createElement('div');
+      row.className = 'd-flex align-items-center mb-2 attribute-row';
+      row.dataset.idx = idx;
+
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.name = `new_attribute_name_${idx}`;
+      nameInput.className = 'form-control me-2';
+      nameInput.placeholder = 'Enter new attribute name';
+      nameInput.required = true;
+      row.appendChild(nameInput);
+
+      const valueInput = document.createElement('input');
+      valueInput.type = 'text';
+      valueInput.name = `new_attribute_value_${idx}`;
+      valueInput.placeholder = 'Enter value';
+      valueInput.className = 'form-control ms-2';
+      valueInput.required = true;
+      row.appendChild(valueInput);
+
+      const removeFlag = document.createElement('input');
+      removeFlag.type = 'hidden';
+      removeFlag.name = `attribute_removed_${idx}`;
+      removeFlag.value = '0';
+      row.appendChild(removeFlag);
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'btn btn-link text-danger ms-2';
+      removeBtn.innerHTML = '<i class="fa fa-times"></i>';
+      removeBtn.onclick = () => {
+        removeFlag.value = '1';
+        row.classList.add('d-none');
+      };
+      row.appendChild(removeBtn);
+
+      return row;
+    }
+
+    function loadAttributesByCategory(categoryId) {
+      wrapper.innerHTML = '';
+      attrIdx = 0;
+      const filtered = allAttributes.filter(attr => attr.category_id == categoryId);
+      filtered.forEach(attr => {
+        const row = createExistingAttributeRow(attrIdx, attr);
+        wrapper.appendChild(row);
+        attrIdx++;
+      });
+    }
+
+    categorySelect.addEventListener('change', function () {
+      const categoryId = this.value;
+      if (categoryId) {
+        loadAttributesByCategory(categoryId);
+      } else {
+        wrapper.innerHTML = '';
+        attrIdx = 0;
+      }
+    });
+
+    addBtn.addEventListener('click', function () {
+      const row = createNewAttributeRow(attrIdx);
+      wrapper.appendChild(row);
+      attrIdx++;
+    });
+
+    if (categorySelect.value) {
+      loadAttributesByCategory(categorySelect.value);
+    }
+  });
+</script>
+
+
+
+{% endblock %}

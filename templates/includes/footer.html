@@ -1,0 +1,111 @@
+{% load static %}
+<!-- Footer Start -->
+<footer class="bg-clickmall text-light pt-5 pb-4 mt-60">
+    <div class="container">
+      <div class="row">
+  
+        <!-- About Ratulenterprise -->
+        <div class="col-md-3 mb-4">
+          <h5 class="text-uppercase mb-3 text-light">About Ratulenterprise</h5>
+          <span class="text-light">Ratulenterprise brings you a wide range of quality products in one seamless and convenient online store.</span>
+          <div class="d-flex gap-3 mt-3">
+            <a href="#" class="text-light"><i class="fa fa-facebook-f"></i></a>
+            <a href="#" class="text-light"><i class="fa fa-twitter"></i></a>
+            <a href="#" class="text-light"><i class="fa fa-instagram"></i></a>
+            <a href="#" class="text-light"><i class="fa fa-youtube"></i></a>
+          </div>
+          <div class="d-flex gap-2 mt-3">
+            <a href="#"><img src="https://www.mystore.in/s/62ea2c599d1398fa16dbae0a//ms.files/play-store-112x33.png" alt="Google Play" height="40"></a>
+            <a href="#"><img src="https://www.mystore.in/s/62ea2c599d1398fa16dbae0a//ms.files/apple-store-112x33.png" alt="App Store" height="40"></a>
+          </div>
+        </div>
+  
+        <!-- Pages -->
+        <div class="col-md-3 mb-4">
+          <h5 class="text-uppercase mb-3 text-light">Account</h5>
+          <ul class="list-unstyled">
+            <li><a href="{% url 'login' %}" class="text-light text-decoration-none">Login</a></li>
+            <li><a href="#" class="text-light text-decoration-none">FAQs</a></li>
+          </ul>
+        </div>
+  
+        <!-- Explore -->
+        <div class="col-md-3 mb-4">
+          <h5 class="text-uppercase mb-3 text-light">Legal</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-light text-decoration-none">Terms & Conditions</a></li>
+            <li><a href="#" class="text-light text-decoration-none">Privacy Policy</a></li>
+            <li><a href="#" class="text-light text-decoration-none">Cancellation & Refund Policy</a></li>
+            <li><a href="#" class="text-light text-decoration-none">Cookie Policy</a></li>
+            <li><a href="#" class="text-light text-decoration-none">Contact Us</a></li>
+          </ul>
+        </div>
+  
+        <!-- Collections -->
+        <div class="col-md-3 mb-4">
+          <h5 class="text-uppercase mb-3 text-light">Collections</h5>
+          <ul class="list-unstyled">
+            {% for i in store_types_footer %}
+            <li><a href="{% url 'marketplace' %}?search={{i}}" class="text-light text-decoration-none">{{ i }}</a></li>
+            {% endfor %}
+          </ul>
+         
+        </div>
+  
+      </div>
+  
+      <div class="text-center pt-3 border-top mt-4">
+        <small>&copy; 2025 Ratulenterprise. All rights reserved.</small>
+      </div>
+    </div>
+  </footer>
+  
+<!-- Footer End -->
+</div>
+
+	<script>
+   document.addEventListener('DOMContentLoaded', function () {
+  const stickyTarget = document.querySelector('.mobile-header-section');
+  const placeholder = document.getElementById('sticky-placeholder');
+  const stickyOffset = stickyTarget.offsetTop;
+  const stickyHeight = stickyTarget.offsetHeight;
+
+  window.addEventListener('scroll', function () {
+    if (window.scrollY >= stickyOffset) {
+      stickyTarget.classList.add('sticky');
+      placeholder.style.height = stickyHeight + 'px'; // Reserve space
+    } else {
+      stickyTarget.classList.remove('sticky');
+      placeholder.style.height = '0px'; // Collapse placeholder
+    }
+  });
+});
+
+
+
+  </script>
+	<!-- Vendor JS-->
+    <script src="{% static 'assets/js/vendor/modernizr-3.6.0.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendor/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendor/jquery-migrate-3.3.0.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendor/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/slick.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/jquery.syotimer.min.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/waypoints.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/wow.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/perfect-scrollbar.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/select2.min.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/counterup.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/jquery.countdown.min.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/images-loaded.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/isotope.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/scrollup.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/jquery.vticker-min.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/jquery.theia.sticky.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/jquery.elevatezoom.js' %}"></script>
+    <!-- Template  JS -->
+    <script src="{% static 'assets/js/main2cc5.js' %}"></script>
+    <script src="{% static 'assets/js/shop2cc5.js' %}"></script>
+</body>
+
+</html>

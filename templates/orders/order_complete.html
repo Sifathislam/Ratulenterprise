@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+  /* Responsive Styles */
+  @media only screen and (max-width: 1199px) {
+    select {width: 41%;}
+
+  }
+  
+  
+  @media only screen and (max-width: 991px) {
+    select {width: 41%;}
+    .custom-design-for-info{
+        display: block !important;
+    }
+    
+    select option {
+        font-size: 12px;
+    }
+
+
+    .status-img{
+        width: 160px !important;
+    }
+  }
+
+
+
+  @media only screen and (max-width: 768px) {
+    select {width: 41%;}
+    select option {font-size: 12px;}
+    .custom-design-for-info{
+        display: block !important;
+    }
+    .image-logo{
+        width: 170px !important;
+    }
+    .status-img{
+        width: 130px !important;
+    }
+
+  }
+  
+  
+  @media only screen and (max-width: 575px) {
+    select {width: 41%;}
+    select option {font-size: 10px;}
+    .custom-design-for-info{
+        display: block !important;
+    }
+    .image-logo{
+        width: 150px !important;
+    }
+    .status-img{
+        width: 100px !important;
+    }
+  }
+  <style>
+  .cart-item-row > div {
+    white-space: nowrap;
+  }
+</style>
+
+</style>
+<div class="container mt-5 mb-5">
+    <div class="justify-content-center row">
+        <div class="col-md-8">
+            <div class="bg-white p-3">
+                <span style="font-size: 26px; font-weight: 700; color: #212529">Ratulenterprise</span>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="mt-2 mb-3">New Order Received</h4>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <p class="mb-0"><strong>Order No:</strong> {{ order.order_number }}</p>
+                        <p class="mb-0"><strong>Customer:</strong> {{ order.name }}</p>
+                        <p class="mb-0">{{ order.phone }}</p>
+                        <p class="mb-0">{{ order.email }}</p>
+                    </div>
+                </div>
+
+                <h6 class="mt-3">You received an order. Below are the details for your products.</h6>
+                <hr>
+
+                <div class="d-flex justify-content-between custom-design-for-info">
+                    <div>
+                        <span class="d-block">Order Date:</span><span class="font-weight-bold">{{ order.created_at }}</span>
+                    </div>
+                    <div>
+                        <span class="d-block">Payment Method:</span><span class="font-weight-bold">{{ order.payment_method }}</span>
+                    </div>
+                    <div>
+                        <span class="d-block">Transaction ID:</span><span class="font-weight-bold">{{ order.payment.transaction_id }}</span>
+                    </div>
+                </div>
+                <hr>
+
+               <table class="table d-none d-md-table">
+                <thead>
+                    <tr>
+                    <th>Product</th>
+                    <th>Vendor</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Tax Category</th>
+                    <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in ordered_food %}
+                    <tr>
+                    <td>
+                        <div class="d-flex align-items-center  gap-3">
+                            <div>
+                                {% if item.variant_info.image %}
+                                    <img src="{{ item.variant_info.image }}" width="60" alt="Variant Image"><br>
+                                {% elif item.product.image %}
+                                    <img src="{{ item.product.image.url }}" width="60" alt="Product Image"><br>
+                                {% else %}     
+                                    <img src="" width="60" alt="No image available" /><br>
+                                {% endif %}
+                            </div>  
+                            <div class="w-20">
+                                <b>{{ item.product | truncatechars:20 }}</b><br>
+                                {% if item.variant_info.attributes %}
+                                    {% for attr in item.variant_info.attributes %}
+                                        <small>{{ attr.attribute__name }}: {{ attr.value }}</small><br>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ item.product.vendor.vendor_name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ item.price }}</td>
+                    <td>{{ item.product.tax_category }}</td>
+                    <td>{{ item.status }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+
+                <!-- Small screen  -->
+                <div class="d-md-none">
+                {% for item in ordered_food %}
+                <div class="cart-item-row d-flex align-items-center mb-3" style="gap: 10px; flex-wrap: wrap; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+                    <div class="d-flex align-items-center  gap-3">
+                        <div style="flex-shrink: 0;">
+                            {% if item.variant_info.image %}
+                                <img src="{{ item.variant_info.image }}" width="60" alt="Variant Image"><br>
+                            {% elif item.product.image %}
+                                <img src="{{ item.product.image.url }}" width="60" alt="Product Image"><br>
+                            {% else %}     
+                                <img src="{% static 'images/placeholder.jpg' %}" width="60" alt="No image available" /><br>
+                            {% endif %}                  
+                        </div>
+                        <div class="w-30">
+                            <b>{{ item.product | truncatechars:20 }}</b><br>
+                            {% if item.variant_info.attributes %}
+                                {% for attr in item.variant_info.attributes %}
+                                    <small>{{ attr.attribute__name }}: {{ attr.value }}</small><br>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div style="margin-left: 15px;">Vendor: {{ item.product.vendor.vendor_name }}</div>
+                    <div style="margin-left: 15px;">Qty: {{ item.quantity }}</div>
+                    <div style="margin-left: 15px;">
+                    Price: ₹{{ item.price }}
+                    </div>
+                    <div style="margin-left: 15px;">Tax: {{ item.product.tax_category }}</div>
+                    <div style="margin-left: 15px;">Status: {{ item.status }}</div>
+                </div>
+                {% endfor %}
+                </div>
+
+                <div class="row mt-5">
+                    <div class="d-flex justify-content-center col-md-6">
+                        {% if all_paid %}
+                            <img src="{% static 'images/paid.png' %}" width="200" class="status-img">
+                        {% else %}
+                            <img src="{% static 'images/cod.svg' %}" width="200" class="status-img">
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <ul>
+                            <li style="list-style-type: none;" class="d-flex justify-content-between align-items-center">
+                                Subtotal
+                                <span class="price float-right">
+                                    ₹{{ subtotal|floatformat:2 }}
+                                </span>
+                            </li>
+
+                            {% for single_tax_dict in tax_data %}
+                                {% for key, value in single_tax_dict.tax_info.items %}
+                                    {% if value %}  
+                                        <li style="list-style-type: none;" class="d-flex justify-content-between align-items-center">
+                                            <div style="font-size: 12px;">
+                                                {{ single_tax_dict.tax_category }} 
+                                                <small>({{ key }}%)</small>
+                                                {% for item in ordered_food %}
+                                                    {% if item.variant_info and item.variant_info.variant_id == single_tax_dict.product_variant_id %}
+                                                        {% for attribue in item.variant_info.attributes %}
+                                                        <small>{{attribue.value }}</small>
+                                                        {% endfor %}
+                                                        <small>{{ item.product|truncatechars:20 }}</small>
+                                                        
+                                                        {% elif item.product.id == single_tax_dict.product_id and not single_tax_dict.product_variant_id %}
+                                                            <small>{{ item.product|truncatechars:20 }}</small>
+                                                    {% endif %}
+
+                                                {% endfor %}
+                                            </div>
+                                            <span class="price float-right">
+                                                <span class="currency">₹</span>
+                                                <span id="tax-{{ single_tax_dict.product_id }}">{{ value }}</span>
+                                            </span>
+                                        </li>
+                                        {% endif %}
+                                    {% endfor %}
+                            {% endfor %}
+
+                            <li style="list-style-type: none; font-weight: 600;" class="d-flex justify-content-between align-items-center">
+                                TOTAL
+                                <span class="price float-right ">
+                                    ₹{{ order.total |floatformat:2 }}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <span class="d-block font-weight-bold">Thanks for fulfilling your order!</span>
+                        <span>— Ratulenterprise Team</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

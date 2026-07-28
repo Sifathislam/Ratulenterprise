@@ -1,0 +1,73 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/cs-foodbakery-plugin.css' %}">
+
+<div class="container">
+    
+        {% if vendor.user_profile.cover_photo %}
+        <div class="archive-header-3 mt-30 mb-50" style="background-image: linear-gradient(rgb(0 0 0 / 37%), rgb(0 0 0 / 60%)), url('{{ vendor.user_profile.cover_photo.url }}'); background-size: cover; background-position: center;">
+        {% else %}
+        <div class="archive-header-3 mt-30 mb-50" style="background-image: url({% static 'assets/imgs/vendor/vendor-header-bg.png' %})">
+        {% endif %}
+        <div class="archive-header-3-inner">
+            <div class="vendor-logo mr-50">
+                {% if vendor.user_profile.profile_picture %}
+                <img src="{{ vendor.user_profile.profile_picture.url }}" alt="{{ vendor.vendor_name }}" style="border-radius: 10px;">
+                {% else %}
+                <img src="{% static 'images/default-profile-new.png' %}" alt="{{ vendor.vendor_name }}">
+                {% endif %}
+            </div>
+            <div class="vendor-content">
+                <div class="product-category">
+                    <span class="text-muted " style="color: #fff !important;">{{ vendor.store_type }}</span>
+                </div>
+                
+                {% if vendor %}
+                <h3 class="mb-5 text-white"><a href="{% url 'vendor_detail' vendor.vendor_slug %}" class="text-white">{{ vendor.vendor_name }}</a></h3>
+                {% endif %}
+                
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="vendor-info text-white mb-15">
+                            <ul class="font-sm" style="padding:0;">
+                                {% if vendor.user_profile.address %}
+                                <li><img class="mr-5" src="{% static 'assets/imgs/theme/icons/icon-location.svg' %}" alt="" /><strong>Address: </strong> <span>{{ vendor.user_profile.address }}</span></li>
+                                {% endif %}
+                                {% if vendor.user.phone_number %}
+                                <li style="display: flex; align-items: center;">
+                                    <img src="{% static 'assets/imgs/theme/icons/icon-contact.svg' %}" alt="" style="width: 16px; height: 16px; margin-right: 6px;">
+                                    <span><strong>Call Us:</strong> {{ vendor.user.phone_number }}</span>
+                                </li>
+
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                       {% if vendor.gst_number %}
+                            <div class="vendor-des">
+                                <p class="font-sm" style="color: #fff !important;">GST Number: {{ vendor.gst_number }}</p>
+                            </div>
+                            {% endif %}
+
+                            {% if vendor.fssai_number %}
+                            <div class="vendor-des">
+                                <p class="font-sm" style="color: #fff !important;">FSSAI Number: {{ vendor.fssai_number }}</p>
+                            </div>
+                            {% endif %}
+
+                            {% if vendor.delivery_radius %}
+                            <div class="vendor-des mb-15">
+                                <p class="font-sm" style="color: #fff !important;">Delivery Radius: {{ vendor.delivery_radius }} KM.</p>
+                            </div>
+                            {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+
+</div>

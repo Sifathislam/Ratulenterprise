@@ -1,0 +1,677 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<style>
+.product-img-wrap {
+  position: relative;
+}
+
+
+
+
+.product-img-wrap .button-add-to-cart {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 2;
+  padding: 3px 11px;
+  font-size: 12px;
+  background-color: #1b216a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.category-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+	text-align: center;
+    margin: 10px;
+}
+
+.category-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #f0f0f0;
+    margin: 10px auto; /* 🟢 THIS ensures it's centered */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+	box-shadow: 0 3px 4px rgba(0,0,0,.09)!important;
+}
+
+.category-circle:hover{
+	background-color: #181970 !important;
+}
+
+.category-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+	padding: 15px;
+	display: block;
+}
+
+.category-name {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    font-size: 14px;
+}
+
+.carausel-10-columns-arrow {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px;
+  z-index: 10;
+}
+.col-1-7 {
+    flex: 0 0 14.2857%;
+    max-width: 14.2857%;
+  }
+  .row>*{
+	padding-left: 5px;
+	 padding-right: 5px;
+  }
+  .quantity-box {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 2;
+    font-size: 12px;
+    background-color: #ed3595; /* or #f53ca4 */
+    border-radius: 5px;
+    padding: 3px 11px;
+    font-weight: bold;
+    color: #ffdff0;
+    gap: 8px;
+}
+
+.quantity-box a {
+    text-decoration: none;
+    color: #ffdff0;
+    font-weight: 300;
+    font-size: 12px;
+}
+
+.quantity-box label {
+  margin: 0;
+  font-size: 12px;
+  color: white;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+#popular-products-slider-arrows{
+  top:25% !important;
+}
+
+#carausel-10-columns {
+  visibility: hidden;
+}
+#carausel-10-columns.slick-initialized {
+  visibility: visible;
+}
+
+.slider-btn:hover {
+  background-color: #1b216a !important; /* Blue background on hover */
+  color: white !important;
+}
+
+
+
+</style>
+{% include 'includes/alerts.html' %}
+
+<section class="popular-categories d-none d-md-block" style="padding-bottom: 0;">
+	<div class="container">
+		<div class="section-title">	
+			<div class="slider-arrow slider-arrow-2 carausel-10-columns-arrow" id="carausel-10-columns-arrows">	
+			</div>
+		</div>
+		<div class="carausel-10-columns-cover position-relative">
+			<div class="carausel-10-columns" id="carausel-10-columns">
+				{% for cat in categories_home %}
+				<div class="category-item">
+					<div class="category-circle bg-7">
+
+						<a href="{% url 'browse' category_slug=cat.slug %}">
+              
+              {% if cat.category_image and cat.category_image.url %}
+							<img src="{{ cat.category_image.url }}" alt="{{cat.category_name}}" />
+              {% else %}
+							<img src="#" alt="Category image" />
+              {% endif %}
+                
+						</a>
+					</div>
+					<h6 class="category-name">
+						<a href="{% url 'filter_by_category' category_id=cat.id %}">{{ cat.category_name }}</a>
+					</h6>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Mobile Banner -->
+<div class="d-block d-md-none w-100" style="background-color: {{ current_event.home_color }};">
+  <img 
+    src="{{ current_event.banner.url }}" 
+    alt="Mobile Banner" 
+    class="img-fluid w-100" 
+    style="max-height: 250px; object-fit: cover;">
+</div>
+
+<div class="container pt-3 pb-3 d-block d-md-none" style="background-color: {{ current_event.home_color }};">
+  <div class="row g-2">
+    {% for ad in ads %}
+    <div class="col-4">
+      <a href="{% if ad.link %}{{ad.link}}{% else %}/{% endif %}"><img src="{{ ad.image.url }}" class="img-fluid w-100" alt=""></a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+<!-- Main Section Start -->
+	<section class="home-slider position-relative mb-20 page-section nopadding cs-nomargin d-none d-md-block">
+		<div class="container">
+			<div class="home-slide-cover">
+				<div class="hero-slider-1 style-4 dot-style-1 dot-style-1-position-1">
+					{% for slide in homepagebanners %}
+						{% if slide.vendor %}
+							<a href="{% url 'vendor_detail' slide.vendor.vendor_slug %}">
+						{% else %}
+							<a href="{{ slide.link }}">
+					{% endif %}
+						<div style="height: 250px !important;">
+              <div class="single-hero-slider single-animation-wrap" style="background-image: url({{ slide.image.url }});">
+							<div class="slider-content">
+								<!-- Optional Content -->
+							</div>
+						</div>
+            </div>
+					</a>
+					{% endfor %}
+				</div>
+				<div class="slider-arrow hero-slider-1-arrow"></div>
+			</div>
+		</div>
+	</section>
+	<section class="product-tabs section-padding position-relative">
+		<div class="container">
+			<div class="section-title style-2 wow animate__animated animate__fadeIn mb-3">
+				<h3>Popular Products</h3>
+			</div>
+			<div class="tab-content" id="myTabContent">
+				<div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+					<div class="container position-relative">
+					<div class="popular-slider-wrapper">
+					<div class="row popular-products-slider" id="popular-products-slider">
+						{% for product in products %}
+						<div class="col-lg-2 col-md-4 col-6 col-sm-6 p-1">
+							<div class="product-cart-wrap wow animate__animated animate__fadeIn" data-wow-delay=".1s">
+								<div class="product-img-action-wrap">
+									<div class="product-img-wrap product-img-zoom position-relative">
+									{% if product.image %}
+                    <a href="{% url 'view_product' product.vendor.vendor_slug product.slug %}">
+                      <img class="product-img" src="{{ product.image.url }}" alt="" />
+                    </a>
+                  {% else %}
+                    <a href="{% url 'view_product' product.vendor.vendor_slug product.slug %}">
+                      <img class="product-img" src="{% static 'images/placeholder.jpg' %}" alt="No image available" />
+                    </a>
+                  {% endif %}
+
+                    <div>
+                      {% if product.variants and product.variants.all|length > 0 %}
+                      <!-- ADD button -->
+                       <a href="{% url 'view_product' product.vendor.vendor_slug product.slug %}" class="button-add-to-cart text-white update_color">
+                      View
+                    </a>
+                      {% else %}
+                      <a href="#" class="button-add-to-cart add_to_cart text-white update_color"
+                        id="add_to_cart_btn-{{product.id}}"
+                        data-id="{{ product.id }}"
+                        data-url="{% url 'add_to_cart' product.id %}"
+                        style="{% if product.id in cart_product_ids %}display:none;{% endif %}">
+                        ADD
+                      </a>
+                      <!-- Quantity controls -->
+                      <div class="quantity-box"
+                      id="quantity-btn-box-{{ product.id }}"
+                      style="{% if product.id not in cart_product_ids %}display:none;{% endif %}">
+                      <a href="#" class="decrease_cart" data-id="{{ product.id }}" data-url="{% url 'decrease_cart' product.id %}">
+                        <i class="icon-minus text-white"></i>
+                      </a>
+                      <label id="qty-{{ product.id }}">
+                        {% for item in cart_items %}
+                        {% if product.id == item.product.id %}
+                        {{ item.quantity }}
+                        {% endif %}
+                        {% endfor %}
+                      </label>
+                      <a href="#" class="add_to_cart" data-id="{{ product.id }}" data-url="{% url 'add_to_cart' product.id %}">
+                        <i class="icon-plus text-white"></i>
+                      </a>
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+									{% if product.get_discount_percentage > 0 %}
+										<div class="product-badges product-badges-position product-badges-mrg">
+											<span class="hot">{{product.get_discount_percentage}}%</span>
+										</div>
+									{% endif %}
+								</div>
+								<div class="product-content-wrap">
+									<div class="product-category">
+										<small class="text-muted" style="font-size: 12px;">{{product.category}}</small>
+									</div>
+									<h2><a href="{% url 'view_product' product.vendor.vendor_slug product.slug %}">{{product.product_name | truncatechars:30}}</a></h2>
+									
+									<div>
+										<div class="product-price">
+											<span>₹{{ product.sales_price }}</span>
+											<span class="old-price">₹{{ product.regular_price }}</span>
+										</div>
+									</div>
+									 
+								</div>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+					</div>
+					
+					<div class="slider-arrow slider-arrow-2 popular-products-slider-arrow" id="popular-products-slider-arrows">
+						
+					</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+	<section class="banners mb-25 pt-3 ">
+		<div class="container">
+			<div class="section-title wow animate__animated animate__fadeIn mb-3">
+				<h3 class="">Ratulenterprise Top Collection</h3>
+			</div>
+	
+			<!-- Bootstrap Carousel for multiple banners -->
+			<div class="d-none d-md-block">
+        <div id="bannerCarousel" class="carousel slide">
+				<div class="carousel-inner">
+	
+					<!-- Carousel Item 1 -->
+					{% for chunk in banner_chunks %}
+					<div class="carousel-item {% if forloop.first %}active{% endif %}">
+						<div class="row">
+							{% for banner in chunk %}
+							<div class="col-lg-4 col-md-6">
+								<div class="banner-img wow animate__animated" data-wow-delay="0">
+									<img src="{{ banner.image.url }}" alt="" />
+									<div class="banner-text mt-3">
+										<a href="{% url 'vendor_detail' banner.vendor.vendor_slug %}" class="btn btn-xs text-light update_color">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+									</div>
+								</div>
+							</div>
+							{% endfor %}
+						</div>
+					</div>
+					{% endfor %}
+	
+					
+	
+					<!-- More Carousel Items (repeat for other banners) -->
+	
+				</div>
+	
+				<!-- Carousel Controls -->
+				<button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev" >
+					<span class="carousel-control-prev-icon slider-btn"></span>
+				</button>
+				<button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
+					<span class="carousel-control-next-icon slider-btn"></span>
+				</button>
+			</div>
+      </div>
+		</div>
+	</section>
+
+  <!-- Mobile View -->
+<div class="d-block d-md-none">
+	<div id="mobileBannerCarousel" class="carousel slide" data-bs-ride="carousel">
+		<div class="carousel-inner">
+			{% for banner in all_banners %}
+			<div class="carousel-item {% if forloop.first %}active{% endif %}">
+				<div class="banner-img text-center p-2">
+					<img src="{{ banner.image.url }}" alt="Banner" class="img-fluid w-100" style="max-height: 300px; object-fit: cover;" />
+					<div class="banner-text mt-2">
+						<a href="{% url 'vendor_detail' banner.vendor.vendor_slug %}" class="btn btn-sm text-light update_color">
+							Shop Now <i class="fi-rs-arrow-small-right"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+
+		<!-- Controls -->
+		<button class="carousel-control-prev" type="button" data-bs-target="#mobileBannerCarousel" data-bs-slide="prev">
+			<span class="carousel-control-prev-icon"></span>
+		</button>
+		<button class="carousel-control-next" type="button" data-bs-target="#mobileBannerCarousel" data-bs-slide="next">
+			<span class="carousel-control-next-icon"></span>
+		</button>
+	</div>
+</div>
+
+
+{% comment %} lowest price {% endcomment %}
+  {% for collection in collections %}
+<section class="product-tabs section-padding position-relative">
+  <div class="container">
+    <div class="section-title style-2 wow animate__animated animate__fadeIn mb-3">
+      <h3>{{ collection.name }}</h3>
+    </div>
+
+    <div class="tab-content">
+      <div class="tab-pane fade show active">
+        <div class="container position-relative">
+          
+          <!-- Slider wrapper -->
+          <div class="popular-slider-wrapper">
+            <div class="row popular-products-slider" id="collections-slider-{{ forloop.counter }}">
+              {% for product in collection.products %}
+              {% if product.qty > 0 %}
+
+              <div class="col-lg-2 col-md-4 col-6 col-sm-6 p-1">
+                <div class="product-cart-wrap wow animate__animated animate__fadeIn" data-wow-delay=".1s">
+                  <div class="product-img-action-wrap">
+                    <div class="product-img-wrap product-img-zoom">
+                      <a href="{% url 'view_product' product.vendor.vendor_slug product.slug %}">
+                      {% if product.image %}
+                        <img class="product-img" src="{{ product.image.url }}" alt="" />
+                      {% else %}
+                        <img class="product-img" src="{% static 'images/placeholder.jpg' %}" alt="No image available" />
+                      {% endif %}
+                    </a>
+
+                      <div>
+                      {% if product.variants and product.variants.all|length > 0 %}
+                       <a href="{% url 'view_product' product.vendor.vendor_slug product.slug %}" class="button-add-to-cart text-white update_color">
+                          View
+                        </a>
+                      {% else %}
+                      <!-- ADD button -->
+                      <a href="#" class="button-add-to-cart add_to_cart text-white update_color"
+                        id="add_to_cart_btn-{{product.id}}-{{collection.slug}}"
+                        data-id="{{ product.id }}"
+                        data-url="{% url 'add_to_cart' product.id %}"
+                        style="{% if product.id in cart_product_ids %}display:none;{% endif %}">
+                        ADD
+                      </a>
+                      <!-- Quantity controls -->
+                      <div class="quantity-box"
+                          id="quantity-btn-box-{{ product.id }}-{{collection.slug}}"
+                          style="{% if product.id not in cart_product_ids %}display:none;{% endif %}">
+                        <a href="#" class="decrease_cart" data-id="{{ product.id }}" data-url="{% url 'decrease_cart' product.id %}">
+                          <i class="icon-minus text-white"></i>
+                        </a>
+                        <label id="qty-{{ product.id }}-{{collection.slug}}">
+                          {% for item in cart_items %}
+                            {% if product.id == item.product.id %}
+                              {{ item.quantity }}
+                            {% endif %}
+                          {% endfor %}
+                        </label>
+                        <a href="#" class="add_to_cart" data-id="{{ product.id }}" data-url="{% url 'add_to_cart' product.id %}">
+                          <i class="icon-plus text-white"></i>
+                        </a>
+                      </div>
+                      {% endif %}
+                    </div>
+                    </div>
+                    {% if product.get_discount_percentage > 0 %}
+                    <div class="product-badges product-badges-position product-badges-mrg">
+                      <span class="hot">{{ product.get_discount_percentage }}%</span>
+                    </div>
+                    {% endif %}
+                  </div>
+                  <div class="product-content-wrap">
+                    <div class="product-category">
+                      <small class="text-muted" style="font-size: 12px;">{{ product.category }}</small>
+                    </div>
+                    <h2><a href="{% url 'view_product' product.vendor.vendor_slug product.slug %}">{{ product.product_name | truncatechars:30 }}</a></h2>
+                    <div class="product-price">
+                      <span>₹{{ product.sales_price }}</span>
+                      <span class="old-price">₹{{ product.regular_price }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+              {% empty %}
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Arrows -->
+          <div class="slider-arrow slider-arrow-2 popular-products-slider-arrow" id="slider-arrows-{{ forloop.counter }}">
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endfor %}
+
+	{% for category, chunks in grouped_banners_list %}
+<section class="banners mb-25 pt-3">
+	<div class="container">
+		<div class="section-title wow animate__animated animate__fadeIn mb-3">
+			<h3 class="">{{ category.category_name }}</h3>
+		</div>
+
+		<!-- Desktop/Tablet Carousel: 3 banners per slide -->
+		<div class="d-none d-md-block">
+			<div id="bannerCarousel_{{ forloop.counter }}" class="carousel slide">
+				<div class="carousel-inner">
+					{% for chunk in chunks %}
+					<div class="carousel-item {% if forloop.first %}active{% endif %}">
+						<div class="row">
+							{% for banner in chunk %}
+							<div class="col-lg-4 col-md-6">
+								<div class="banner-img wow animate__animated" data-wow-delay="0">
+									<img src="{{ banner.image.url }}" alt="{{ banner.category.category_name }}" class="img-fluid" />
+									<div class="banner-text mt-3">
+										<a href="{{ banner.link }}" class="btn btn-xs text-light update_color">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+									</div>
+								</div>
+							</div>
+							{% endfor %}
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+
+				<!-- Controls -->
+				<button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel_{{ forloop.counter }}" data-bs-slide="prev">
+					<span class="carousel-control-prev-icon slider-btn"></span>
+				</button>
+				<button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel_{{ forloop.counter }}" data-bs-slide="next">
+					<span class="carousel-control-next-icon slider-btn"></span>
+				</button>
+			</div>
+		</div>
+
+		<!-- Mobile Carousel: 1 banner per slide -->
+		<div class="d-block d-md-none">
+			<div id="mobileBannerCarousel_{{ forloop.counter }}" class="carousel slide" data-bs-ride="carousel">
+				<div class="carousel-inner">
+					{% for chunk in chunks %}
+						{% for banner in chunk %}
+						<div class="carousel-item {% if forloop.parentloop.first and forloop.first %}active{% endif %}">
+							<div class="banner-img text-center p-2">
+								<img src="{{ banner.image.url }}" alt="{{ banner.category.category_name }}" class="img-fluid w-100" style="max-height: 300px; object-fit: cover;" />
+								<div class="banner-text mt-2 text-center">
+									<a href="{{ banner.link }}" class="btn btn-sm text-light update_color">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+								</div>
+							</div>
+						</div>
+						{% endfor %}
+					{% endfor %}
+				</div>
+
+				<!-- Controls -->
+				<button class="carousel-control-prev" type="button" data-bs-target="#mobileBannerCarousel_{{ forloop.counter }}" data-bs-slide="prev">
+					<span class="carousel-control-prev-icon slider-btn"></span>
+				</button>
+				<button class="carousel-control-next" type="button" data-bs-target="#mobileBannerCarousel_{{ forloop.counter }}" data-bs-slide="next">
+					<span class="carousel-control-next-icon slider-btn"></span>
+				</button>
+			</div>
+		</div>
+	</div>
+</section>
+{% endfor %}
+
+
+	
+	
+
+	<!-- Home Pages Elements End  -->
+</div>
+<!-- Main Section End -->
+
+
+<script>
+  $(document).ready(function () {
+    const totalSliders = {{ collections|length }};
+    let slidersInitialized = 0;
+
+    {% for collection in collections %}
+    $('#collections-slider-{{ forloop.counter }}').on('init', function () {
+      slidersInitialized++;
+      if (slidersInitialized === totalSliders) {
+        // All sliders are initialized → now run sticky logic
+        initStickyHeader();
+      }
+    }).slick({
+      infinite: true,
+      slidesToShow: 6,
+      slidesToScroll: 6,
+      autoplay: true,
+      autoplaySpeed: 3000,
+      arrows: true,
+      dots: false,
+      responsive: [
+        { breakpoint: 1200, settings: { slidesToShow: 3 }},
+        { breakpoint: 992, settings: { slidesToShow: 2 }},
+        { breakpoint: 576, settings: { slidesToShow: 3 }}
+      ],
+      prevArrow: '<span class="slider-btn slider-prev"><i class="fi-rs-arrow-small-left"></i></span>',
+      nextArrow: '<span class="slider-btn slider-next"><i class="fi-rs-arrow-small-right"></i></span>',
+      appendArrows: '#slider-arrows-{{ forloop.counter }}'
+    });
+    {% endfor %}
+
+    function initStickyHeader() {
+      const stickyEl = document.querySelector('.mobile-header-section');
+      const stickyTop = stickyEl.offsetTop;
+
+      window.addEventListener('scroll', () => {
+        if (window.scrollY >= stickyTop) {
+          stickyEl.classList.add('sticky');
+        } else {
+          stickyEl.classList.remove('sticky');
+        }
+      });
+    }
+  });
+</script>
+
+
+<script>
+
+	$(document).ready(function(){
+    $('.popular-products-slider').slick({
+        infinite: true,
+        slidesToShow: 7,
+        slidesToScroll: 7,
+        autoplay: true,
+        autoplaySpeed: 10000,
+        arrows: true,
+        dots: false,
+        responsive: [
+            {
+                breakpoint: 1200,
+                settings: {
+                    slidesToShow: 3,
+                }
+            },
+            {
+                breakpoint: 992,
+                settings: {
+                    slidesToShow: 2,
+                }
+            },
+            {
+                breakpoint: 576,
+                settings: {
+                    slidesToShow: 3,
+                }
+            }
+        ],
+        prevArrow: '<span class="slider-btn slider-prev"><i class="fi-rs-arrow-small-left"></i></span>',
+        nextArrow: '<span class="slider-btn slider-next"><i class="fi-rs-arrow-small-right"></i></span>',
+        appendArrows: '#popular-products-slider-arrows'
+    });
+});
+/* document.querySelectorAll('.add_to_cart').forEach(button => {
+    button.addEventListener('click', function(event) {
+        event.preventDefault();
+
+        const productId = button.getAttribute('data-id');
+        const url = button.getAttribute('data-url');
+        const isDifferentVendor = button.getAttribute('data-different-vendor') === 'true';
+        const quantity = document.getElementById('quantity-input') ?
+                         document.getElementById('quantity-input').value : 1;
+
+        if (isDifferentVendor) {
+            swal({
+                title: "Warning",
+                text: "You have added products from a different vendor to your cart. Adding this product will remove the previously added items. Do you want to proceed?",
+                icon: "warning",
+                buttons: ["Cancel", "OK"],
+                dangerMode: true,
+            }).then((willProceed) => {
+                if (willProceed) {
+                }
+            });
+        } else {
+        }
+    });
+});
+*/
+</script>
+
+{% endblock %}

@@ -1,0 +1,604 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'includes/alerts.html' %}
+    <style>
+    input{
+    border:unset;
+    border-radius:unset;
+    height: unset !important;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    padding-left: 20px;
+    font-size: 12px;
+    width: unset !important;
+    }
+   .upload-preview-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .thumbnail {
+    width: 100px;
+    height: 100px;
+    border-radius: 4px;
+    position: relative;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    overflow: hidden;
+  }
+
+  #image-placeholder-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #999;
+    font-size: 14px;
+    user-select: none;
+    text-align: center;
+    width: 100%;
+    padding: 0 5px;
+  }
+
+  #image-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .custom-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    background-color: #ffffff;
+    color: #777;
+    border: 1px solid #ced4da;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px !important;
+    user-select: none;
+    height: 50px;
+    transition: background-color 0.2s ease;
+  }
+
+  .custom-upload-btn:hover {
+    background-color: #f2f2f2;
+  }
+
+  .custom-upload-btn i {
+    font-size: 18px;
+    color: #777;
+  }
+
+  .form-label {
+    font-size: 20px;
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+    .btn-outline-update_color {
+  color: #181970 !important;
+  border: 1px solid #181970 !important;
+  background-color: transparent !important;
+}
+
+.btn-outline-update_color:hover {
+  background-color: #007bff !important;
+  color: white !important;
+}
+
+</style>
+<div class="main-section">
+    {% include 'includes/cover.html' %}
+    <div class="page-section account-header buyer-logged-in">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                    {% include 'includes/v_sidebar.html' %}
+                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                    <div class="user-dashboard loader-holder">
+                        <div class="user-holder">
+                            <h5 class="text-uppercase">Edit Product</h5>
+                            <hr>
+                            <button class="btn btn-secondary" onclick="history.back()"><i class="fa fa-angle-left" aria-hidden="true"></i> Back</button>
+                            <br><br>
+                            <h6>Update Product Information</h6>
+                            <form action="{% url 'edit_product' product.id %}" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{ formset.management_form }}
+
+                                <div class="form-fields-set">
+                                    <div class="row">
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12">
+                                            <div class="field-holder">
+                                                <label>Barcode</label>
+                                                {{ form.barcode }}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-12 col-md-12 col-sm-12">
+                                            <div class="field-holder">
+                                                <label>Category *</label>
+                                                {{ form.category }}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12">
+                                            <div class="field-holder">
+                                                <label>Subcategory </label>
+                                                {{ form.subcategory }}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12">
+                                            <div class="field-holder">
+                                                <label>Product Title *</label>
+                                                {{ form.product_name }}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12">
+                                            {% comment %} <div class="field-holder">
+                                                <label>Image</label>
+                                                <img
+                                                    id="image-preview"
+                                                    class="thumbnail"
+                                                    src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/default-profile-new.png' %}{% endif %}"
+                                                    alt="Product Image Preview"
+                                                    style="width: 100px; display: block; margin: 10px;">
+                                                {{ form.image }}
+                                            </div> {% endcomment %}
+                                             <div class="field-holder">
+                                        <label class="form-label">Image</label>
+                                        <div class="upload-preview-wrapper">
+                                            <div id="image-preview-box" class="thumbnail" >
+                                            {% if product.image %}
+                                                <img
+                                                id="image-preview"
+                                                src="{{ product.image.url }}"
+                                                alt="Product Image Preview"
+                                                style=" display: block;"
+                                                />
+                                            {% else %}
+                                                <span id="image-placeholder-text" >
+                                                500 × 500 pixels
+                                                </span>
+                                                <img id="image-preview" src="" alt="Preview" />
+                                            {% endif %}
+                                            </div>
+
+                                            <label for="image-upload" class="custom-upload-btn">
+                                            <i class="fas fa-upload"></i>
+                                            <span>Update Product Image</span>
+                                            </label>
+
+                                            <input
+                                            type="file"
+                                            id="image-upload"
+                                            name="image"
+                                            accept="image/*"
+                                            style="display: none;"
+                                            />
+                                        </div>
+                                        </div>
+
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12">
+                                            <div class="field-holder">
+                                                <label>Description</label>
+                                                {{ form.product_desc }}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12">
+                                            <div class="field-holder">
+                                                <label >Full Specification</label>
+                                                {{ form.full_specification }}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="field-holder">
+                                                <label>HSN Code </label>
+                                                {{ form.hsn_number }}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="field-holder">
+                                                <label>Model Number </label>
+                                                {{ form.model_number }}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-12">
+                                            <div class="field-holder">
+                                                <label>Purchase Price *</label>
+                                                {{ form.cost_price }}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-12">
+                                            <div class="field-holder">
+                                                <label>Regular Price *</label>
+                                                {{ form.regular_price }}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-12">
+                                            <div class="field-holder">
+                                                <label>Sale Price</label>
+                                                {{ form.sales_price }}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12">
+                                            <div class="field-holder">
+                                                <label>Unit Type</label>
+                                                {{ form.unit_type }}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="field-holder">
+                                                <label>Stock</label>
+                                                {{ form.qty }}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="field-holder">
+                                                <label>Tax Category</label>
+                                                {{ form.tax_category }}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="field-holder">
+                                                <label>Availability</label>
+                                                {{ form.is_available }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12">
+                                            <input type="hidden" id="removed-attr-ids" name="removed_attr_ids" value="">
+                                            <input type="hidden" name="attr_value_id_0" value="123" />
+
+
+                                            <div class="field-holder">
+                                                <label>Product Attributes</label>
+                                                <div id="attributes-wrapper"></div>
+                                                <button type="button" class="btn btn-sm mt-2 text-light" style="background-color: #181970;" id="add-attribute-btn">
+                                                <i class="fa fa-plus"></i> Add Attribute
+                                                </button>
+                                                <button type="button" class="btn btn-sm mt-2 ms-2 text-light" style="background-color: #181970;" id="custom-attribute-btn">
+                                                    <i class="fa fa-cogs"></i> Add Custom Attributes
+                                                </button>
+                                                <small style="color: #888;">Add or edit product attributes and their values.</small>
+                                            </div>
+                                        </div>
+                                    <div>
+                                        <h3>Manage Gallery Images</h3>
+                                        {{formset}}
+                                        {% comment %} {% for form in formset %}
+                                            <div style="margin-bottom: 20px;">
+                                                {% if form.instance.image %}
+                                                    <img src="{{ form.instance.image.url }}" alt="Gallery Image" style="width: 50px; height: 50px;">
+                                                {% endif %}
+                                                {{ form.image.label }} {{ form.image }}
+                                                {{ form.DELETE.label }} {{ form.DELETE }}
+                                            </div>
+                                            {% endfor %} {% endcomment %}
+                                            <hr>
+                                    </div>
+                                    
+                                        
+                                        
+                                    </div>
+                                </div>
+                                
+                                {% for field in form %}
+                                    {% if field.errors %}
+                                        {% for error in field.errors %}
+                                            <li style="color: red;">{{ error }}</li>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+
+                                <div class="d-flex justify-content-end gap-3 mb-3">
+                                    <button type="submit" name="submit_type" value="save" class="btn btn-outline-update_color mb-3">
+                                    <i class="fa fa-check" aria-hidden="true"></i> Update
+                                    </button>
+
+                                    <button type="submit" name="submit_type" value="next" class="btn update_color mb-3 float-right">
+                                    Manage Variant <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                                    </button>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const categorySelect = document.querySelector('[name="category"]');
+        const subcategorySelect = document.querySelector('[name="subcategory"]');
+
+        categorySelect.addEventListener('change', function () {
+            const categoryId = categorySelect.value;
+
+            if (categoryId) {
+                fetch(`/vendor/get-subcategories/${categoryId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        subcategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
+                        data.subcategories.forEach(subcategory => {
+                            subcategorySelect.innerHTML += `<option value="${subcategory.id}">${subcategory.name}</option>`;
+                        });
+                    });
+            } else {
+                subcategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
+            }
+        });
+    });
+   document.addEventListener('DOMContentLoaded', function () {
+        const imageInput = document.querySelector('[name="image"]');
+        const imagePreview = document.getElementById('image-preview');
+
+        imageInput.addEventListener('change', function () {
+            const file = imageInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // Reset to default image if no file is selected
+                imagePreview.src = "{% static 'images/default_image_add_product.png' %}";
+            }
+        });
+    });
+</script>
+<script>
+  // List of all available attributes fetched from the backend
+  const allAttributes = [
+    {% for attr in attributes %}
+      {id: {{ attr.id }}, name: "{{ attr.name|escapejs }}"},
+    {% endfor %}
+  ];
+
+  // Existing attribute values already assigned to the product
+  const existingAttrValues = [
+    {% for av in attrvalue_list %}
+      {
+        id: {{ av.id }},
+        name: "{{ av.name|escapejs }}",
+        value: "{{ av.value|escapejs }}",
+        attr_value_id: {{ av.attr_value_id }}
+      },
+    {% endfor %}
+  ];
+
+  let attrIdx = 0;
+  let customAttrIdx = 0;
+
+  // Get currently selected attribute IDs from all attribute dropdowns on the page
+  function getSelectedAttrIds() {
+    return Array.from(document.querySelectorAll('.attr-select'))
+      .map(select => parseInt(select.value))
+      .filter(val => !isNaN(val));
+  }
+
+  // Refresh all attribute dropdowns to disable options already selected elsewhere,
+  // except for the current dropdown's selected value
+  function refreshAttributeDropdowns() {
+    const rows = document.querySelectorAll('.attribute-row');
+    const selectedIds = getSelectedAttrIds();
+
+    rows.forEach(row => {
+      const select = row.querySelector('.attr-select');
+      const currentVal = parseInt(select.value) || null;
+      select.innerHTML = "";
+
+      // Add blank option for no selection
+      const blank = document.createElement("option");
+      blank.value = "";
+      blank.textContent = "Select Attribute";
+      select.appendChild(blank);
+
+      // Add attribute options, excluding those already selected elsewhere
+      allAttributes.forEach(attr => {
+        if (!selectedIds.includes(attr.id) || attr.id === currentVal) {
+          const opt = document.createElement("option");
+          opt.value = attr.id;
+          opt.textContent = attr.name;
+          select.appendChild(opt);
+        }
+      });
+
+      // Restore current selection
+      if (currentVal) {
+        select.value = currentVal;
+      }
+    });
+  }
+
+  // Create a new attribute input row for existing or new attributes,
+  // including hidden input to track DB record if available
+  function createAttributeRow(idx, selectedIds = [], selectedId = null, value = '', attrValueId = null) {
+    const row = document.createElement('div');
+    row.className = 'd-flex align-items-center mb-2 attribute-row';
+    row.dataset.idx = idx;
+
+    // Hidden input to store existing VariantAttributeValue ID for backend updates
+    if (attrValueId !== null && attrValueId !== undefined) {
+      const hiddenIdInput = document.createElement('input');
+      hiddenIdInput.type = 'hidden';
+      hiddenIdInput.name = `attr_value_id_${idx}`;
+      hiddenIdInput.value = attrValueId;
+      row.appendChild(hiddenIdInput);
+    }
+
+    // Dropdown for selecting attribute type
+    const select = document.createElement('select');
+    select.name = `attribute_${idx}`;
+    select.className = 'form-select attr-select';
+    select.required = false;
+
+    // Blank default option
+    const blank = document.createElement('option');
+    blank.value = "";
+    blank.textContent = "Select Attribute";
+    select.appendChild(blank);
+
+    // Populate dropdown options while respecting already selected attributes
+    allAttributes.forEach(attr => {
+      if (!selectedIds.includes(attr.id) || attr.id === selectedId) {
+        const option = document.createElement('option');
+        option.value = attr.id;
+        option.textContent = attr.name;
+        select.appendChild(option);
+      }
+    });
+
+    // Set current attribute selection
+    if (selectedId) select.value = selectedId;
+    row.appendChild(select);
+
+    // Input for attribute value
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.name = `attr_value_${idx}`;
+    input.placeholder = 'Enter value';
+    input.className = 'form-control ms-2';
+    input.required = false;
+    input.value = value || '';
+    row.appendChild(input);
+
+    // Button to remove this attribute row
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'btn btn-link text-danger ms-2 remove-attr-btn';
+    removeBtn.innerHTML = '<i class="fa fa-times"></i>';
+    removeBtn.onclick = function () {
+      // When removed, mark DB id for deletion if it exists
+      if (attrValueId !== null && attrValueId !== undefined) {
+        const removedInput = document.getElementById('removed-attr-ids');
+        const current = removedInput.value ? removedInput.value.split(',').map(Number) : [];
+        if (!current.includes(attrValueId)) {
+          current.push(attrValueId);
+        }
+        removedInput.value = current.join(',');
+      }
+
+      row.remove();
+      refreshAttributeDropdowns();
+    };
+    row.appendChild(removeBtn);
+
+    return row;
+  }
+
+  // Create a new input row for custom (user-defined) attributes
+  function createCustomAttributeRow(idx) {
+    const row = document.createElement('div');
+    row.className = 'd-flex align-items-center mb-2 custom-attribute-row';
+    row.dataset.idx = idx;
+
+    // Input for custom attribute name
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.name = `custom_attr_name_${idx}`;
+    nameInput.placeholder = 'Attribute Name';
+    nameInput.className = 'form-control me-2 w-50';
+    nameInput.required = false;
+    row.appendChild(nameInput);
+
+    // Input for custom attribute value
+    const valueInput = document.createElement('input');
+    valueInput.type = 'text';
+    valueInput.name = `custom_attr_value_${idx}`;
+    valueInput.placeholder = 'Value';
+    valueInput.className = 'form-control me-2 w-50';
+    valueInput.required = false;
+    row.appendChild(valueInput);
+
+    // Button to remove this custom attribute row
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'btn btn-link text-danger  remove-attr-btn';
+    removeBtn.innerHTML = '<i class="fa fa-times"></i>';
+    removeBtn.onclick = function () {
+      row.remove();
+    };
+    row.appendChild(removeBtn);
+
+    return row;
+  }
+
+  // Run on page load to initialize existing attributes and attach event handlers
+  document.addEventListener('DOMContentLoaded', function () {
+    const wrapper = document.getElementById('attributes-wrapper');
+    const addAttrBtn = document.getElementById('add-attribute-btn');
+    const customAttrBtn = document.getElementById('custom-attribute-btn');
+
+    // Populate existing attributes into the form
+    existingAttrValues.forEach(av => {
+      const selectedIds = getSelectedAttrIds();
+      const row = createAttributeRow(attrIdx, selectedIds, av.id, av.value, av.attr_value_id);
+      if (row) {
+        wrapper.appendChild(row);
+        attrIdx++;
+      }
+    });
+
+    // Add new attribute row on button click
+    addAttrBtn.onclick = function () {
+      const selectedIds = getSelectedAttrIds();
+      const row = createAttributeRow(attrIdx, selectedIds);
+      if (row) {
+        wrapper.appendChild(row);
+        attrIdx++;
+        refreshAttributeDropdowns();
+      }
+    };
+
+    // Add new custom attribute row on button click
+    customAttrBtn.onclick = function () {
+      const row = createCustomAttributeRow(customAttrIdx);
+      wrapper.appendChild(row);
+      customAttrIdx++;
+    };
+
+    // Refresh dropdown options whenever an attribute selection changes
+    wrapper.addEventListener('change', function (e) {
+      if (e.target.classList.contains('attr-select')) {
+        refreshAttributeDropdowns();
+      }
+    });
+
+    // Ensure hidden input to track removed attribute IDs exists
+    if (!document.getElementById('removed-attr-ids')) {
+      const removedInput = document.createElement('input');
+      removedInput.type = 'hidden';
+      removedInput.id = 'removed-attr-ids';
+      removedInput.name = 'removed_attr_ids';
+      removedInput.value = '';
+      wrapper.parentNode.appendChild(removedInput);
+    }
+  });
+</script>
+
+
+
+
+
+
+{% endblock %}

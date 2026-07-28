@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+{% include 'includes/alerts.html' %}
+    <style>
+    input{
+    border:unset;
+    border-radius:unset;
+    height: unset !important;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    padding-left: 20px;
+    font-size: 12px;
+    width: unset !important;
+    }
+    /* Hide the real input, but keep it in DOM */
+input[type="file"]#id_products_file {
+  display: none;
+}
+
+.custom-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background-color: #ffffff;
+  color: #555;
+  border: 1px solid #ced4da;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  height: 48px;
+  max-width: 200px; /* increase width if needed */
+  white-space: nowrap; /* keep text in one line */
+  overflow: hidden;   /* hide overflow */
+  text-overflow: ellipsis; /* add ... if text too long */
+  box-sizing: border-box;
+  transition: background-color 0.2s ease;
+}
+
+
+.custom-upload-btn:hover {
+  background-color: #f1f1f1;
+}
+
+.custom-upload-btn i {
+  font-size: 18px;
+  color: #000;
+}
+
+#csv-filename {
+  font-size: 14px;
+  color: #555;
+  margin-left: 10px;
+  word-break: break-word;
+}
+
+</style>
+<!-- Main Section Start -->
+<div class="main-section">
+    {% include 'includes/cover.html' %}
+    <div class="page-section account-header buyer-logged-in">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                    <!-- Load the sidebar here -->
+                    {% include 'includes/v_sidebar.html' %}
+                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                    <div class="user-dashboard loader-holder">
+                        <div class="user-holder">
+                            <h5 class="text-uppercase">Import Bulk Products</h5>
+							<hr>
+                            <button class="btn btn-secondary" onclick="history.back()"><i class="fa fa-angle-left" aria-hidden="true"></i> Back</button>
+                            <br><br>
+                            <h6>Import Bulk Products</h6>
+                            <form action="{% url 'import_products' %}" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="form-fields-set">
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <div class="field-holder">
+                                        <label>Upload CSV File *</label>
+
+                                        <!-- Render Django's input normally -->
+                                        {{ form.products_file }}
+
+                                        <!-- Custom label that triggers file input -->
+                                        <label for="id_products_file" class="custom-upload-btn">
+                                        <i class="fas fa-upload"></i>
+                                        <span id="upload-btn-text">Select CSV File</span>
+                                        </label>
+
+                                        <!-- Filename display -->
+                                        <span id="csv-filename" style="margin-left: 10px; font-size: 14px; color: #555;"></span>
+                                    </div>
+                                    </div>
+                                </div>
+                                </div>
+
+
+                                {% for field in form %}
+                                    {% if field.errors %}
+                                        {% for error in field.errors %}
+                                            <li style="color: red;">{{ error }}</li>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+
+                                <button type="submit" class="btn btn-info update_color"><i class="fa fa-cloud-download" aria-hidden="true"></i> Import</button>
+                            </form>
+
+                            <div class="mt-5">
+                                <p style="text-decoration: underline;"><b>Follow the steps below to prepare your CSV file:</b></p>
+                            <ul>
+                                <li class="mb-0"><strong>barcode</strong> - Unique barcode for each product</li>
+                                <li class="mb-0"><strong>product_name</strong> - Name of the product</li>
+                                <li class="mb-0"><strong>product_desc</strong> - Short description about the product</li>
+                                <li class="mb-0"><strong>full_specification</strong> - Full specification about the product (Optional)</li>
+                                <li class="mb-0"><strong>hsn_number</strong> - HSN number for the product (Optional)</li>
+                                <li class="mb-0"><strong>model_number</strong> - Model Number for the product (Optional)</li>
+                                <li class="mb-0"><strong>purchase_price</strong> - Purchase price of the product</li>
+                                <li class="mb-0"><strong>regular_price</strong> - MRP of the product</li>
+                                <li class="mb-0"><strong>sales_price</strong> - Sale price of the product (Optional)</li>
+                                <li class="mb-0"><strong>unit_type</strong> - Unit type of the product (pcs for Pieces),(kg for Kilograms),(g for Grams),(l for Liters),(ml for Milliliters), <br>(m for Meters), (m2 for Meter Square)</li>
+                                <li class="mb-0"><strong>stock</strong> - No. of products in stock</li>
+                                <li class="mb-0"><strong>image</strong> - Image of the product</li>
+                                <li class="mb-0"><strong>gallery_image_1</strong> - Product Gallery Image 1 (Optional)</li>
+                                <li class="mb-0"><strong>gallery_image_2</strong> - Product Gallery Image 2 (Optional)</li>
+                                <li class="mb-0"><strong>gallery_image_3</strong> - Product Gallery Image 3 (Optional)</li>
+                                <li class="mb-0"><strong>category</strong> - Category name</li>
+                                <li class="mb-0"><strong>subcategory</strong> - Subcategory name</li>
+                                <li class="mb-0"><strong>tax_category</strong> - Tax category name</li>
+                                <li class="mb-0"><strong>tax_percentage</strong> - Tax percentage</li>
+                            </ul>
+                            <p class="mt-3" style="border: 1px solid #bdbdbd; font-style: italic; padding: 5px 10px; border-radius: 5px; background-color: #fffacd;"><b>Important Note: </b>Before importing the CSV file, ensure that the fields for <b>image, gallery_image_1, gallery_image_2, gallery_image_3</b> contain valid URLs. Upload these images first into the <span><a href="{% url 'media_library' %}" target="_blank">Media Library</a></span>, copy their links, and paste them into the respective fields in the CSV file to ensure the products are imported correctly.</p>
+                            <a href="{% static 'vendor/products_import_demo.csv' %}" download="products_import_demo.csv" class="btn update_color mt-3 mb-3"><i class="fa fa-download"></i> Download Sample CSV</a>
+                            </div>
+
+                            <!-- render form -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Section End -->
+ <script>
+  document.addEventListener("DOMContentLoaded", function () {
+  const csvInput = document.getElementById("id_products_file");
+  const uploadBtnText = document.getElementById("upload-btn-text");
+
+  if (csvInput && uploadBtnText) {
+    csvInput.addEventListener("change", function () {
+      if (this.files.length > 0) {
+        uploadBtnText.textContent = this.files[0].name;
+      } else {
+        uploadBtnText.textContent = "Select CSV File";
+      }
+    });
+  }
+});
+
+</script>
+
+{% endblock %}

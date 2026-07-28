@@ -1,0 +1,1330 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load query_filters %}
+{% block content %}
+<style>
+	.product-extra-link2 .button.button-add-to-cart {
+    position: relative !important;
+    padding: 0px 14px !important;
+    border-radius: 5px !important;
+    border: 0 !important;
+    height: 35px !important;
+    line-height: 15px !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    font-family: "Quicksand", sans-serif !important;
+    margin: auto !important;
+    text-align: center !important;
+    margin-top: 6px !important;
+    margin-bottom: 7px !important;
+}
+.product-cart-wrap .product-card-bottom .add:hover {
+    background-color: #DC3545;
+    color: #fff !important;}
+
+
+  .quantity-box {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #ed3595; /* or #f53ca4 */
+    border-radius: 5px;
+    padding: 3px 11px;
+    font-weight: bold;
+    gap: 8px;
+}
+
+.quantity-box button {
+    text-decoration: none;
+    color: #ed3595;
+    font-weight: 300;
+    font-size: 12px;
+    border:none;
+    background:none;
+    cursor: pointer;
+}
+
+.quantity-box label {
+  margin: 0;
+  font-size: 12px;
+  color: #ed3595;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+#popular-products-slider-arrows{
+  top:25% !important;
+}
+.view-button{
+        font-size: 14px !important;
+        padding: 8px 30px !important;
+        font-weight: bold !important;
+}
+#searchForm button.btn{
+    color: inherit !important;
+    margin-left: 20px !important;
+}
+#searchForm button.btn:hover {
+    background-color: transparent !important;
+    color: inherit !important;
+    box-shadow: none !important;
+    cursor: pointer; /* keep pointer if you want */
+}
+
+#searchForm button.btn:hover i {
+    color: inherit !important;
+}
+.toggle-btn i {
+        transition: transform 0.3s ease;
+    }
+
+    .toggle-btn.open i {
+        transform: rotate(180deg);
+    }
+
+      #vendor-suggestions-list {
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-top: none;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  #vendor-suggestions-list li {
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  #vendor-suggestions-list li:hover {
+    background-color: #f0f0f0;
+  }
+  .vendor-wrap .vendor-content-wrap {
+    padding: 20px 15px 30px 15px !important;
+}
+
+  .btn-outline-update_color {
+  color: #1b216a !important;
+  height: 37px !important;
+  border: 1px solid #181970 !important;
+  background-color: transparent !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+  .page-item.active .page-link {
+    color: white !important;
+}
+.page-item:not(.active):not(.disabled) .page-link:hover {
+    color: white !important;
+}
+.pagination {
+    flex-wrap: wrap;
+    gap: 4px; /* Optional spacing between items */
+}
+
+.pagination-area nav {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+</style>
+
+<style>
+.sidebar-dropdown {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    border: 1px solid #eee;
+    margin-bottom: 18px;
+    padding: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.sidebar-dropdown .dropdown-header {
+    padding: 15px 20px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: transparent;
+    border: none;
+    width: 100%;
+    font-size: 16px;
+    transition: background 0.15s;
+}
+
+.sidebar-dropdown .dropdown-header:hover {
+    background: #f7f7f7;
+}
+
+.sidebar-dropdown .dropdown-content-list {
+    padding: 16px 20px 12px 20px;
+    border-top: 1px solid #eee;
+    display: none; /* Hidden by default */
+}
+
+.sidebar-dropdown.open .dropdown-content-list {
+    display: block; /* Show on open */
+}
+
+/* Chevron rotate */
+.sidebar-dropdown .dropdown-header .chevron {
+    transition: transform 0.25s;
+}
+
+.sidebar-dropdown.open .dropdown-header .chevron {
+    transform: rotate(-180deg);
+}
+
+/* Radio button styles */
+.filter-radio-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.filter-radio-list li {
+    margin-bottom: 12px;
+}
+
+.filter-radio-list label {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+}
+
+.filter-radio-list input[type="radio"] {
+    margin-right: 12px;
+    accent-color: #181970;
+}
+.hidden {
+    display: none;
+}
+.filter-toggle-btn {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 14px;
+    padding: 0;
+}
+</style>
+
+
+{% include 'includes/alerts.html' %}
+
+<div class="container my-4">
+    <main class="main">
+        <div class="page-header d-none d-xl-block mt-30 mb-50">
+            <div class="container">
+                <div class="archive-header">
+                    <div class="row align-items-center">
+                        <div class="col-xl-3">
+                            <h1 class="mb-15">Products</h1>
+                            
+                        </div>
+                        <div class="col-xl-9 text-end ">
+                            <div class="flex-grow-1">
+                                <div class="search-style-2">
+                                    <form method="get" class="d-flex" id="searchForm">
+                                        <input type="text" name="search" id="vendor-search-input" autocomplete="off" class="form-control" placeholder="Search products or stores..." value="{{ search_query|default:'' }}" />
+                                        <input type="hidden" name="type" id="searchType" value="{{ search_type|default:'products' }}">
+                                         <button type="submit" class="btn  d-flex align-items-center justify-content-center ml-10" >
+                                             <img src=" {% static 'assets/imgs/theme/icons/search.png' %}" alt="Search" style="width: 100%; height: 20px;">
+                                        </button>
+                                         <ul id="vendor-suggestions-list" class="dropdown-menu show" style="position:absolute; z-index:1000; display:none;"></ul>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container mb-30">
+            <div class="row flex-row-reverse mobile-column-reverse">
+                <div class="col-lg-8">
+                    <div class="shop-product-fillter">
+                        <div class="totall-product">
+                            {% if search_type == 'stores' %}
+                                <p>We found <strong class="text-brand">{{ vendors|length }}</strong> stores for you!</p>
+                            {% else %}
+                                <p>We found <strong class="text-brand">{{ total_vendor_products|length }}</strong> products for you!</p>
+                            {% endif %}
+                            
+                        </div>
+                        <div class="sort-by-product-area mb-10">
+                            {% comment %} <div class="sort-by-cover mr-10">
+                                <div class="sort-by-product-wrap">
+                                    <div class="sort-by">
+                                        <span><i class="fi-rs-apps"></i>Show:</span>
+                                    </div>
+                                    <div class="sort-by-dropdown-wrap">
+                                        <span> 50 <i class="fi-rs-angle-small-down"></i></span>
+                                    </div>
+                                </div>
+                                <div class="sort-by-dropdown">
+                                    <ul>
+                                        <li><a class="active" href="#">50</a></li>
+                                        <li><a href="#">100</a></li>
+                                        <li><a href="#">150</a></li>
+                                        <li><a href="#">200</a></li>
+                                        <li><a href="#">All</a></li>
+                                    </ul>
+                                </div>
+                            </div> {% endcomment %}
+                            {% if search_type != 'stores' %}
+                            <div class="sort-by-cover d-flex align-items-center justify-content-between gap-2">
+                                <div class="sort-by-product-wrap" id="sortDropdownToggle">
+                                    <div class="sort-by">
+                                        <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
+                                    </div>
+                                    <div class="sort-by-dropdown-wrap">
+                                        <span> All Products <i class="fi-rs-angle-small-down"></i></span>
+                                    </div>
+                                </div>
+                                <div class="sort-by-dropdown">
+                                    <ul>
+                                        <li><a href="{% url 'all_products' %}">All Products</a></li>
+                                        <li>
+                                            <a href="{% url 'all_products' %}?sort=asec">
+                                                Price: Low to High
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{% url 'all_products' %}?sort=dsec">
+                                                Price: High to Low
+                                            </a>
+                                        </li>
+                                        {% comment %} <li><a href="#">Release Date</a></li>
+                                        <li><a href="#">Avg. Rating</a></li> {% endcomment %}
+                                    </ul>
+                                </div>
+                                
+                                </div>
+                                <button id="filterToggleBtn"
+                                    class="btn d-lg-none sort-by-product-wrap ml-10 d-flex align-items-center justify-content-center"
+                                    style="width: 150px; height: 40px;font-size: 14px" 
+                                    type="button"
+                                    aria-expanded="false"
+                                    aria-controls="category-ul">
+                                    <i class="fa fa-filter mr-2"></i> Filter
+                                </button>
+
+
+                            {% endif %}
+                            
+                        </div>
+                        <div class="d-lg-none d-block">
+                             <div class="col-lg-4 primary-sidebar sticky-sidebar " id="category-ul">
+                            {% if is_filter_active %}
+                                <div class="d-flex justify-content-between align-items-center mb-3 px-2 mt-3">
+                                    <h5><strong>Filters</strong></h5>
+                                    <a href="{% url 'all_products' %}" class="text-danger text-decoration-none">Clear All</a>
+                                </div>
+                            {% endif %}
+                            <!-- Categories -->
+                            <div class="sidebar-dropdown {% if selected_category %}open{% endif %}" id="dropdown-categories-m">
+                                <button class="dropdown-header" type="button">
+                                    Categories
+                                    <span class="chevron"><i class="fa fa-chevron-down"></i></span>
+                                </button>
+                                <div class="dropdown-content-list">
+                                     {% if selected_category %}
+                                                <div class="text-end mb-2">
+                                                    <a href="{% url 'all_products' %}" class="text-danger text-decoration-none">Clear</a>
+                                                </div>
+                                        {% endif %}
+                                <ul class="list-unstyled">
+                                        {% for cat in categories %}
+                                        <li class="mb-2" style="display: block !important; line-height: 20px; text-align: left;">
+                                            {% if cat.subcategories.all %}
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <!-- Main category name links to its page -->
+                                                <a class="text-dark fw-bold text-decoration-none" href="{% url 'filter_by_category'  category_id=cat.id %}"style="padding: 9px 10px !important;margin-bottom:15px !important; font-size: 16px !important;">
+                                                    {{ cat.category_name }} 
+                                                </a>
+
+                                                <!-- Arrow icon toggles collapse only -->
+                                                 <button class="toggle-btn" data-target="subcats-{{ cat.id }}" style="border: none; background: none;">
+                                                    <i class="fa fa-chevron-down"></i>
+                                                </button>
+                                            </div>
+                                            <ul class="subcategory-list mt-2 ps-3" id="subcats-{{ cat.id }}" style="display: none;">
+                                                {% for sub in cat.subcategories.all %}
+                                                <li class="small" style="padding: 9px 10px !important;margin-bottom:15px !important; font-size: 16px !important;">
+                                                    <a class="text-decoration-none" href="{% url 'filter_by_subcategory' subcategory_id=sub.id %}" style="padding: 9px 10px !important;margin-bottom:15px !important; font-size: 16px !important;">--{{ sub.category_name }}</a>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% else %}
+                                            <!-- No subcategories -->
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <a class="fw-bold text-dark text-decoration-none" href="{% url 'filter_by_category'  category_id=cat.id %}" style="padding: 9px 10px !important;margin-bottom:15px !important; font-size: 16px !important;">
+                                                    {{ cat.category_name }}
+                                                </a>
+                                            </div>
+                                            {% endif %}
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Price Filter -->
+                            <div class="sidebar-dropdown  {% if request.GET.price %}open{% endif %}" id="dropdown-price-m">
+                                <button class="dropdown-header" type="button">
+                                    Price
+                                    <span class="chevron"><i class="fa fa-chevron-down"></i></span>
+                                </button>
+                                <div class="dropdown-content-list">
+                                    {% if request.GET.price %}
+                                        <div class="text-end">
+                                        <a href="{{ request|remove_query_param:'price' }}" class="text-danger text-decoration-none">Clear</a>
+                                        </div>
+                                    {% endif %}
+                                    <form id="price-filter-form-m">
+                                        <ul class="filter-radio-list">
+                                            {% for val, label in PRICE_CHOICES %}
+                                            <li>
+                                                <label>
+                                                    <input type="radio" name="price" value="{{ val }}"
+                                                        {% if request.GET.price == val %}checked{% endif %}
+                                                        onchange="updateFilters('price-filter-form-m')"
+                                                        style="width: 13px; height: 13px;">
+                                                    {{ label }}
+                                                </label>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Discount Filter -->
+                            <div class="sidebar-dropdown {% if request.GET.discount %}open{% endif %}" id="dropdown-discount-m">
+                                <button class="dropdown-header" type="button">
+                                    Discount
+                                    <span class="chevron"><i class="fa fa-chevron-down"></i></span>
+                                </button>
+                                <div class="dropdown-content-list">
+                                    {% if request.GET.discount %}
+                                        <div class="text-end">
+                                        <a href="{{ request|remove_query_param:'discount' }}" class="text-danger text-decoration-none">Clear</a>
+                                        </div>
+                                    {% endif %}
+                                    <form id="discount-filter-form-m">
+                                        <ul class="filter-radio-list">
+                                            {% for val, label in DISCOUNT_CHOICES %}
+                                            <li>
+                                                <label>
+                                                    <input type="radio" name="discount" value="{{ val }}"
+                                                     {% if request.GET.discount == val %}checked{% endif %}
+                                                        onchange="updateFilters('discount-filter-form-m')"
+                                                        style="width: 13px; height: 13px;">
+                                                    {{ label }}
+                                                </label>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- Gender Filter -->
+                            <div class="sidebar-dropdown {% if request.GET.gender %}open{% endif %}" id="dropdown-gender-m">
+                                <button class="dropdown-header" type="button">
+                                    Gender
+                                    <span class="chevron"><i class="fa fa-chevron-down"></i></span>
+                                </button>
+                                <div class="dropdown-content-list">
+                                    {% if request.GET.gender %}
+                                        <div class="text-end">
+                                        <a href="{{ request|remove_query_param:'gender' }}" class="text-danger text-decoration-none">Clear</a>
+                                        </div>
+                                    {% endif %}
+                                    <form id="gender-filter-form-m">
+                                        <ul class="filter-radio-list">
+                                            {% for val, label in GENDER_CHOICES %}
+                                            <li>
+                                                <label>
+                                                    <input type="radio" name="gender" value="{{ val }}"
+                                                        {% if request.GET.gender == val %}checked{% endif %}
+                                                        onchange="updateFilters('gender-filter-form-m')"
+                                                        style="width: 13px; height: 13px;">
+                                                    {{ label }}
+                                                </label>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </form>
+                                </div>
+                            </div>
+                           <!-- Brand Filter -->
+                                <div class="sidebar-dropdown {% if request.GET.brand %}open{% endif %}" id="dropdown-brand-m">
+                                    <button class="dropdown-header" type="button">
+                                        Brand
+                                        <span class="chevron"><i class="fa fa-chevron-down"></i></span>
+                                    </button>
+                                    <div class="dropdown-content-list">
+                                        {% if request.GET.brand %}
+                                            <div class="text-end">
+                                            <a href="{{ request|remove_query_param:'brand' }}" class="text-danger text-decoration-none">Clear</a>
+                                            </div>
+                                        {% endif %}
+                                        <form id="brand-filter-form-m">
+                                            <ul class="filter-radio-list" id="brand-filter-list-m">
+                                                {% for val in brand_values %}
+                                                <li class="brand-item-m {% if forloop.counter > 10 %}hidden{% endif %}">
+                                                    <label>
+                                                        <input type="radio" name="brand" value="{{ val }}"
+                                                            {% if request.GET.brand == val %}checked{% endif %}
+                                                            onchange="updateFilters('brand-filter-form-m')"
+                                                            style="width: 13px; height: 13px;">
+                                                        {{ val|capfirst }}
+                                                    </label>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% if brand_values|length > 10 %}
+                                            <button type="button" id="toggle-brand-btn-m" class="filter-toggle-btn">Show more</button>
+                                            {% endif %}
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- Size Filter -->
+                                <div class="sidebar-dropdown {% if request.GET.size %}open{% endif %}" id="dropdown-size-m">
+                                    <button class="dropdown-header" type="button">
+                                        Sizes
+                                        <span class="chevron"><i class="fa fa-chevron-down"></i></span>
+                                    </button>
+                                    <div class="dropdown-content-list">
+                                         {% if request.GET.size %}
+                                            <div class="text-end">
+                                            <a href="{{ request|remove_query_param:'size' }}" class="text-danger text-decoration-none">Clear</a>
+                                            </div>
+                                        {% endif %}
+                                        <form id="size-filter-form-m">
+                                            <ul class="filter-radio-list" id="size-filter-list-m">
+                                                {% for val in size_values %}
+                                                <li class="size-item-m {% if forloop.counter > 10 %}hidden{% endif %}">
+                                                    <label>
+                                                        <input type="radio" name="size" value="{{ val }}"
+                                                            {% if request.GET.size == val %}checked{% endif %}
+                                                            onchange="updateFilters('size-filter-form-m')"
+                                                            style="width: 13px; height: 13px;">
+                                                        {{ val|capfirst }}
+                                                    </label>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% if size_values|length > 10 %}
+                                            <button type="button" id="toggle-size-btn-m" class="filter-toggle-btn">Show more</button>
+                                            {% endif %}
+                                        </form>
+                                    </div>
+                                </div>
+
+                                                        <!-- Color Filter -->
+                                <div class="sidebar-dropdown {% if request.GET.color %}open{% endif %}" id="dropdown-color-m">
+                                    <button class="dropdown-header" type="button">
+                                        Colors
+                                        <span class="chevron"><i class="fa fa-chevron-down"></i></span>
+                                    </button>
+                                    <div class="dropdown-content-list">
+                                        {% if request.GET.color %}
+                                            <div class="text-end">
+                                            <a href="{{ request|remove_query_param:'color' }}" class="text-danger text-decoration-none">Clear</a>
+                                            </div>
+                                        {% endif %}
+                                        <form id="color-filter-form-m">
+                                            <ul class="filter-radio-list" id="color-filter-list-m">
+                                                {% for val in color_values %}
+                                                <li class="color-item-m {% if forloop.counter > 10 %}hidden{% endif %}">
+                                                    <label>
+                                                        <input type="radio" name="color" value="{{ val }}"
+                                                            {% if request.GET.color == val %}checked{% endif %}
+                                                            onchange="updateFilters('color-filter-form-m')"
+                                                            style="width: 13px; height: 13px;">
+                                                        {{ val|capfirst }}
+                                                    </label>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% if color_values|length > 10 %}
+                                            <button type="button" id="toggle-color-btn-m" class="filter-toggle-btn">Show more</button>
+                                            {% endif %}
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if search_type == 'stores' %}
+                    <div class="row vendor-grid">
+                        {% for vendor in vendors %}
+                            <div class="col-lg-4 col-md-6 col-12 col-sm-6">
+                                    <div class="vendor-wrap mb-30" style="border-radius: 8px !important;">
+                                        <div class="vendor-img-action-wrap">
+                                            <div class="vendor-img" style="max-width: 100%; height: 135px !important; object-fit: cover; overflow: hidden;">
+                                                <a href="{% url 'vendor_detail' vendor.vendor_slug %}" >
+                                                    {% if vendor.user_profile.profile_picture %}
+                                                        <img src="{{ vendor.user_profile.profile_picture.url }}" class="img-list wp-post-image" alt="" style="max-width: 100%;">
+                                                        {% else %}
+                                                        <img src="{% static 'images/default-profile-new.png' %}" class="img-list wp-post-image" alt="" style="max-width: 100%;">
+                                                    {% endif %}
+                                                </a>
+                                            </div>
+                                            <div class="product-badges product-badges-position product-badges-mrg">
+                                                {% if vendor.is_open %}
+                                                    <span class="green bg-success">Open</span>
+                                                {% else %}
+                                                    <span class="new">Close</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="vendor-content-wrap">
+                                            <div class="d-flex justify-content-between align-items-end mb-10">
+                                                <div>
+                                                    <div class="product-category">
+                                                        <span class="text-muted">{{ vendor.store_type }}</span>
+                                                    </div>
+                                                    <h5 class="mb-0"><a href="{% url 'vendor_detail' vendor.vendor_slug %}">{{ vendor.vendor_name | truncatechars:16 }}</a></h5>
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="vendor-info mb-20">
+                                                <ul class="contact-infor text-muted" style="padding: 0;">
+                                                
+                                              {% if vendor.user_profile.address %}
+                                              <li style="min-height: 50px !important;"><strong>Address: </strong>
+                                                    <span>
+                                                        {{vendor.user_profile.address | truncatechars:25}}
+                                                    </span>
+                                                </li>
+                                              
+                                              {% else %}
+                                              <li style="min-height: 50px !important;visibility: hidden;"><strong>Address: </strong>
+                                                    <span>
+                                                        {{vendor.user_profile.address | truncatechars:25}}
+                                                    </span>
+                                                </li>
+                                              {% endif %}
+                                               
+                                                
+                                                  {% if vendor.user.phone_number %}
+                                                  <li><strong>Call Us:</strong><span> {{vendor.user.phone_number | truncatechars:15}}</span></li>
+                                                  {% else %}
+                                                  <li style="visibility: hidden;"><strong>Call Us:</strong><span></span></li>
+                                                  {% endif %}
+                                                    
+                                                </ul>
+                                            </div>
+                                            <a href="{% url 'vendor_detail' vendor.vendor_slug %}" class="btn btn-xs text-light update_color">Visit Store <i class="fi-rs-arrow-small-right"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                        {% empty %}
+                        {% endfor %}
+                    </div>
+                    {% if show_pagination %}
+                        <div class="pagination-area mt-20 mb-20">
+                                {% if vendors.has_other_pages %}
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-start">
+                                        {% if vendors.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ vendors.previous_page_number }}"><i class="fi-rs-arrow-small-left"></i></a>
+                                        </li>
+                                        {% else %}
+                                        <li class="page-item disabled">
+                                            <span class="page-link"><i class="fi-rs-arrow-small-left"></i></span>
+                                        </li>
+                                        {% endif %}
+
+                                        {% for num in vendors.paginator.page_range %}
+                                            {% if vendors.number == num %}
+                                                <li class="page-item active"><a class="page-link text-light" href="#">{{ num }}</a></li>
+                                            {% elif num > vendors.number|add:'-3' and num < vendors.number|add:'3' %}
+                                                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        {% if vendors.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ vendors.next_page_number }}"><i class="fi-rs-arrow-small-right"></i></a>
+                                        </li>
+                                        {% else %}
+                                        <li class="page-item disabled">
+                                            <span class="page-link"><i class="fi-rs-arrow-small-right"></i></span>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                </nav>
+                                {% endif %}
+                            </div>
+                    {% endif %}
+                {% else %}
+                    <div class="row product-grid">
+                        {% for product in products %}
+                        <div class="col-lg-4 col-md-4 col-6 col-sm-6">
+                            <div class="product-cart-wrap mb-30" style="border-radius: 8px !important;">
+                                <div class="product-img-action-wrap" style="border: none !important; border-radius: 0 !important;">
+                                    <div class="product-img product-img-zoom">
+                                        <a href="{% url 'view_product' product.vendor.vendor_slug product.slug %}">
+                                            <div class="img-box-cs">
+                                            {% if product.image %}
+                                            <img class="default-img-cs" src="{{ product.image.url }}" alt="{{ product.product_name }}" />
+                                            {% else %}
+                                            <img class="default-img-cs" src="{% static 'images/placeholder.jpg' %}" alt="No image available" />
+                                            {% endif %}
+
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <!-- <div class="product-badges product-badges-position product-badges-mrg">
+                                        <span class="hot">Hot</span>
+                                    </div> -->
+                                </div>
+                                <div class="product-content-wrap">
+                                    <div class="product-category">
+                                        <a href="shop-grid-right.html">{{ product.category }}</a>
+                                    </div>
+                                    <h2 style="min-height:34px;"><a href="{% url 'view_product' product.vendor.vendor_slug product.slug %}">{{ product.product_name | truncatechars:55 }}</a></h2>
+                                    <div>
+                                        <span class="font-small text-muted">By <a href="{% url 'vendor_detail' product.vendor.vendor_slug %}">{{ product.vendor.vendor_name | truncatechars:20 }}</a></span>
+                                    </div>
+                                    <div class="product-card-bottom d-block">
+                                        <div class="product-price">
+                                            <span>₹{{ product.sales_price }}</span>
+                                            <span class="old-price">₹{{ product.regular_price }}</span>
+                                        </div>
+                                        {% comment %} <div class="product-extra-link2"> {% endcomment %}
+                                            
+                                            {% if product.qty > 0 %}
+                                            <div>
+                                                <!-- ADD button -->
+                                                {% if product.variants and product.variants.all|length > 0 %}
+                                                  <form action="{% url 'view_product' product.vendor.vendor_slug product.slug %}">
+                                                    <button type=submit class="button text-white w-100 text-center view-button">View Product </button>
+                                                </form>
+                                                {% else %}
+                                                <button href="#" class="button button-add-to-cart add_to_cart text-white w-100 text-center"
+                                                    id="add_to_cart_btn-{{product.id}}"
+                                                    data-id="{{ product.id }}"
+                                                    data-url="{% url 'add_to_cart' product.id %}"
+                                                    style="{% if product.id in cart_product_ids %}display:none;{% endif %}">
+                                                    Add to Cart
+                                                </button>
+                                                <!-- Quantity controls -->
+                                                <hr id="hr-above-qty-{{ product.id }}" style="margin: 5px 0px;width: 105% !important;margin-left: -7px; {% if product.id not in cart_product_ids %}display:none;{% endif %}">
+                                                <div class="quantity-box"
+                                                    id="quantity-btn-box-{{ product.id }}"
+                                                    style="{% if product.id not in cart_product_ids %}display:none;{% endif %}">
+                                                    <button href="#" class="decrease_cart" data-id="{{ product.id }}" data-url="{% url 'decrease_cart' product.id %}">
+                                                    <i class="icon-minus"></i>
+                                                    </button>
+                                                    <label id="qty-{{ product.id }}">
+                                                    {% for item in cart_items %}
+                                                        {% if product.id == item.product.id %}
+                                                        {{ item.quantity }}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    </label>
+                                                    <button href="#" class="add_to_cart" data-id="{{ product.id }}" data-url="{% url 'add_to_cart' product.id %}">
+                                                    <i class="icon-plus"></i>
+                                                    </button>
+                                                </div>
+                                                {% endif %}
+                                                </div>
+                                            {% comment %} <button  class="button button-add-to-cart add_to_cart w-100" data-id="{{ product.id }}" data-url="{% url 'add_product_to_cart' product.id %}"><i class="fi-rs-shopping-cart"></i>Add to cart</button> {% endcomment %}
+                                            {% else %}
+                                             <div class="add-cart">
+                                            <form action="{% url 'view_product' product.vendor.vendor_slug product.slug %}">
+                                                <button type=submit class="button text-white w-100 text-center view-button">View Product </button>
+                                            </form>
+                                            </div>
+                                            {% endif %}
+                                              {% if check_cart %}
+                                            <p class="text-success" style="font-weight: 600;">
+                                                {{ chkCart_count }} items added to the cart.
+                                            </p>
+                                            {% endif %}
+                                        {% comment %} </div> {% endcomment %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <!--product grid-->
+                    
+                     {% if show_pagination %}
+                    
+                    <!--product grid-->
+                    <div class="pagination-area mt-20 mb-20">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                {% if products.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ products.previous_page_number }}">
+                                        <i class="fi-rs-arrow-small-left"></i>
+                                        </a>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item disabled">
+                                        <a class="page-link"><i class="fi-rs-arrow-small-left"></i></a>
+                                    </li>
+                                    {% endif %}
+
+                                    {% if products.paginator.num_pages > 1 %}
+                                        {% with current=products.number total=products.paginator.num_pages %}
+                                        {% for num in products.paginator.page_range  %}
+                                         {% if num == 1 or num == total %}
+                                          <li class="page-item {% if num == current %}active{% endif %}">
+                                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                           </li>
+                                        {% elif num >= current|add:'-2' and num <= current|add:'2' %}
+                                            <li class="page-item {% if num == current %}active{% endif %}">
+                                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                            </li>
+                                        {% elif num == current|add:'-3' or num == current|add:'3' %}
+                                            <li class="page-item disabled">
+                                                <a class="page-link">...</a>
+                                            </li>
+                                                            
+                                         {% endif %}
+                                        {% endfor %}
+                                        
+                                        {% endwith %}
+                                    
+                                    
+                                    {% endif %}
+                                
+                                {% if products.has_next %}
+                                <li class="page-item">
+                                        <a class="page-link" href="?page={{ products.next_page_number }}">
+                                            <i class="fi-rs-arrow-small-right"></i>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                        <a class="page-link"><i class="fi-rs-arrow-small-right"></i></a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                {% endif %}
+                        {% endif %}
+                        
+                    </div>
+                        <div class="col-lg-4 primary-sidebar d-none d-lg-block" id="category-ul">
+                            {% if is_filter_active %}
+                                <div class="d-flex justify-content-between align-items-center mb-3 px-2">
+                                    <h5><strong>Filters</strong></h5>
+                                    <a href="{% url 'all_products' %}" class="text-danger text-decoration-none">Clear All</a>
+                                </div>
+                            {% endif %}
+                            <!-- Categories -->
+                            <div class="sidebar-dropdown {% if selected_category %}open{% endif %}" id="dropdown-categories">
+                                <button class="dropdown-header" type="button">
+                                    Categories
+                                    <span class="chevron"><i class="fa fa-chevron-down"></i></span>
+                                </button>
+                                <div class="dropdown-content-list">
+                                    {% if selected_category %}
+                                                <div class="text-end mb-2">
+                                                    <a href="{% url 'all_products' %}" class="text-danger text-decoration-none">Clear</a>
+                                                </div>
+                                        {% endif %}
+        
+                                    <ul class="list-unstyled">
+                                        {% for cat in categories %}
+                                        <li class="mb-2" style="display: block !important; line-height: 20px; text-align: left;">
+                                            {% if cat.subcategories.all %}
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <a class="text-dark fw-bold text-decoration-none"
+                                                href="{% url 'filter_by_category' category_id=cat.id %}" style="font-size: 15px !important; margin-bottom: 0px !important; padding: 5px 5px !important;">
+                                                    {{ cat.category_name }}
+                                                </a>
+                                                <button class="toggle-btn" data-target="subcat-{{ cat.id }}" style="border: none; background: none; cursor: pointer;">
+                                                    <i class="fa fa-chevron-down"></i>
+                                                </button>
+                                            </div>
+                                            <ul id="subcat-{{ cat.id }}" class="subcategory-list" style="display: none;">
+                                                {% for sub in cat.subcategories.all %}
+                                                <li class="small" style="padding: 5px 10px !important; font-size: 14px !important;">
+                                                    <a class="text-decoration-none" href="{% url 'filter_by_subcategory' subcategory_id=sub.id %}" style="padding: 9px 10px !important;margin-bottom:15px !important; font-size: 14px !important;">
+                                                        --{{ sub.category_name }}
+                                                    </a>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% else %}
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <a class="fw-bold text-dark text-decoration-none"
+                                                href="{% url 'filter_by_category' category_id=cat.id %}" style="font-size: 15px !important; margin-bottom: 0px !important; padding: 5px 5px !important;">
+                                                    {{ cat.category_name }}
+                                                </a>
+                                            </div>
+                                            {% endif %}
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Price Filter -->
+                            <div class="sidebar-dropdown  {% if request.GET.price %}open{% endif %}" id="dropdown-price">
+                                <button class="dropdown-header" type="button">
+                                    Price
+                                    <span class="chevron"><i class="fa fa-chevron-down"></i></span>
+                                </button>
+                               <div class="dropdown-content-list">
+
+                                    {% if request.GET.price %}
+                                        <div class="text-end">
+                                        <a href="{{ request|remove_query_param:'price' }}" class="text-danger text-decoration-none">Clear</a>
+                                        </div>
+                                    {% endif %}
+                                    <form id="price-filter-form">
+                                        <ul class="filter-radio-list">
+                                            {% for val, label in PRICE_CHOICES %}
+                                            <li>
+                                                <label>
+                                                    <input type="radio" name="price" value="{{ val }}"
+                                                        {% if request.GET.price == val %}checked{% endif %}
+                                                        onchange="updateFilters('price-filter-form')"
+                                                        style="width: 13px; height: 13px;">
+                                                    {{ label }}
+                                                </label>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Discount Filter -->
+                            <div class="sidebar-dropdown {% if request.GET.discount %}open{% endif %}" id="dropdown-discount">
+                                <button class="dropdown-header" type="button">
+                                    Discount
+                                    <span class="chevron"><i class="fa fa-chevron-down"></i></span>
+                                </button>
+                                <div class="dropdown-content-list">
+                                     {% if request.GET.discount %}
+                                        <div class="text-end">
+                                        <a href="{{ request|remove_query_param:'discount' }}" class="text-danger text-decoration-none">Clear</a>
+                                        </div>
+                                    {% endif %}
+                                    <form id="discount-filter-form">
+                                        <ul class="filter-radio-list">
+                                            {% for val, label in DISCOUNT_CHOICES %}
+                                            <li>
+                                                <label>
+                                                    <input type="radio" name="discount" value="{{ val }}"
+                                                        {% if request.GET.discount == val %}checked{% endif %}
+                                                        onchange="updateFilters('discount-filter-form')"
+                                                        style="width: 13px; height: 13px;">
+                                                    {{ label }}
+                                                </label>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- Gender Filter -->
+                            <div class="sidebar-dropdown {% if request.GET.gender %}open{% endif %}" id="dropdown-gender">
+                                <button class="dropdown-header" type="button">
+                                    Gender
+                                    <span class="chevron"><i class="fa fa-chevron-down"></i></span>
+                                </button>
+                                <div class="dropdown-content-list">
+                                    {% if request.GET.gender %}
+                                        <div class="text-end">
+                                        <a href="{{ request|remove_query_param:'gender' }}" class="text-danger text-decoration-none">Clear</a>
+                                        </div>
+                                    {% endif %}
+                                    <form id="gender-filter-form">
+                                        <ul class="filter-radio-list">
+                                            {% for val, label in GENDER_CHOICES %}
+                                            <li>
+                                                <label>
+                                                    <input type="radio" name="gender" value="{{ val }}"
+                                                        {% if request.GET.gender == val %}checked{% endif %}
+                                                        onchange="updateFilters('gender-filter-form')"
+                                                        style="width: 13px; height: 13px;">
+                                                    {{ label }}
+                                                </label>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </form>
+                                </div>
+                            </div>
+                                <!-- Brand Filter -->
+                                <div class="sidebar-dropdown {% if request.GET.brand %}open{% endif %}" id="dropdown-brand">
+                                    <button class="dropdown-header" type="button">
+                                        Brand
+                                        <span class="chevron"><i class="fa fa-chevron-down"></i></span>
+                                    </button>
+                                    <div class="dropdown-content-list">
+                                        {% if request.GET.brand %}
+                                            <div class="text-end">
+                                            <a href="{{ request|remove_query_param:'brand' }}" class="text-danger text-decoration-none">Clear</a>
+                                            </div>
+                                        {% endif %}
+                                        <form id="brand-filter-form">
+                                            <ul class="filter-radio-list" id="brand-filter-list">
+                                                {% for val in brand_values %}
+                                                <li class="brand-item {% if forloop.counter > 10 %}hidden{% endif %}">
+                                                    <label>
+                                                        <input type="radio" name="brand" value="{{ val }}"
+                                                            {% if request.GET.brand == val %}checked{% endif %}
+                                                            onchange="updateFilters('brand-filter-form')"
+                                                            style="width: 13px; height: 13px;">
+                                                        {{ val|capfirst }}
+                                                    </label>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% if brand_values|length > 10 %}
+                                            <button type="button" id="toggle-brand-btn" class="filter-toggle-btn">Show more</button>
+                                            {% endif %}
+                                        </form>
+                                    </div>
+                                </div>
+                             <!-- Size Filter -->
+                            <div class="sidebar-dropdown {% if request.GET.size %}open{% endif %}" id="dropdown-size">
+                                <button class="dropdown-header" type="button">
+                                    Sizes
+                                    <span class="chevron"><i class="fa fa-chevron-down"></i></span>
+                                </button>
+                                <div class="dropdown-content-list">
+                                    {% if request.GET.size %}
+                                            <div class="text-end">
+                                            <a href="{{ request|remove_query_param:'size' }}" class="text-danger text-decoration-none">Clear</a>
+                                            </div>
+                                        {% endif %}
+                                    <form id="size-filter-form">
+                                        <ul class="filter-radio-list" id="size-filter-list">
+                                            {% for val in size_values %}
+                                            <li class="size-item {% if forloop.counter > 10 %}hidden{% endif %}">
+                                                <label>
+                                                    <input type="radio" name="size" value="{{ val }}"
+                                                        {% if request.GET.size == val %}checked{% endif %}
+                                                        onchange="updateFilters('size-filter-form')"
+                                                        style="width: 13px; height: 13px;">
+                                                    {{ val|capfirst }}
+                                                </label>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% if size_values|length > 10 %}
+                                        <button type="button" id="toggle-size-btn" class="filter-toggle-btn">Show more</button>
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Color Filter -->
+                            <div class="sidebar-dropdown {% if request.GET.color %}open{% endif %}" id="dropdown-color">
+                                <button class="dropdown-header" type="button">
+                                    Colors
+                                    <span class="chevron"><i class="fa fa-chevron-down"></i></span>
+                                </button>
+                                <div class="dropdown-content-list">
+                                    {% if request.GET.color %}
+                                            <div class="text-end">
+                                            <a href="{{ request|remove_query_param:'color' }}" class="text-danger text-decoration-none">Clear</a>
+                                            </div>
+                                        {% endif %}
+                                    <form id="color-filter-form">
+                                        <ul class="filter-radio-list" id="color-filter-list">
+                                            {% for val in color_values %}
+                                            <li class="color-item {% if forloop.counter > 10 %}hidden{% endif %}">
+                                                <label>
+                                                    <input type="radio" name="color" value="{{ val }}"
+                                                        {% if request.GET.color == val %}checked{% endif %}
+                                                        onchange="updateFilters('color-filter-form')"
+                                                        style="width: 13px; height: 13px;">
+                                                    {{ val|capfirst }}
+                                                </label>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% if color_values|length > 10 %}
+                                        <button type="button" id="toggle-color-btn" class="filter-toggle-btn">Show more</button>
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            </div>
+                        </div>             
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+{% comment %} for search {% endcomment %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = {
+        input: document.getElementById("vendor-search-input"),
+        list: document.getElementById("vendor-suggestions-list"),
+    };
+
+    const { input, list } = searchInput;
+    if (!input || !list) return;
+
+    input.addEventListener("keyup", function () {
+        const query = input.value.trim();
+        console.log("query", query);
+
+        if (query.length < 1) {
+        list.style.display = "none";
+        list.innerHTML = "";
+        return;
+        }
+
+        fetch(`/marketplace/live/search/?term=${encodeURIComponent(query)}`)
+        .then((response) => response.json())
+        .then((data) => {
+          list.innerHTML = "";
+
+          // Combine vendors and products into one list
+          const combinedResults = [...(data.vendors || []), ...(data.products || [])];
+
+          if (combinedResults.length === 0) {
+            list.innerHTML = `<li class="dropdown-item text-muted">No results found</li>`;
+          } else {
+            combinedResults.forEach((item) => {
+              const li = document.createElement("li");
+              li.className = "dropdown-item";
+
+              // Determine link URL
+              const link =
+                item.type === "vendor"
+                  ? `/marketplace/${item.vendor_slug}/`
+                  : `/marketplace/product/${item.vendor_slug}/${item.slug}`;
+
+              // Image with fallback
+              const image = item.image || "/static/images/placeholder.jpg";
+
+              // Extra info HTML (price & seller for products, plain label for vendors)
+              let extraInfo = "";
+              if (item.type === "vendor") {
+                extraInfo = `<div class="d-flex align-items-center gap-1 text-muted" style="font-size: 13px;">
+                  ${item.name}
+                </div>
+                <small class="text-muted">Visit Store</small>`;
+              } else {
+                extraInfo = `<div>${item.name}</div>
+                <small>₹${item.price}</small><br>`;
+              }
+
+              li.innerHTML = `
+                <a href="${link}" class="d-flex align-items-center text-dark text-decoration-none">
+                  <img src="${image}" alt="${item.name}" style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px; border-radius: 4px;">
+                  <div style="font-size: 13px;">
+                    ${extraInfo}
+                  </div>
+                </a>
+              `;
+              list.appendChild(li);
+            });
+          }
+
+          list.style.display = "block";
+        })
+        .catch(() => {
+          list.innerHTML = `<li class="dropdown-item text-danger">Error loading results</li>`;
+          list.style.display = "block";
+        });
+    });
+
+    // Hide dropdown on click outside
+    document.addEventListener("click", function (e) {
+        if (!input.contains(e.target) && !list.contains(e.target)) {
+        list.style.display = "none";
+        }
+    });
+    });
+</script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggles = document.querySelectorAll('.toggle-btn');
+
+        toggles.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-target');
+                const subList = document.getElementById(targetId);
+
+                if (subList.style.display === 'none' || subList.style.display === '') {
+                    subList.style.display = 'block';
+                    btn.classList.add('open');
+                } else {
+                    subList.style.display = 'none';
+                    btn.classList.remove('open');
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    function toggleCategories(event) {
+        event.preventDefault(); // Prevent default behavior of the button/link
+        const category = document.getElementById('category-ul');
+        // Toggle the display property between 'none' and 'block'
+        if (category.style.display === 'none' || category.style.display === '') {
+            category.style.display = 'block';
+        } else {
+            category.style.display = 'none';
+        }
+    }
+    
+    function updateCategoryIcon() {
+        const icon = document.getElementById("categoryIcon");
+        const category = document.getElementById('category-ul'); 
+        
+        if (window.innerWidth <= 990) {
+            category.style.display = 'none';
+            if (icon) {
+                icon.classList.remove("icon-restaurant_menu");
+                icon.classList.add("fa", "fa-bars");
+            }
+        } else {
+            category.style.display = 'block';
+            if (icon) {
+                icon.classList.remove("fa", "fa-bars");
+                icon.classList.add("icon-restaurant_menu");
+            }
+        }
+    }
+
+     updateCategoryIcon();
+
+    // Add event listener to handle window resize
+    window.addEventListener("resize", updateCategoryIcon);
+
+
+    const filterBtn = document.getElementById('filterToggleBtn');
+    if (filterBtn) {
+        filterBtn.addEventListener('click', function () {
+            const categoryMenu = document.getElementById('category-ul');
+            const isHidden = categoryMenu.style.display === 'none' || categoryMenu.style.display === '';
+
+            if (isHidden) {
+                categoryMenu.style.display = 'block';
+                this.setAttribute('aria-expanded', 'true');
+            } else {
+                categoryMenu.style.display = 'none';
+                this.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
+});
+</script>
+<script>
+     function switchType(type) {
+        document.getElementById('searchType').value = type;
+        document.getElementById('searchForm').submit();
+    }
+     updateCategoryIcon();
+    window.addEventListener("resize", updateCategoryIcon);
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const dropdowns = document.querySelectorAll('.sidebar-dropdown');
+
+    dropdowns.forEach(function (dropdown) {
+        const header = dropdown.querySelector('.dropdown-header');
+        header.addEventListener('click', function () {
+            dropdown.classList.toggle('open');
+        });
+    });
+});
+
+
+// Preserve existing filters (query parameters) when selecting a new one
+function updateFilters(formId) {
+    const form = document.getElementById(formId);
+    const url = new URL(window.location.href);
+    const params = new URLSearchParams(url.search);
+
+    // Update parameters from current form
+    const formData = new FormData(form);
+    for (const [key, value] of formData.entries()) {
+        params.set(key, value);
+    }
+
+    // Redirect with combined filters
+    window.location.search = params.toString();
+}
+</script>
+
+
+
+<script>
+function setupToggle(buttonId, itemClass) {
+    const toggleBtn = document.getElementById(buttonId);
+    const items = document.querySelectorAll('.' + itemClass);
+    let visibleCount = 10;
+
+    if (!toggleBtn) return;
+
+    toggleBtn.addEventListener('click', () => {
+        const hiddenItems = Array.from(items).filter(item => item.classList.contains('hidden'));
+
+        if (hiddenItems.length > 0) {
+            // Show 5 more
+            hiddenItems.slice(0, 5).forEach(item => item.classList.remove('hidden'));
+            visibleCount += 5;
+
+            // If no more items to show, change button text
+            if (visibleCount >= items.length) {
+                toggleBtn.textContent = 'Show less';
+            }
+        } else {
+            // Show less (back to 10)
+            items.forEach((item, index) => {
+                if (index >= 10) item.classList.add('hidden');
+            });
+            visibleCount = 10;
+            toggleBtn.textContent = 'Show more';
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    setupToggle('toggle-size-btn', 'size-item');
+    setupToggle('toggle-color-btn', 'color-item');
+    setupToggle('toggle-brand-btn', 'brand-item'); 
+    setupToggle('toggle-brand-btn-m', 'brand-item-m');
+    setupToggle('toggle-size-btn-m', 'size-item-m');
+    setupToggle('toggle-color-btn-m', 'color-item-m');
+});
+</script>
+{% endblock %}

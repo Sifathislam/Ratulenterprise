@@ -1,0 +1,164 @@
+{% load static  %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Login - Flickbasket Multi-Vendor Ecommerce Marketplace</title>
+	<!-- Google Font Family Link Start -->
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Montserrat:400,700">
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,800">
+	
+	<link rel="stylesheet" href="{% static 'assets/css/main2cc5.css' %}" />
+	
+	<!-- JAVASCRIPT -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+
+    <style>
+    .field-holder input,
+    .field-holder select,
+    .field-holder textarea {
+        padding: 6px 10px !important;
+        font-size: 14px !important;
+        width: 100% !important;
+        margin: 0 auto !important;
+        height: 45px;
+        border-radius:5px;
+    }
+
+    .field-holder {
+        padding: 5px;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    
+    .field-holder label{
+        font-size:14px
+    }
+</style>
+</head>
+
+<body>
+
+<!-- Main Section Start -->
+<div class="main-section">
+    <div class="page-section nopadding cs-nomargin" style="margin-top: 0px;padding-top: 60px;padding-bottom: 60px;margin-bottom: 0px;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-10 col-sm-12">
+                    <div class="user-dashboard loader-holder">
+                        <div class="user-holder">
+                    <h4 class="text-center" style="margin-bottom: 0;">Welcome to Flickbasket Marketplace</h4>
+                    <p class="text-center">Please fill this form to get yourself onboarded in the Flickbasket marketplace.</p>
+                    <hr>
+                    <div id="restaurant-sets-holder">
+                        <form action="{% url 'registerUser' %}" class="form-fields-set foodbakery-dev-restaurant-form" method="post">
+                            {% csrf_token %}
+                            <ul class="register-add-restaurant-tab-container restaurant-information-tab-container">
+                                <li>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="row">
+                                                <ul >
+                                                    <li class="row">
+                                                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                            <div class="field-holder">
+                                                                <label>First name</label>{{form.first_name}}
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                            <div class="field-holder">
+                                                                <label>Last name</label>{{form.last_name}}
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        
+                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="field-holder">
+                                                                <label>Email Address</label>{{form.email}}
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                            <div class="field-holder">
+                                                                <label>Phone Number</label>{{form.phone_number}}
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                            <div class="field-holder">
+                                                                <label>Username</label>{{form.username}}
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    
+                                                    <li class="row">
+                                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                            <div class="field-holder">
+                                                                <label>Password</label>
+                                                                {{form.password}}
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                            <div class="field-holder">
+                                                                <label>Confirm Password</label>
+                                                                {{form.confirm_password}}
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <ul class="errorlist">
+                                        {% for field in form %}
+                                            {% if field.errors %}
+                                                {% for error in field.errors %}
+                                                    <li style="color: red;">{{error}}</li>
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        <li style="color: red;">{{form.non_field_errors}}</li>
+                                    </ul>
+                                    <div class="row mt-4">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="field-holder">
+                                                <div class="payment-holder">
+                                                    <input type="submit" value="Submit" id="btn-next-restaurant-information" class="btn btn-sm text-uppercase fw-semibold rounded" style="width: 170px !important; background-color: #DC3545; color:#fff;">                                             
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <!-- Load message -->
+                                            {% include 'includes/alerts.html' %}
+                                        </div>
+                                    </div>
+
+                                </li>
+                            </ul>
+                        </form>
+                    </div>
+                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Section End -->
+
+
+<script src="{% static 'assets/js/vendor/bootstrap.bundle.min.js' %}"></script>
+    
+    <!-- Template  JS -->
+    <script src="{% static 'assets/js/main2cc5.js' %}"></script>
+</body>

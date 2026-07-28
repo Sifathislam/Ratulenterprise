@@ -1,0 +1,298 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+<!-- Main Section Start -->
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                <span></span> Shop
+                <span></span> Checkout
+            </div>
+        </div>
+    </div>
+    <div class="container mb-80 mt-50">
+        <div class="row">
+            <div class="col-lg-8 mb-40">
+                <h1 class="heading-2 mb-10">Checkout</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="row">
+                    <h4 class="mb-30">Billing Details</h4>
+                    <form action="{% url 'place_order' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="form-group col-md-6 col-sm-12 col-lg-6">
+                                First Name: {{ form.first_name }}
+                            </div>
+                            <div class="form-group col-md-6 col-sm-12 col-lg-6">
+                                Last Name: {{ form.last_name }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6 col-sm-12 col-lg-6">
+                                Phone Number: {{ form.phone }}
+                            </div>
+                            <div class="form-group col-md-6 col-sm-12 col-lg-6">
+                                Email Address: {{ form.email }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12 col-sm-12 col-lg-12">
+                                Address: {{ form.address }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6 col-sm-12 col-lg-6">
+                                Country: {{ form.country }}
+                            </div>
+                            <div class="form-group col-md-6 col-sm-12 col-lg-6">
+                                State: {{ form.state }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6 col-sm-12 col-lg-6">
+                                City: {{ form.city }}
+                            </div>
+                            <div class="form-group col-md-6 col-sm-12 col-lg-6">
+                                Pin Code: {{ form.pin_code }}
+                            </div>
+                        </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="border p-25 cart-totals ml-30 mb-50 responsive-cart-totals">
+                    <div class="d-flex align-items-end justify-content-between mb-30">
+                        <h4>Your Order</h4>
+                        <h6 class="text-muted">Subtotal</h6>
+                    </div>
+                    <div class="divider-2 mb-30"></div>
+                    <div class="table-responsive order_table checkout">
+               <table class="table table-borderless w-100">
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr style="border: none;">
+                        <td colspan="4" class="p-0">
+                            <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center w-100 px-2 py-2 gap-2 gap-sm-3" style="border-bottom: 1px solid #eee;">
+
+                                <!-- Image and Variant -->
+                                <div class="w-25 d-md-block d-none w-sm-auto text-center text-sm-start">
+                                    {% if item.product_variant_group and item.product_variant_group.image %}
+                                        <img src="{{ item.product_variant_group.image.url }}" alt="Variant Image"
+                                            style="width: 50px; height: 50px; object-fit: cover;">
+                                    {% elif item.product.image %}
+                                        <img src="{{ item.product.image.url }}" alt="#"
+                                            style="width: 50px; height: 50px; object-fit: cover;">
+                                    {% else %}
+                                        <img src="{% static 'images/placeholder.jpg' %}" alt="No image"
+                                            style="width: 50px; height: 50px; object-fit: cover;">
+                                    {% endif %}
+                                    
+                                    {% if item.product_variant_group %}
+                                    <div class="small d-none d-sm-block">{{ item.product_variant_group|extract_variant }}</div>
+                                    {% endif %}
+                                        
+                                </div>
+                                <div class="w-100 d-block d-md-none w-sm-auto text-center text-sm-start">
+                                    {% if item.product_variant_group and item.product_variant_group.image %}
+                                        <img src="{{ item.product_variant_group.image.url }}" alt="Variant Image"
+                                            style="width: 50px; height: 50px; object-fit: cover;">
+                                    {% elif item.product.image %}
+                                        <img src="{{ item.product.image.url }}" alt="#"
+                                            style="width: 50px; height: 50px; object-fit: cover;">
+                                    {% else %}
+                                        <img src="{% static 'images/placeholder.jpg' %}" alt="No image"
+                                            style="width: 50px; height: 50px; object-fit: cover;">
+                                    {% endif %}
+                                    
+                                    {% if item.product_variant_group %}
+                                        <div class="small d-none d-sm-block">{{ item.product_variant_group|extract_variant }}</div>  
+                                    {% endif %}
+                                        
+                                </div>
+
+
+                                <!-- Product Info -->
+                                <div class="flex-grow-1 ">
+                                    <p class="mb-1 text-heading" style="font-size: 14px;">{{ item.product }}</p>
+
+                                    <!-- Show variant under product on small screens -->
+                                    
+                                    {% if item.product_variant_group %}
+                                    <span class="small d-inline d-sm-none">{{ item.product_variant_group|extract_variant }}</span>
+                                    {% endif %}
+                                        
+
+                                    <!-- Quantity and Price for small screen -->
+                                    <div class="d-block d-sm-none mt-1 small text-muted text-center" style="width: 300px;">
+                                        Quantity: x {{ item.quantity }} |
+                                        Price:
+                                        {% if item.product_variant_group and item.product_variant_group.price %}
+                                            {{ item.product_variant_group.price }}
+                                        {% else %}
+                                            {% if item.product.sales_price %}
+                                                {{ item.product.sales_price }}
+                                            {% else %}
+                                                {{ item.product.regular_price }}
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Quantity (sm and up) -->
+                                <div class="d-none d-sm-block" style="width: 70px;" class="text-center">
+                                    <p class="mb-0" style="font-size: 14px;">x {{ item.quantity }}</p>
+                                </div>
+
+                                <!-- Price (sm and up) -->
+                                <div class="d-none d-sm-block text-end" style="width: 90px;">
+                                    {% if item.product_variant_group and item.product_variant_group.price %}
+                                        {{ item.product_variant_group.price }}
+                                    {% else %}
+                                        {% if item.product.sales_price %}
+                                            {{ item.product.sales_price }}
+                                        {% else %}
+                                            {{ item.product.regular_price }}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        <ul class="order-summary-list list-unstyled px-2">
+        <!-- Subtotal -->
+        <li class="order-summary-item d-flex justify-content-between align-items-center text-start  mb-2">
+            <span >Subtotal</span>
+            <span class="price text-end">
+                <span class="currency">₹</span>
+                <span id="subtotal">{{ subtotal }}</span>
+            </span>
+        </li>
+
+
+        {% for single_tax_dict in tax_dict %}
+            {% for key, value in single_tax_dict.tax_info.items %}
+                {% if value %}
+                    <li class="order-summary-item d-flex justify-content-between align-items-start text-start  mb-1">
+                        <div class="w-100 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                {% comment %} Tax label + product {% endcomment %}
+                                {% for item in cart_items %}
+                                    {% if item.product_variant_group and item.product_variant_group.id == single_tax_dict.product_variant_id %}
+                                        <span class="d-md-block d-none">
+                                            {{ single_tax_dict.tax_category }} ({{ key }}%) -
+                                            {{ item.product_variant_group|extract_variant }}
+                                            {{ item.product|truncatechars:20 }}
+                                        </span>
+                                        <span class="d-block d-md-none small">
+                                            {{ single_tax_dict.tax_category }} ({{ key }}%) -
+                                            {{ item.product_variant_group|extract_variant }}
+                                            {{ item.product|truncatechars:10 }}
+                                        </span>
+                                    {% elif item.product.id == single_tax_dict.product_id and not single_tax_dict.product_variant_id %}
+                                        <span class="d-md-block d-none">
+                                            {{ single_tax_dict.tax_category }} ({{ key }}%) -
+                                            {{ item.product|truncatechars:20 }}
+                                        </span>
+                                        <span class="d-block d-md-none small">
+                                            {{ single_tax_dict.tax_category }} ({{ key }}%) -
+                                            {{ item.product|truncatechars:10 }}
+                                        </span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+
+                            <div>
+                                <span class="currency">₹</span>{{ value }}
+                            </div>
+                        </div>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+
+
+        <!-- Total -->
+        <li class="order-summary-item total d-flex justify-content-between align-items-center text-start  mt-3 fw-bold">
+            <strong>TOTAL</strong>
+            <span class="price fw-bolder">
+                <span id="total">{{ grand_total }}</span>
+            </span>
+        </li>
+
+        <!-- Payment Buttons -->
+        {% if order.payment_method == 'PayPal' %}
+            <div id="paypal-button-container" class="mt-3"></div>
+        {% elif order.payment_method == 'COD' %}
+            <button id="placeOrderBtn" type="submit" class="btn update_color w-100 p-2 mt-3 mb-4" onclick="placeOrder()">Place Order</button>
+            <div id="pay-loading" class="my-4" style="display:none;"></div>
+        {% endif %}
+
+    </ul>
+                    </div>
+                </div>
+                <div class="payment ml-30">
+                    <h4 class="mb-30">Payment</h4>
+                    <div class="payment_option">
+                        <div class="custome-radio">
+                            <input class="form-check-input" required="" type="radio" name="payment_method" value="COD" id="exampleRadios4" checked="">
+                            <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse" data-target="#checkPayment" aria-controls="checkPayment">Cash on delivery</label>
+                        </div>
+                         {% comment %} <div class="custome-radio">
+                                <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios3" checked="">
+                                <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#bankTranfer" aria-controls="bankTranfer">Direct Bank Transfer</label>
+                            </div> {% endcomment %}
+                            {% comment %} <div class="custome-radio">
+                                <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios5" checked="">
+                                <label class="form-check-label" for="exampleRadios5" data-bs-toggle="collapse" data-target="#paypal" aria-controls="paypal">Online Getway</label>
+                            </div> {% endcomment %}
+                    </div>
+                    <div class="payment-logo d-flex">
+                        <img class="mr-15" src="assets/imgs/theme/icons/payment-paypal.svg" alt="">
+                        <img class="mr-15" src="assets/imgs/theme/icons/payment-visa.svg" alt="">
+                        <img class="mr-15" src="assets/imgs/theme/icons/payment-master.svg" alt="">
+                        <img src="assets/imgs/theme/icons/payment-zapper.svg" alt="">
+                    </div>
+                    <button onclick="return payMethodConfirm();" type="submit" class="btn btn-sm update_color btn-block mt-30">PLACE ORDER <i class="fi-rs-sign-out ml-15"></i></button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- Main Section End -->
+
+
+
+<script>
+    function payMethodConfirm(){
+        var payMethod = $("input[name='payment_method']:checked").val()
+        if(!payMethod){
+            $('#payment-method-error').html("Select Payment Method!");
+            return false;
+        }else{
+            var conf = confirm('You have selected '+payMethod+' as your preferred payment method.\nClick "OK" to continue.')
+            if(conf == true){
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
+
+    $('input[name=payment_method]').on('change', function(){
+        $('#payment-method-error').html("");
+    })
+</script>
+
+{% endblock %}

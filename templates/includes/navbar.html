@@ -1,0 +1,934 @@
+{% load static %}
+
+<style>
+  /* Basic styling for dropdown */
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  .dropdown-content {
+    display: none;
+    position: fixed;
+    background-color: #f9f9f9;
+    min-width: 175px;
+    border: 1px solid #ccc;
+    margin: 11px 0px 0px 40px;
+    z-index: 1;
+  }
+  .dropdown-content a {
+    color: black;
+    padding: 8px 12px;
+    text-decoration: none;
+    display: block;
+  }
+  .dropdown-content a:hover {
+    background-color: #f1f1f1;
+  }
+  .show {
+    display: block;
+  }
+  .subcategory {
+    margin-left: 20px;
+    font-size: 0.9em;
+  }
+  .btn-category {
+    padding: 6px 50px 5px 50px;
+    margin: 0px 10px 0px 40px;
+    font-weight: 600;
+  }
+  .logout-icon {
+    font-size: 20px;
+  }
+  /* This Design for the Become a seller button  */
+  .Become_a_seller_btn {
+    line-height: 44px !important;
+    border-radius: 5px !important;
+    padding: 0 20px !important;
+    font-family: "Quicksand", sans-serif !important;
+    font-size: 16px !important;
+  }
+
+  /* Responsive Styles */
+  @media only screen and (max-width: 1199px) {
+    .header-middle .container-fluid.py-2 {
+      flex-direction: column !important;
+      gap: 1rem !important;
+    }
+    .header-middle
+      .d-flex.align-items-center.justify-content-between.flex-wrap.gap-3 {
+      flex-direction: column !important;
+      gap: 1rem !important;
+      align-items: stretch !important;
+    }
+    .header-middle .flex-grow-1 {
+      width: 100% !important;
+    }
+    .header-middle .d-flex.align-items-center.gap-3.flex-shrink-0 {
+      justify-content: flex-end !important;
+    }
+  }
+  @media only screen and (max-width: 991px) {
+    .header-middle.d-none.d-lg-block {
+      display: none !important;
+    }
+    .mobile-navbar {
+      display: block !important;
+    }
+    .navbar-mobile-overlay {
+      display: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1099;
+      background: rgba(0, 0, 0, 0.2);
+    }
+    .navbar-mobile-menu {
+      position: fixed;
+      top: 0;
+      right: -100%; /* Start off-screen to the right */
+      width: 60%;
+      height: 100%;
+      background: #fff;
+      z-index: 1000;
+      transition: right 0.3s ease;
+    }
+    .navbar-mobile-menu.show {
+      right: 0;
+    }
+    .navbar-mobile-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      display: none;
+    }
+    .navbar-mobile-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .navbar-mobile-top .logo img {
+      height: 55px;
+    }
+    .mobile-category-btn {
+      display: block;
+      margin-bottom: 1rem;
+      width: 100%;
+    }
+    .mobile-search-bar {
+      margin-bottom: 1.5rem;
+    }
+    .mobile-navbar-location {
+      margin-bottom: 1.5rem;
+    }
+    .mobile-navbar-links a,
+    .mobile-navbar-links .btn {
+      display: block;
+      margin-bottom: 1rem;
+    }
+    .mobile-navbar-links .btn {
+      width: 80%;
+      margin: auto;
+    }
+    .mobile-navbar-links .badge {
+      position: static !important;
+      margin-left: 8px;
+    }
+    .mobile-navbar-links .logout-icon {
+      font-size: 18px;
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+  }
+  @media only screen and (max-width: 768px) {
+    .custom-offcanvas-zindex {
+      z-index: 2000 !important;
+    }
+
+    .main-logo img {
+      max-width: 95%;
+    }
+    .btn-category {
+      margin: 10px 10px 0px 0px;
+      padding: 6px 20px 5px 20px;
+    }
+    .main-location {
+      width: 100%;
+      margin-left: 0px !important;
+      margin-top: 5px;
+    }
+    #categoryDropdown {
+      margin: 11px 0px 0px -40px;
+      z-index: 999;
+    }
+    .logout-icon {
+      font-size: 18px;
+      position: relative;
+      top: 2px;
+      left: 10px;
+    }
+    .cart-page .decrease_cart {
+      margin-right: 5px !important;
+    }
+    .menu-itam-holder .menu-itam-list .price-holder a i {
+      margin-left: 5px !important;
+    }
+  }
+  @media only screen and (max-width: 575px) {
+    .custom-offcanvas-zindex {
+      z-index: 2000 !important;
+    }
+
+    .mobile-sidebar-wrapper {
+      padding: 1rem 0.75rem 1.5rem 0.75rem;
+    }
+
+    .sidebar-logo {
+      height: 55px;
+    }
+
+    .offcanvas.offcanvas-end {
+      width: 70vw !important;
+      max-width: 70vw !important;
+    }
+
+    option[name="store_type"] {
+      padding: 10px;
+      font-size: 10px;
+    }
+  }
+  /* Hide mobile navbar on desktop */
+  .mobile-navbar {
+    display: none;
+  }
+  .cs-color {
+    color: red !important;
+  }
+  .cs-color:hover {
+    color: red !important;
+  }
+  .cart_color {
+    color: white !important;
+    background-color: #5c6dc3 !important; /* lighter version of #1b216a */
+  }
+
+  button.no-hover-bg,
+  button.no-hover-bg:hover,
+  button.no-hover-bg:focus,
+  button.no-hover-bg:active,
+  button.no-hover-bg:visited {
+    background: none !important;
+    background-color: transparent !important;
+  }
+
+  .small_screen_button {
+    border: 1px solid #1b216a;
+    padding: 10px 8px !important;
+    font-size: 1rem;
+  }
+  .s-logout {
+    background: red;
+    color: white !important;
+    border: none !important;
+    padding: 10px 8px !important;
+    font-size: 1rem;
+  }
+  #suggestions-list {
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-top: none;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+#suggestions-list li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+#suggestions-list li:hover {
+  background-color: #f0f0f0;
+}
+#mobile-suggestions-list {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-top: none;
+  padding: auto;
+  margin: 0;
+  list-style: none;
+  max-height: 300px;
+  overflow-y: auto;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+#mobile-suggestions-list li {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+#mobile-suggestions-list li:hover {
+  background-color: #f2f2f2;
+}
+.autocomplete_mobile_container {
+  overflow: visible !important;
+}
+
+
+</style>
+
+<!-- Desktop Header -->
+<header
+  class="header-area header-style-1 header-height-2 large-header"
+  style="
+    z-index: 1050 !important;
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+    background-color: #fff;
+  "
+>
+  <!-- Desktop Navbar -->
+  <div
+    class="header-middle d-none d-lg-block"
+    style="box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15)"
+  >
+    <!-- ... Desktop navbar unchanged ... -->
+    <div class="container-fluid">
+      <div
+        class="d-flex align-items-center justify-content-between flex-wrap gap-3"
+      >
+        <!-- Left Side: Logo + Categories -->
+        <div class="d-flex align-items-center gap-4 flex-shrink-0">
+          <!-- Logo -->
+          <div class="logo logo-width-1">
+            <a href="/" style="text-decoration: none"
+              ><span style="font-size: 28px; font-weight: 700; color: #212529"
+                >Ratulenterprise</span
+            ></a>
+          </div>
+        </div>
+
+        <!-- Middle: Search Bar -->
+        <div class="flex-grow-1">
+          <div class="search-style-2">
+            <form action="{% url 'all_products' %}" method="get" id="searchForm" class="d-flex">
+              <input
+                type="text"
+                name="search"
+                id="live-search-input"
+                class="form-control"
+                placeholder="What are you looking for?"
+                autocomplete="off"
+              />
+              <ul id="suggestions-list" class="dropdown-menu show" style="position:absolute; z-index:1000; display:none;"></ul>
+               
+                <input type="hidden" name="type" id="searchType" value=""> <!-- Hidden input to switch between products/stores -->
+
+              <button
+                type="submit"
+                class="btn no-hover-bg d-flex align-items-center justify-content-center ml-10"
+              >
+                <img
+                  src=" {% static 'assets/imgs/theme/icons/search.png' %}"
+                  alt="Search"
+                  style="width: 100%; height: 20px"
+                />
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Right Side: Location -->
+        <div class="d-flex align-items-center gap-3 flex-shrink-0">
+          <a
+            href="{% url 'cart' %}"
+            class="text-dark position-relative me-2 ms-4"
+            style="font-size: 1.2rem"
+          >
+            <i class="fa fa-shopping-cart"></i>
+            <!-- Optional: Cart item count badge -->
+            <span
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart_color"
+            >
+              <span id="cart_count">{{cart_count}}</span>
+              <span class="visually-hidden">cart items</span>
+            </span>
+          </a>
+          <!-- <a href="{% url 'marketplace' %}" class="btn btn-outline-danger text-uppercase font-weight-bold">Marketplace</a> -->
+          {% if user.is_authenticated %}
+          <a class="text-dark fw-700 login-popup" href="{% url 'myAccount' %}"
+            >My Account</a
+          >
+          <a
+            class="cs-color cs-popup-joinus-btn login-popup text-danger"
+            href="{% url 'logout' %}"
+            ><i class="fa fa-power-off logout-icon" aria-hidden="true"></i
+          ></a>
+          {% else %}
+          <!-- <a href="{% url 'marketplace' %}" class="btn btn-outline-danger text-uppercase font-weight-bold">Marketplace</a> -->
+          <a
+            href="{% url 'login' %}"
+            class="text-dark Become_a_seller_btn"
+            style="font-size: 1rem; font-weight: 600; border: 1px solid #1b216a"
+          >
+            <i class="fa fa-sign-in" aria-hidden="true"></i> Login
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Mobile Navbar -->
+  <div class="mobile-navbar" style="position: relative">
+    <div
+      style="background: #fff; border-bottom: 1px solid #ececec; padding: 7px 0"
+    >
+      <div
+        class="container-fluid d-flex align-items-center justify-content-between"
+      >
+        <div class="logo">
+          <a href="/" style="text-decoration: none"
+            ><span style="font-size: 22px; font-weight: 700; color: #212529"
+              >Ratulenterprise</span
+          ></a>
+        </div>
+        <div>
+          {% if user.is_authenticated %}
+          <a
+            href="{% url 'cart' %}"
+            class="text-dark position-relative me-2"
+            style="font-size: 1.4rem"
+          >
+            <i class="fa fa-shopping-cart"></i>
+            <span class="badge rounded-pill bg-danger" id="mb-cart_count"> {{cart_count}} </span>
+          </a>
+          {% endif %}
+          <button
+            class="btn btn-danger py-1 px-2"
+            id="mobileMenuOpen"
+            style="font-size: 22px; border-radius: 4px"
+          >
+            <i class="fa fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="navbar-mobile-overlay" id="mobileNavbarOverlay"></div>
+    <div class="navbar-mobile-menu" id="mobileNavbarMenu">
+      <div class="navbar-mobile-top">
+        <div class="logo">
+          <a href="/" style="text-decoration: none"
+            ><span style="font-size: 20px; font-weight: 700; color: #212529"
+              >Ratulenterprise</span
+          ></a>
+        </div>
+        <button
+          class="btn btn-link"
+          id="mobileMenuClose"
+          style="font-size: 20px"
+        >
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      <div class="mobile-search-bar">
+        <form action="{% url 'all_products' %}" method="get" class="d-flex">
+          <input
+            type="text"
+            name="search"
+            class="form-control"
+            placeholder="What are you looking for?"
+          />
+          <button
+            type="submit"
+            class="ml-2 btn btn-light"
+            style="width: 20px; margin-left: 10px; padding-left: 17px"
+          >
+            <i class="fa fa-search"></i>
+          </button>
+        </form>
+      </div>
+      <div class="mobile-navbar-links">
+        {% if user.is_authenticated %}
+        <a
+          class="btn small_screen_button text-uppercase font-weight-bold"
+          href="{% url 'myAccount' %}"
+          >My Account</a
+        >
+        <a
+          class="btn btn-outline-danger text-uppercase font-weight-bold"
+          href="{% url 'logout' %}"
+        >
+          <i class="fa fa-power-off" aria-hidden="true"></i> Logout
+        </a>
+        {% else %}
+        <a
+          href="{% url 'login' %}"
+          class="mt-2"
+          style="font-size: 1rem; font-weight: 600"
+        >
+          <i class="fa fa-sign-in" aria-hidden="true"></i> Login
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Header -->
+<div
+  class="mobile-header d-block d-md-none mobile-main-row position-relative"
+  style="z-index: 1050; background-color: {{ current_event.home_color }};"
+  >
+  <!-- Top Row: Location & User Icon (scrolls away) -->
+  <div
+    class="mobile-row w-100 top-mobile-row d-flex flex-nowrap align-items-center justify-content-between px-3"
+    style="height: 55px"
+  >
+    <div
+      class="mobile-col flex-fill left text-dark d-flex flex-row flex-nowrap align-items-center justify-content-start h-100"
+    >
+    
+     <div class="mobile-col-item mobile-location flex-fill">
+        <div role="button" class="selected_mobile_location h-100">
+          <a class="d-flex align-items-start" style="width: 100%">
+            <div class="loc_active text-muted flex-fill">
+              {% if request.path != '/' %}
+              <div class="main-categori-wrap">
+                <a href="#" onclick="window.history.back()" class="back-button" style="display: inline-flex; align-items: center; text-decoration: none; color: inherit;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <path d="M19 12H6m0 0l6-6m-6 6l6 6"/>
+                </svg>
+              </a>
+
+              </div>
+                {% endif %}
+            </div>
+          </a>
+        </div>
+      </div>
+  
+     
+    </div>
+    <div class="d-flex align-items-center ms-3 gap-3">
+      <a
+        href="{% url 'cart' %}"
+        class="text-dark position-relative mt-2"
+        style="font-size: 1.4rem"
+      >
+        <i class="fa fa-shopping-cart"></i>
+        <!-- Optional: Cart item count badge -->
+        <span
+          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart_color"
+        >
+          <span id="mb-hd-cart_count">{{cart_count}}</span>
+          <span class="visually-hidden">cart items</span>
+        </span>
+      </a>
+      <div class="mobile-col flex-auto right">
+        <div class="mobile-col-item mobile-cart">
+          <a
+            class="mobile-header-icon position-relative d-block ps-3"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#humburgermenu"
+          >
+            <span
+              class="bg-dark bg-opacity-75 d-inline-flex align-items-center justify-content-center rounded-circle"
+              style="height: 35px; width: 35px"
+            >
+              <i class="bi bi-person-fill lh-1 fs-4 text-white"></i>
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Middle Row: Search Bar (Sticky) -->
+  <div id="sticky-placeholder" style="height: 0"></div>
+  <div
+    class="mobile-header-section w-100"
+    style="background-color: {{ current_event.home_color }};"
+  >
+    <div
+      class="mobile-row w-100 middle-mobile-row d-flex flex-nowrap align-items-center justify-content-between px-3 py-0"
+      style="height: 60px"
+    >
+      <div class="mobile-col w-100">
+        <div class="mobile-col-item mobile-autocomplete flex-fill">
+         <div class="autocomplete_mobile_container w-100">
+            <div
+              class="autocomplete_mobile_inputgroup input-group position-relative rounded-3 overflow-hidden bg-white d-flex flex-row flex-nowrap"
+              style="
+                height: 40px;
+                border: 1px solid #eee;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.07);
+              "
+            >
+              <form action="{% url 'all_products' %}" method="get" style="width: 100%;">
+                <div class="input-group" style="width: 100%;">
+                  <span class="input-group-text bg-white border-0" style="height: 40px; display: flex; align-items: center;">
+                    <i class="fi-rs-search"></i>
+                  </span>
+                  <input
+                    type="text"
+                    name="search"
+                    id="mobile-search-input"
+                    class="form-control border-0 bg-white px-2"
+                    placeholder="Search for products, sellers and more"
+                    autocomplete="off"
+                    style="font-size: 14px; height: 40px; line-height: 40px; padding-top: 0; padding-bottom: 0;"
+                  />
+                   <input type="hidden" name="type" value="">
+                  <button type="submit" hidden></button>
+                </div>
+                
+              </form>
+              
+            </div>
+            <ul id="mobile-suggestions-list" class="dropdown-menu show" style="position: absolute; top: 105px; left: 50%;transform: translateX(-50%);  z-index: 9999; display: none;width: 92%;"></ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+        
+    {% if request.path == '/' or '/marketplace/browse/' in request.path or '/marketplace/products/category/' in request.path or '/marketplace/products/' in request.path %}
+    <div class="mobile-row w-100 bottom-mobile-row" style="height: 70px">
+      <div class="mobile-col h-100 w-100 d-flex flex-row flex-nowrap">
+        <div
+          id="mobile-header-categories"
+          class="mobile-col-item mobile-header-categories overflow-hidden small border-bottom border-opacity-10 h-100"
+          style="border-width: 0.5px !important"
+        >
+          <div
+            class="d-flex flex-row flex-nowrap text-nowrap overflow-auto px-3 h-100 mobile-header-scroll"
+            style="scroll-snap-type: x mandatory"
+          >
+            <!-- Static 'All' Category -->
+            <div
+              class="mobile-header-category-item animate text-center"
+              data-id="sample-id"
+              style="
+                min-width: 20%;
+                max-width: 20%;
+                padding: 0 5px;
+                scroll-snap-align: start;
+              "
+            >
+              <a
+                href="/marketplace/products/"
+                class="d-block text-center px-2 py-1 pb-2 position-relative overflow-hidden h-100"
+              >
+                <div
+                  class="mobile-header-category-icon d-flex justify-content-center align-items-center mb-2"
+                >
+                  <img
+                    src="{% static 'images/all.svg' %}"
+                    class="img-fluid"
+                    alt="All"
+                    style="width: 2rem; height: 2rem"
+                  />
+                </div>
+                
+                <span
+                  class="d-block text-dark mobile-header-category-title lh-1 fw-semibold text-dark ms-fs-12"
+                  >All</span
+                >
+                 {% if request.path == '/marketplace/products/' %}
+                <span class="activebar bg-dark position-absolute start-0 end-0 bottom-0" style="border-radius: 2px 2px 0px 0px; height: 2.5px;"></span>
+                {% endif %}
+              </a>
+            </div>
+
+            <!-- Dynamic Categories -->
+            {% for cat in categories_home %}
+            {% url 'browse' category_slug=cat.slug as cat_url %}
+            
+            <div
+              class="mobile-header-category-item animate text-center"
+              data-id="{{ cat.id }}"
+              style="
+                min-width: 20%;
+                max-width: 20%;
+                padding: 0 5px;
+                scroll-snap-align: start;
+              "
+            >
+              <a
+                href="{% url 'browse' category_slug=cat.slug %}"
+                class="d-block px-1 py-1 pb-2 position-relative overflow-hidden h-100"
+              >
+                <div
+                  class="mobile-header-category-icon d-flex justify-content-center align-items-center mb-2"
+                >
+              {% if cat.category_image and cat.category_image.url %}                
+                <img src="{{ cat.category_image.url }}"class="img-fluid"alt="{{ cat.category_name }}"style="width: 2rem; height: 2rem"/>
+              {% else %}
+                <img src=""class="img-fluid"alt="{{ cat.category_name }}"style="width: 2rem; height: 2rem"/>
+              {% endif %}
+                </div>
+                <span
+                  class="d-block text-dark mobile-header-category-title lh-1 fw-semibold text-dark ms-fs-12 text-truncate"
+                  style="font-size: 12px"
+                  >{{ cat.category_name }}</span
+                >
+                {% if request.path == cat_url or cat.id == current_category_id%}
+                <span class="activebar bg-dark position-absolute start-0 end-0 bottom-0" style="border-radius: 2px 2px 0px 0px; height: 2.5px;"></span>
+                {% endif %}
+              </a>
+            </div>
+
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Offcanva Slidebar -->
+<div
+  class="offcanvas offcanvas-end custom-offcanvas-zindex"
+  tabindex="-1"
+  id="humburgermenu"
+  aria-labelledby="offcanvasLabel"
+>
+  <div class="offcanvas-header border-bottom">
+    <h5 class="offcanvas-title" id="offcanvasLabel">
+      <a href="/" style="text-decoration: none">
+        <span
+          class="sidebar-logo"
+          style="font-size: 22px; font-weight: 700; color: #212529"
+          >Ratulenterprise</span
+        >
+      </a>
+    </h5>
+    <button
+      type="button"
+      class="btn-close text-reset text-dark"
+      data-bs-dismiss="offcanvas"
+      aria-label="Close"
+    ></button>
+  </div>
+  <div class="offcanvas-body p-0">
+    <div class="mobile-sidebar-wrapper">
+      <!-- 🔷 Auth Buttons -->
+      <div class="d-flex flex-column gap-2 px-3 py-3">
+        {% if user.is_authenticated %}
+        <a
+          href="{% url 'myAccount' %}"
+          class="btn small_screen_button text-uppercase fw-bold"
+          >My Account</a
+        >
+        <a
+          href="{% url 'logout' %}"
+          class="btn s-logout  fw-bold"
+        >
+          <i class="fa fa-power-off me-1"></i> Logout
+        </a>
+        {% else %}
+        <a
+          href="{% url 'login' %}"
+          class="btn fw-semibold small_screen_button"
+          style=":1rem "
+        >
+          <i class="fa fa-sign-in me-1"></i> Login
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const configs = [
+      {
+        inputId: "live-search-input",
+        listId: "suggestions-list",
+        formSelector: "#searchForm"
+      },
+      {
+        inputId: "mobile-search-input",
+        listId: "mobile-suggestions-list",
+        formSelector: ".autocomplete_mobile_container form"
+      }
+    ];
+
+    configs.forEach(({ inputId, listId, formSelector }) => {
+      const input = document.getElementById(inputId);
+      const list = document.getElementById(listId);
+      const form = document.querySelector(formSelector);
+
+      if (!input || !list || !form) return;
+
+      // Create hidden input for type (if not present)
+      let typeInput = form.querySelector("input[name='type']");
+      if (!typeInput) {
+        typeInput = document.createElement("input");
+        typeInput.type = "hidden";
+        typeInput.name = "type";
+        form.appendChild(typeInput);
+      }
+
+      // Live search on keyup
+      input.addEventListener("keyup", function () {
+        const query = input.value.trim();
+        if (!query) {
+          list.style.display = "none";
+          list.innerHTML = "";
+          return;
+        }
+
+        fetch(`/marketplace/live/search/?term=${encodeURIComponent(query)}`)
+          .then(res => res.json())
+          .then(data => {
+            const combined = [...(data.vendors || []), ...(data.products || [])];
+            list.innerHTML = "";
+
+            if (combined.length === 0) {
+              list.innerHTML = `<li class="dropdown-item text-muted">No results found</li>`;
+            } else {
+              combined.forEach(item => {
+                const li = document.createElement("li");
+                li.className = "dropdown-item";
+                const link = item.type === "vendor"
+                  ? `/marketplace/${item.vendor_slug}/`
+                  : `/marketplace/product/${item.vendor_slug}/${item.slug}`;
+                const image = item.image || "/static/images/placeholder.jpg";
+                const extra = item.type === "vendor"
+                  ? `<div class="d-flex align-items-center gap-1 text-muted" style="font-size: 13px;">
+                      ${item.name}
+                    </div><small class="text-muted">Visit Store</small>`
+                  : `<div>${item.name.length > 25 ? item.name.slice(0, 45) + '...' : item.name}</div><small>₹${item.price}</small>`;
+
+                li.innerHTML = `
+                  <a href="${link}" class="d-flex align-items-center text-dark text-decoration-none">
+                    <img src="${image}" alt="${item.name}" style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px; border-radius: 4px;">
+                    <div style="font-size: 13px;">${extra}</div>
+                  </a>`;
+                list.appendChild(li);
+              });
+            }
+
+            list.style.display = "block";
+          })
+          .catch(() => {
+            list.innerHTML = `<li class="dropdown-item text-danger">Error loading results</li>`;
+            list.style.display = "block";
+          });
+      });
+
+      // Hide on outside click
+      document.addEventListener("click", function (e) {
+        if (!input.contains(e.target) && !list.contains(e.target)) {
+          list.style.display = "none";
+        }
+      });
+
+      // Auto set `type=stores/products` before submit
+      form.addEventListener("submit", function (e) {
+        const query = input.value.trim().toLowerCase();
+        if (!query) return;
+
+        e.preventDefault();
+        fetch(`/marketplace/live/search/?term=${encodeURIComponent(query)}`)
+          .then(res => res.json())
+          .then(data => {
+            const vendors = data.vendors || [];
+            const exactVendor = vendors.find(v => v.name.toLowerCase() === query);
+            typeInput.value = exactVendor ? "stores" : "products";
+            form.submit(); // now submit
+          })
+          .catch(() => {
+            form.submit(); // fallback
+          });
+      });
+    });
+  });
+</script>
+
+
+
+
+<script>
+  // Toggle dropdown display when clicking the button
+  function toggleDropdown() {
+    const dropdown = document.getElementById("categoryDropdown");
+    dropdown.classList.toggle("show");
+
+    if (dropdown.classList.contains("show")) {
+      // Add scroll event listener only when the dropdown is open
+      window.addEventListener("scroll", closeDropdownOnScroll);
+    }
+  }
+
+  // Close the dropdown
+  function closeDropdownOnScroll() {
+    const dropdown = document.getElementById("categoryDropdown");
+    if (dropdown.classList.contains("show")) {
+      dropdown.classList.remove("show");
+      // Remove the scroll event listener to prevent unnecessary calls
+      window.removeEventListener("scroll", closeDropdownOnScroll);
+    }
+  }
+
+  // Toggle subcategory display for each category and prevent dropdown from closing
+  function toggleSubcategories(categoryId) {
+    var subcategoryDiv = document.getElementById("subcategory-" + categoryId);
+    subcategoryDiv.style.display =
+      subcategoryDiv.style.display === "none" ? "block" : "none";
+  }
+
+  // Close the dropdown if clicked outside, but ignore clicks on the dropdown content
+  window.onclick = function (event) {
+    if (
+      !event.target.matches(".dropdown button") &&
+      !event.target.matches(".dropdown-content a")
+    ) {
+      var dropdowns = document.getElementsByClassName("dropdown-content");
+      for (var i = 0; i < dropdowns.length; i++) {
+        var openDropdown = dropdowns[i];
+        if (openDropdown.classList.contains("show")) {
+          openDropdown.classList.remove("show");
+        }
+      }
+    }
+  };
+  document.addEventListener("DOMContentLoaded", function () {
+    // Mobile navbar event handling
+    const mobileMenuBtn = document.getElementById("mobileMenuOpen");
+    const mobileMenuClose = document.getElementById("mobileMenuClose");
+    const mobileMenu = document.getElementById("mobileNavbarMenu");
+    const mobileOverlay = document.getElementById("mobileNavbarOverlay");
+    function openMobileMenu() {
+      mobileMenu.classList.add("show");
+      mobileOverlay.style.display = "block";
+      document.body.style.overflow = "hidden";
+    }
+    function closeMobileMenu() {
+      mobileMenu.classList.remove("show");
+      mobileOverlay.style.display = "none";
+      document.body.style.overflow = "";
+    }
+    if (mobileMenuBtn) mobileMenuBtn.onclick = openMobileMenu;
+    if (mobileMenuClose) mobileMenuClose.onclick = closeMobileMenu;
+    if (mobileOverlay) mobileOverlay.onclick = closeMobileMenu;
+  });
+</script>

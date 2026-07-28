@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'includes/alerts.html' %}
+<style>
+   .custom-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; 
+    background-color: #ffffff; /* white background */
+    color: #777; 
+    border: 1px solid #ced4da; 
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px; 
+    user-select: none;
+    width: 220px;
+    height: 44px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+ 
+</style>
+<!-- Main Section Start -->
+<div class="main-section">
+    
+    {% include 'customers/cover.html' %}
+    <div class="page-section account-header buyer-logged-in">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                    <!-- Load the sidebar here -->
+                    {% include 'includes/c_sidebar.html' %}
+                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                    <div class="user-dashboard loader-holder shadow-lg">
+                        <div class="user-holder">
+                            
+                            <h5 class="text-uppercase pb-4">Profile Settings</h5>
+
+                            <form action="{% url 'cprofile' %}" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="form-fields-set">
+                                    <ul>
+                                        <li>
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="restaurant-info">
+                                                        <div class="img-holder">
+                                                            <ul class="foodbakery-gallery-holder">
+                                                                <li class="gal-img">
+                                                                    <div class="drag-list">
+                                                                        <div class="item-thumb">
+                                                                            {% if profile.profile_picture %}
+                                                                            <img class="thumbnail" src="{{profile.profile_picture.url}}" alt="Profile Picture">
+                                                                            {% else %}
+                                                                            <img class="thumbnail" src="{% static 'images/default-profile-new.png' %}" alt="Profile Picture">
+                                                                            {% endif %}
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="text-holder">
+                                                        <label class="custom-upload-btn" for="profile-upload" id="profileLabel">
+                                                            <i class="fas fa-upload"></i>
+                                                            Update Profile Picture
+                                                        </label>
+                                                        <input type="file" id="profile-upload" name="profile_picture" style="display:none" />
+                                                        </div>
+                                                        <label class="text-danger">{{ profile_form.profile_picture.errors }}</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="restaurant-info">
+                                                        <div class="img-holder">
+                                                            <ul class="foodbakery-gallery-holder">
+                                                                <li class="gal-img">
+                                                                    <div class="drag-list">
+                                                                        <div class="item-thumb">
+                                                                            {% if profile.cover_photo %}
+                                                                            <img class="thumbnail" src="{{profile.cover_photo.url}}" alt="Cover Photo">
+                                                                            {% else %}
+                                                                            <img class="thumbnail" src="{% static 'images/default-cover-new.png' %}" alt="Cover Photo">
+                                                                            {% endif %}
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="text-holder" >
+                                                            <label class="custom-upload-btn" for="cover-photo-upload" id="coverPhotoLabel">
+                                                                <i class="fas fa-upload"></i>
+                                                                Update Cover Photo
+                                                            </label>
+                                                            <input type="file" id="cover-photo-upload" name="cover_photo" style="display:none" />
+                                                            </div>
+                                                        <label class="text-danger">{{ profile_form.cover_photo.errors }}</label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                    <div class="field-holder">
+                                                        <label>First Name *</label>
+                                                        {{user_form.first_name}}
+                                                    </div>
+                                                    <label class="text-danger">{{ user_form.first_name.errors }}</label>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                    <div class="field-holder">
+                                                        <label>Last Name *</label>
+                                                        {{user_form.last_name}}
+                                                    </div>
+                                                    <label class="text-danger">{{ user_form.last_name.errors }}</label>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                    <div class="field-holder">
+                                                        <label>Phone Number *</label>
+                                                        {{user_form.phone_number}}
+                                                    </div>
+                                                    <label class="text-danger">{{ user_form.phone_number.errors }}</label>
+                                                </div>
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="field-holder">
+                                                        <label>Address *</label>
+                                                        {{profile_form.address}}
+                                                    </div>
+                                                    <label class="text-danger">{{ profile_form.address.errors }}</label>
+                                                </div>
+                                                
+
+                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                    <div class="field-holder">
+                                                        <label>Country *</label>
+                                                        {{profile_form.country}}
+                                                    </div>
+                                                    <label class="text-danger">{{ profile_form.country.errors }}</label>
+                                                </div>
+
+                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                    <div class="field-holder">
+                                                        <label>State *</label>
+                                                        {{profile_form.state}}
+                                                    </div>
+                                                    <label class="text-danger">{{ profile_form.state.errors }}</label>
+                                                </div>
+
+                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                    <div class="field-holder">
+                                                        <label>City *</label>
+                                                        {{profile_form.city}}
+                                                    </div>
+                                                    <label class="text-danger">{{ profile_form.city.errors }}</label>
+                                                </div>
+
+                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                    <div class="field-holder">
+                                                        <label>Pin Code *</label>
+                                                        {{profile_form.pin_code}}
+                                                    </div>
+                                                    <label class="text-danger">{{ profile_form.pin_code.errors }}</label>
+                                                </div>
+
+
+
+                                                
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <div>
+                                        <div class="field-holder">
+                                            <div class="payment-holder input-button-loader ">
+                                                <input type="submit" class="update_color" value="Update Profile">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Section End -->
+<script>
+  function setupFileInputLabel(inputId, labelId, defaultText) {
+    const input = document.getElementById(inputId);
+    const label = document.getElementById(labelId);
+
+    input.addEventListener("change", function () {
+      label.textContent = this.files[0]?.name || defaultText;
+    });
+  }
+
+  setupFileInputLabel("profile-upload", "profileLabel", "Update Profile Picture");
+  setupFileInputLabel("cover-photo-upload", "coverPhotoLabel", "Update Cover Photo");
+</script>
+
+{% endblock %}

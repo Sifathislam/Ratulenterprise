@@ -1,0 +1,42 @@
+{% load static %}
+<style>
+/* Base link styles */
+.user-nav-list ul li a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* Active link color */
+.user-nav-list ul li.active a,
+.user-nav-list ul li.active a i {
+    color: #4A90E2 !important;  /* light blue */
+}
+
+/* Disable hover color change for all links */
+.user-nav-list ul li a:hover,
+.user-nav-list ul li a:hover i {
+    color: inherit !important;
+    background: none !important;
+    text-decoration: none !important;
+}
+
+/* Make sure active links keep their color even on hover */
+.user-nav-list ul li.active a:hover,
+.user-nav-list ul li.active a:hover i {
+    color: #4A90E2 !important; /* keep light blue on hover */
+    cursor: default !important; /* optional */
+}
+
+
+</style>
+<div class="user-account-nav user-account-sidebar">
+    <div class="user-nav-list">
+        <ul>
+            <li class="{% if '/custDashboard/' == request.path or '/customer/' == request.path %}active{% endif %}"><a href="{% url 'customer' %}"><i class="icon-dashboard3"></i>Dashboard</a></li>
+            <li class="{% if '/my_orders/' in request.path or '/order_detail/' in request.path %}active{% endif %}"><a href="{% url 'customer_my_orders' %}"><i class="icon-add_shopping_cart"></i>My Orders</a></li>
+            <li class="{% if '/profile/' in request.path %}active{% endif %}"><a href="{% url 'cprofile' %}"><i class="icon-build"></i>Profile Settings</a></li>
+            {% comment %} <li class="{% if '/addresses/' in request.path %}active{% endif %}"><a href="{% url 'address_book' %}"><i class="icon-address-book"></i>Address Book</a></li> {% endcomment %}
+            <li><a class="logout-btn" href="{% url 'logout' %}"><i class="icon-log-out"></i>Signout</a></li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,524 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+<!-- Main Section Start -->
+<div class="main-section pt-5">
+    <div class="page-section">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-7 col-md-8 col-sm-8 col-xs-12">
+                    <div class="tabs-holder horizontal">
+                        <ul class="stickynav-tabs nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#home"><i class="fa fa-shopping-cart me-2"></i>Review Your Billing Address</a></li>
+                            
+                        </ul>
+                        <div class="tab-content">
+                            <div id="home" class="tab-pane in active">
+                                <div class="menu-itam-holder">
+                                    
+                                    <div id="menu-item-list-6272" class="menu-itam-list">
+                                        
+                                        <div class="billing-address">
+                                            <div><b>{{ order.name }}</b></div>
+                                            <div>{{ order.address }}</div>
+                                            <div>{{ order.city }} - {{ order.pin_code }}</div>
+                                            {% if  order.state or order.country  %}
+                                            <div>{{ order.state }} {{ order.country }}</div>
+                                            {% endif %}                                                
+                                            <div><b>Phone: </b>{{ order.phone }}</div>
+                                            <div><b>Email: </b>{{ order.email }}</div>
+                                            <div><b>Payment: </b>{{ order.payment_method }}</div>
+                                            <br>
+                                            <div><a href="{% url 'checkout' %}" class="btn update_color">Edit</a></div>
+                                            <br>
+
+                                        </div>
+                                        
+                                    </div>
+
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Your order section -->
+                <div class="col-lg-5 col-md-4 col-sm-4 col-xs-12">
+                    <div class="tabs-holder horizontal">
+                        <ul class="stickynav-tabs nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#home"><i class="icon- icon-room_service"></i>Your Order</a></li>
+                            
+                        </ul>
+                        <div class="tab-content">
+                            <div id="home" class="tab-pane in active">
+                                <div class="menu-itam-holder">
+                                    
+                                    <div>
+
+                                       <!-- Table for large screens -->
+                                    <table class="table table-borderless  d-md-table d-sm-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Image</th>
+                                                <th>Variant</th>
+                                                <th>Product</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
+                                                <th>Tax</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for item in cart_items %}
+                                            <tr>
+                                                <td>
+                                                    <div class="w-100 w-md-25">
+                                                        {% if item.product_variant_group and item.product_variant_group.image %}
+                                                            <img src="{{ item.product_variant_group.image.url }}" 
+                                                                alt="Variant Image" style="width: 50px; height: 50px; object-fit: cover;">
+                                                        {% elif item.product.image %}
+                                                            <img src="{{ item.product.image.url }}" width="40" alt="Product Image">
+                                                        {% else %}
+                                                            <img src="{% static 'images/placeholder.jpg' %}" width="40" alt="No Image Available">
+                                                        {% endif %}
+                                                        
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    {% if item.product_variant_group %}
+                                                        <div class="small mt-1">{{ item.product_variant_group|extract_variant }}</div></td>
+                                                    {% endif %}
+                                                <td><b>{{ item.product }}</b></td>
+                                                <td>
+                                                    <div class="d-md-none d-block d-flex justify-content-center gap-1">
+                                                        <span >Quantity: x</span>
+                                                        <span >{{ item.quantity }}</span>
+
+                                                    </div>  
+                                                    <span class="d-none d-md-block">{{ item.quantity }}</span>
+                                                <td>
+                                                    {% if item.product_variant_group and item.product_variant_group.price %}
+                                                        {{ item.product_variant_group.price }}
+                                                
+                                                    {% else %}
+                                                        {% if item.product.sales_price %}
+                                                            {{ item.product.sales_price }}
+                                                        {% else %}
+                                                                {{ item.product.regular_price }}
+                                                        {% endif %}
+                                                 {% endif %}
+                                                </td>
+                                                <td>{{ item.product.tax_category }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+
+                                   
+
+    <ul class="order-summary-list list-unstyled px-2">
+        <!-- Subtotal -->
+        <li class="order-summary-item d-flex justify-content-between align-items-center text-start mx-3 mb-2">
+            <span>Subtotal</span>
+            <span class="price text-end">
+                <span class="currency">₹</span>
+                <span id="subtotal">{{ subtotal }}</span>
+            </span>
+        </li>
+
+
+        {% for single_tax_dict in tax_dict %}
+            {% for key, value in single_tax_dict.tax_info.items %}
+                {% if value %}
+                    <li class="order-summary-item d-flex justify-content-between align-items-start text-start mx-3 mb-1">
+                        <div class="w-100 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                {% comment %} Tax label + product {% endcomment %}
+                                {% for item in cart_items %}
+                                    {% if item.product_variant_group and item.product_variant_group.id == single_tax_dict.product_variant_id %}
+                                        <span class="d-md-block d-none">
+                                            {{ single_tax_dict.tax_category }} ({{ key }}%) -
+                                            {{ item.product_variant_group|extract_variant }}
+                                            {{ item.product|truncatechars:10 }}
+                                        </span>
+                                        <span class="d-block d-md-none">
+                                            {{ single_tax_dict.tax_category }} ({{ key }}%) -
+                                            {{ item.product_variant_group|extract_variant }}
+                                            {{ item.product|truncatechars:10 }}
+                                        </span>
+                                    {% elif item.product.id == single_tax_dict.product_id and not single_tax_dict.product_variant_id %}
+                                        <span class="d-md-block d-non">
+                                            {{ single_tax_dict.tax_category }} ({{ key }}%) -                                          
+                                            {{ item.product|truncatechars:10 }}
+                                        </span>
+                                        <span class="d-block d-md-none">
+                                            {{ single_tax_dict.tax_category }} ({{ key }}%) -                                          
+                                            {{ item.product|truncatechars:10 }}
+                                        </span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+
+                            <div>
+                                <span class="currency">₹</span>{{ value }}
+                            </div>
+                        </div>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+
+
+        <!-- Total -->
+        <li class="order-summary-item total d-flex justify-content-between align-items-center text-start mx-3 mt-3 fw-bold">
+            <strong>TOTAL</strong>
+            <span class="price fw-bolder">
+                <span id="total">{{ grand_total }}</span>
+            </span>
+        </li>
+
+        <!-- Payment Buttons -->
+        {% if order.payment_method == 'PayPal' %}
+            <div id="paypal-button-container" class="mt-3"></div>
+        {% elif order.payment_method == 'COD' %}
+            <button id="placeOrderBtn" type="submit" class="btn update_color w-100 p-2 mt-3 mb-4" onclick="placeOrder()">Place Order</button>
+            <div id="pay-loading" class="my-4" style="display:none;"></div>
+        {% endif %}
+
+    </ul>
+
+                                </div>
+                                    
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Section End -->
+
+
+<script>
+    {% if order.payment_method == 'RazorPay' %}
+     
+    // Paypal Integraions in new way 
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+    
+        var grand_total = "{{ grand_total }}"
+        var url = "{% url 'payments' %}"
+        var order_number = "{{ order.order_number }}"
+        var items_count = "{{ items_count }}"
+        const csrftoken = getCookie('csrftoken');
+        var order_complete = "{% url 'order_complete' %}"
+        console.log('csrftoken===>', csrftoken)
+        console.log(items_count)
+    // RazorPay Payment Gateway
+    var options = {
+            "key": "{{ RZP_KEY_ID }}", // Enter the Key ID generated from the Dashboard
+            "amount": "{{ rzp_amount }}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            "currency": "INR",
+            "name": "Ratulenterprise",
+            "description": "Ratulenterprise - Multi Vendor Ecommerce Marketplace",
+            "image": "{% static 'logo/foodOnlineLogo.png' %}",
+            "order_id": "{{ rzp_order_id }}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+            "handler": function (response){
+                // alert(response.razorpay_payment_id);
+                // alert(response.razorpay_order_id);
+                // alert(response.razorpay_signature)
+                // Replace the above to show a success message within this page, e.g.
+                const element = document.getElementById('rzp_payment_button');
+                element.innerHTML = '';
+                element.innerHTML = '<h4 class="text-center"><i class="fa fa-spinner fa-spin" style="font-size:24px"></i> Please wait...</h4>';
+
+                var transaction_id = response.razorpay_payment_id
+                var payment_method = 'RazorPay'
+                var status = 'Success'
+                sendTransaction(transaction_id, payment_method, status)
+            },
+            "prefill": {
+                "name": "{{ order.name }}",
+                "email": "{{ order.email }}",
+                "contact": "{{ order.phone }}"
+            },
+            "notes": {
+                "address": "{{ order.address }}"
+            },
+            "theme": {
+                "color": "#dc3545"
+            }
+        };
+
+        var rzp1 = new Razorpay(options);
+        rzp1.on('payment.failed', function (response){
+                alert(response.error.code);
+                alert(response.error.description);
+                alert(response.error.source);
+                alert(response.error.step);
+                alert(response.error.reason);
+                alert(response.error.metadata.order_id);
+                alert(response.error.metadata.payment_id);
+        });
+    document.getElementById('rzp-button1').onclick = function(e){
+        rzp1.open();
+        e.preventDefault();
+    }
+    // RazorPay Payment Gateway
+
+    
+    // Send the data to payments view to store in the database
+    function sendTransaction(transaction_id, payment_method, status){
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {
+                'order_number': order_number,
+                'transaction_id': transaction_id,
+                'payment_method': payment_method,
+                'status': status,
+                'csrfmiddlewaretoken': csrftoken
+            },
+            success: function(response){
+                console.log('response==>', response)
+                window.location.href = order_complete +'?order_no='+response.order_number+'&trans_id='+response.transaction_id
+            }
+        })
+    }
+    
+    
+    {% elif order.payment_method == 'PayPal' %}
+    
+    
+    // Paypal Integraions in new way 
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+    
+        var grand_total = "{{ grand_total }}"
+        var url = "{% url 'payments' %}"
+        var order_number = "{{ order.order_number }}"
+        var items_count = "{{ items_count }}"
+        const csrftoken = getCookie('csrftoken');
+        var order_complete = "{% url 'order_complete' %}"
+        console.log('csrftoken===>', csrftoken)
+        console.log(items_count)
+    
+    window.paypal
+    .Buttons({
+        style: {
+            shape: "rect",
+            layout: "vertical",
+        },
+        async createOrder() {
+            try {
+                const response = await fetch("http://127.0.0.1:8000/orders/new_order/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+
+                    body: JSON.stringify({
+                        cart: [
+                            {
+                                id: order_number,
+                                quantity: items_count,
+                            },
+                            ],
+                        }),
+                    });
+                    
+                    const orderData = await response.json();
+                    
+                    if (orderData.id) {
+                        return orderData.id;
+        } else {
+            const errorDetail = orderData?.details?.[0];
+            const errorMessage = errorDetail
+            ? `${errorDetail.issue} ${errorDetail.description} (${orderData.debug_id})`
+            : JSON.stringify(orderData);
+            
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error(error);
+        resultMessage(`Could not initiate PayPal Checkout...<br><br>${error}`);
+    }
+},
+async onApprove(data, actions) {
+    try {
+        const response = await fetch(` http://127.0.0.1:8000/orders/new_order/${data.orderID}/capture/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        
+        const orderData = await response.json();
+        
+        const errorDetail = orderData?.details?.[0];
+        
+        if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
+            return actions.restart();
+        } else if (errorDetail) {
+            throw new Error(`${errorDetail.description} (${orderData.debug_id})`);
+        } else if (!orderData.purchase_units) {
+            throw new Error(JSON.stringify(orderData));
+        } else {
+            const transaction =
+            orderData?.purchase_units?.[0]?.payments?.captures?.[0] ||
+            orderData?.purchase_units?.[0]?.payments?.authorizations?.[0];
+            var transaction_id = transaction.id
+            var status = orderData.status
+            var payment_method = 'PayPal'
+            sendTransaction(transaction_id, payment_method, status);
+          console.log(
+              "Capture result",
+              orderData,
+              JSON.stringify(orderData, null, 2),
+              );
+            }
+        } catch (error) {
+        console.error(error);
+        sendTransaction(
+            `Sorry, your transaction could not be processed...<br><br>${error}`,
+            );
+        }
+    },
+})
+.render("#paypal-button-container");
+
+// Example function to show a result to the user. Your site's UI library can be used instead.
+    function sendTransaction(transaction_id, payment_method, status){
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {
+                'order_number': order_number,
+                'transaction_id': transaction_id,
+                'payment_method': payment_method,
+                'status': status,
+                'csrfmiddlewaretoken': csrftoken
+            },
+            success: function(response){
+                console.log('response==>', response)
+                window.location.href = order_complete +'?order_no='+response.order_number+'&trans_id='+response.transaction_id
+            }
+        })
+    }
+
+
+{% elif order.payment_method == 'COD' %}
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        var grand_total = "{{ grand_total }}";
+        var url = "{% url 'payments' %}";
+        var order_number = "{{ order.order_number }}";
+        var items_count = "{{ items_count }}";
+        const csrftoken = getCookie('csrftoken');
+        var order_complete = "{% url 'order_complete' %}";
+
+
+        // Function to generate a random transaction ID
+        function generateTransactionID() {
+            return 'TXN-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        }
+
+        // Place Order function that gets called on button click
+        function placeOrder() {
+            const transaction_id = generateTransactionID();
+            const payment_method = 'COD';
+            const status = 'Success'; // Set the initial status of the order.
+
+            console.log('Transaction ID:', transaction_id);
+            sendTransaction(transaction_id, payment_method, status);
+
+            const element = document.getElementById('pay-loading');
+            const place_order_btn = document.getElementById('placeOrderBtn');
+            
+            // Clear the inner HTML content
+            element.innerHTML = '';
+            place_order_btn.innerHTML = '';
+            
+            // Set display styles
+            element.style.display = 'block';  // Make the element visible
+            place_order_btn.style.display = 'none';  // Hide the paystack button
+            
+            // Add the loading spinner and message
+            element.innerHTML = '<h4 class="text-center"><i class="fa fa-spinner fa-spin"></i> Please wait...</h4>';
+        }
+
+        // Function to send the transaction details via AJAX
+        function sendTransaction(transaction_id, payment_method, status) {
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    'order_number': order_number,
+                    'transaction_id': transaction_id,
+                    'payment_method': payment_method,
+                    'status': status,
+                    'csrfmiddlewaretoken': csrftoken
+                },
+                success: function(response) {
+                    console.log('Response:', response);
+                    window.location.href = order_complete +'?order_no='+response.order_number+'&trans_id='+response.transaction_id
+                }
+            });
+        }
+
+{% endif %}
+
+
+</script>
+{% endblock %}

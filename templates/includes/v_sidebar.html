@@ -1,0 +1,49 @@
+{% load static %}
+<style>
+/* Base link styles */
+.user-nav-list ul li a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* Active link color */
+.user-nav-list ul li.active a,
+.user-nav-list ul li.active a i {
+    color: #4A90E2 !important;  /* light blue */
+}
+
+/* Disable hover color change for all links */
+.user-nav-list ul li a:hover,
+.user-nav-list ul li a:hover i {
+    color: inherit !important;
+    background: none !important;
+    text-decoration: none !important;
+}
+
+/* Make sure active links keep their color even on hover */
+.user-nav-list ul li.active a:hover,
+.user-nav-list ul li.active a:hover i {
+    color: #4A90E2 !important; /* keep light blue on hover */
+    cursor: default !important; /* optional */
+}
+
+
+</style>
+
+<div class="user-account-nav user-account-sidebar" style="background-color: #D1E8F2;">
+    <div class="user-nav-list">
+        <ul>
+            <li class="{% if '/vendorDashboard/' == request.path or '/vendor/' == request.path %}active{% endif %}"><a href="{% url 'vendorDashboard' %}"><i class="icon-dashboard3"></i>Dashboard</a></li>
+            <li class="{% if 'profile' in request.path %}active{% endif %}"><a href="{% url 'vprofile' %}"><i class="icon-building"></i>My Store</a></li>
+            <li class="{% if '/manage-categories/' in request.path %}active{% endif %}"><a href="{% url 'category_builder' %}"><i class="fa fa-list-alt"></i>Categories</a></li>
+            <li class="{% if '/media-library/' in request.path %}active{% endif %}"><a href="{% url 'media_library' %}"><i class="fa fa-photo"></i>Media Library</a></li>
+            <li class="{% if 'products/' in request.path or 'product-variant/' in request.path %}active{% endif %}"><a href="{% url 'vendor_products_list' %}"><i class="icon-product-hunt"></i>Inventory</a></li>
+            <li class="{% if 'import-your-data/' in request.path %}active{% endif %}"><a href="{% url 'import_your_data' %}"><i class="icon-cloud-download"></i>Import Your Data</a></li>
+            <li class="{% if 'opening-hour' in request.path %}active{% endif %}"><a href="{% url 'opening_hours' %}"><i class="icon-menu5"></i>Opening Hours</a></li>
+            <li class="{% if '/my_orders/' in request.path or 'order_detail' in request.path %}active{% endif %}"><a href="{% url 'vendor_my_orders' %}"><i class="icon-add_shopping_cart"></i>Orders</a></li>
+            <li class="{% if '/pos/' in request.path %}active{% endif %}"><a href="{% url 'pos_home' %}" target="_blank"><i class="fa fa-credit-card"></i>POS</a></li>
+            <!-- <li><a href="restaurant-earnings.html"><i class="icon-money"></i>Earnings</a></li> -->
+            <li><a class="logout-btn" href="{% url 'logout' %}"><i class="icon-log-out"></i>Signout</a></li>
+        </ul>
+    </div>
+</div>
