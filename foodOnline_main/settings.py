@@ -11,17 +11,19 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-from decouple import config
-import os, socket
+from decouple import config, Csv
+import os
 from django import conf
 import platform
-
-ip_address = socket.gethostbyname('localhost')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-CSRF_TRUSTED_ORIGINS = [f"http://{ip_address}","http://127.0.0.1"]
+# Comma-separated list, e.g. "127.0.0.1,localhost,your-droplet-ip,yourdomain.com"
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv())
+
+# Comma-separated list of full origins, e.g. "http://127.0.0.1,https://yourdomain.com"
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='http://127.0.0.1', cast=Csv())
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -31,8 +33,6 @@ SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', cast=bool)
-
-ALLOWED_HOSTS = ['172.105.253.185', '127.0.0.1']
 
 
 # Application definition
