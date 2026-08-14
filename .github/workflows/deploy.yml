@@ -46,6 +46,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Debug — fingerprint the DO_SSH_KEY secret
+        run: |
+          cat > /tmp/deploy_key <<'EOF'
+          ${{ secrets.DO_SSH_KEY }}
+          EOF
+          echo "--- byte length ---"
+          wc -c < /tmp/deploy_key
+          echo "--- fingerprint ---"
+          ssh-keygen -lf /tmp/deploy_key || echo "ssh-keygen could not parse this key"
+          rm -f /tmp/deploy_key
+
       - name: Copy deploy files to droplet
         uses: appleboy/scp-action@v0.1.7
         with:
