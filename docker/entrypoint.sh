@@ -12,5 +12,9 @@ python manage.py collectstatic --noinput --clear
 
 exec gunicorn foodOnline_main.wsgi:application \
     --bind 0.0.0.0:8000 \
-    --workers 3 \
+    --worker-class gthread \
+    --workers 1 \
+    --threads 4 \
+    --max-requests 500 \
+    --max-requests-jitter 50 \
     --timeout 120
