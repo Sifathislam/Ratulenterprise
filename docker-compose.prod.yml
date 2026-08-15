@@ -35,10 +35,23 @@ services:
       - static_volume:/app/static:ro
       - media_volume:/app/media:ro
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - certbot_www:/var/www/certbot:ro
+      - certbot_certs:/etc/letsencrypt:ro
     depends_on:
       - web
+
+  certbot:
+    image: certbot/certbot
+    # Does nothing on `up`/`start` — only ever invoked manually via
+    # `docker compose run --rm certbot ...` to request or renew certs.
+    entrypoint: "true"
+    volumes:
+      - certbot_www:/var/www/certbot
+      - certbot_certs:/etc/letsencrypt
 
 volumes:
   postgres_data:
   static_volume:
   media_volume:
+  certbot_www:
+  certbot_certs:
