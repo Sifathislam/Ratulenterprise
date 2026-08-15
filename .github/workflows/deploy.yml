@@ -64,6 +64,7 @@ jobs:
           username: ${{ secrets.DO_USER }}
           key: ${{ secrets.DO_SSH_KEY }}
           port: ${{ secrets.DO_PORT }}
+          command_timeout: 30m
           script: |
             set -e
             cd ~/ratulenterprise
