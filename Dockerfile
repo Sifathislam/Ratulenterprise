@@ -5,8 +5,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# System deps: GDAL/GEOS/PROJ for GeoDjango, libpq for Postgres, build-essential
-# for any pure-Python packages that need to compile on install.
+# TEMPORARY: GDAL/GEOS/PROJ are still here for one more deploy, so that the
+# still-on-disk pre-squash migrations (which import django.contrib.gis) can
+# be imported one last time while this deploy's migrate applies the pending
+# location-field removal. Once that's applied in production, the old
+# migration files get deleted and this whole block comes out for real.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gdal-bin \

@@ -13,8 +13,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 from decouple import config, Csv
 import os
-from django import conf
 import platform
+from django import conf
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'vendor',
     'menu',
     'marketplace',
-    'django.contrib.gis',
+    'django.contrib.gis',  # TEMPORARY: still needed for this deploy's migration to drop the old PointField column; comes out in the next deploy once that's applied.
     'customers',
     'orders',
 
@@ -128,7 +128,9 @@ WSGI_APPLICATION = 'foodOnline_main.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.postgresql',
+        # TEMPORARY: stays on the GIS-aware backend until this deploy's
+        # migration actually drops the old PointField column — switches to
+        # plain 'django.db.backends.postgresql' in the next deploy.
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': config('DB_NAME'),
         'USER': config('DB_USER'),
@@ -247,28 +249,19 @@ DEFAULT_FROM_EMAIL = 'Ratulenterprise <django.foodonline@gmail.com>'
 
 GOOGLE_API_KEY = config('GOOGLE_API_KEY')
 
-# Windows
-# GDAL/GEOS/PROJ are provided by the PostGIS bundle installed alongside PostgreSQL
-# (Stack Builder ships libgdal/libgeos/libproj under <PostgreSQL>/bin), so we point
-# GeoDjango's ctypes loaders straight at that install instead of requiring a separate
-# OSGeo4W/conda GDAL setup. Override via .env if PostgreSQL is installed elsewhere.
+# TEMPORARY (Windows local dev only): lets GeoDjango find GDAL/GEOS for this
+# one transitional deploy. Linux/Docker doesn't need this block since apt-
+# installed GDAL is auto-discoverable there. Removed entirely in the next
+# deploy once django.contrib.gis comes out for good.
 if platform.system() == "Windows":
     PG_BIN = config('PG_BIN_PATH', default=r'C:\Program Files\PostgreSQL\17\bin')
-    PG_PROJ_DATA = config(
+    os.environ['PATH'] = PG_BIN + ';' + os.environ['PATH']
+    os.environ['PROJ_LIB'] = config(
         'PROJ_LIB_PATH',
         default=r'C:\Program Files\PostgreSQL\17\share\contrib\postgis-3.5\proj',
     )
-    os.environ['PATH'] = PG_BIN + ';' + os.environ['PATH']
-    os.environ['PROJ_LIB'] = PG_PROJ_DATA
     GDAL_LIBRARY_PATH = config('GDAL_LIBRARY_PATH', default=os.path.join(PG_BIN, 'libgdal-35.dll'))
     GEOS_LIBRARY_PATH = config('GEOS_LIBRARY_PATH', default=os.path.join(PG_BIN, 'libgeos_c.dll'))
-else:
-    pass
-
-# MacOS
-# if DEBUG == True:
-#     GDAL_LIBRARY_PATH = '/opt/homebrew/Cellar/gdal/3.8.4_3/lib/libgdal.dylib'
-#     GEOS_LIBRARY_PATH = '/opt/homebrew/Cellar/geos/3.12.1/lib/libgeos_c.dylib'
 
 PAYPAL_CLIENT_ID = config('PAYPAL_CLIENT_ID')
 PAYPAL_CLIENT_SECRET = config('PAYPAL_CLIENT_SECRET')
@@ -279,13 +272,7 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
 RZP_KEY_ID = config('RZP_KEY_ID')
 RZP_KEY_SECRET = config('RZP_KEY_SECRET')
 
-
-# os.environ['PATH'] = os.path.join(BASE_DIR, 'env/Lib/site-packages/osgeo') + ';' + os.environ['PATH']
-# os.environ['PROJ_LIB'] = os.path.join(BASE_DIR, 'env/Lib/site-packages/osgeo/data/proj') + ';' + os.environ['PATH']
-# GDAL_LIBRARY_PATH = os.path.join(BASE_DIR, 'env/Lib/site-packages/osgeo/gdal.dll')
-
-
-RECEIPT_CHAR_COUNT = int(config('RECEIPT_CHAR_COUNT', 32)) 
+RECEIPT_CHAR_COUNT = int(config('RECEIPT_CHAR_COUNT', 32))
 STORE_NAME = config('STORE_NAME', "STORE NAME")  #Can not be more than RECEIPT_CHAR_COUNT 
 STORE_ADDRESS = config('STORE_ADDRESS', "STORE ADDRESS")
 STORE_PHONE = config('STORE_PHONE', "")
