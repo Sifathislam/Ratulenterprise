@@ -69,6 +69,9 @@ class ProductForm(forms.ModelForm):
         else:
             self.fields['subcategory'].queryset = Category.objects.none()
 
+        # Not required - Product.save() fills in a default "No Tax" category when left blank
+        self.fields['tax_category'].required = False
+
     # def clean_image(self):
     #     image = self.cleaned_data.get('image')
     #     if image:
@@ -111,6 +114,9 @@ class EditProductForm(forms.ModelForm):
         else:
             # Set subcategory choices to none initially
             self.fields['subcategory'].queryset = Category.objects.none()
+
+        # Not required - Product.save() fills in a default "No Tax" category when left blank
+        self.fields['tax_category'].required = False
 
 
 class FoodItemForm(forms.ModelForm):

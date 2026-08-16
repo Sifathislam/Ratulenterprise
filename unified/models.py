@@ -96,6 +96,14 @@ class Product(models.Model):
         return self.product_name
 
     def save(self, *args, **kwargs):
+        # Automatically set tax_category to a default "No Tax" row if not set
+        # (the field is required at the DB level, so this must always resolve
+        # to a real row rather than None)
+        if not self.tax_category_id:
+            self.tax_category, _ = TaxCategory.objects.get_or_create(
+                tax_category="No Tax", tax_percentage=0
+            )
+
         # Automatically set the deposit_category to "Clickmall" if not set
         if not self.deposit_category:
             self.deposit_category = DepositCategory.objects.filter(deposit_category="Clickmall").first()
