@@ -22,6 +22,12 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv(
 
 # Comma-separated list of full origins, e.g. "http://127.0.0.1,https://yourdomain.com"
 CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='http://127.0.0.1', cast=Csv())
+
+# Cloudflare (or any reverse proxy) always terminates TLS with the visitor
+# before reaching us, even when it then talks plain HTTP to this origin.
+# nginx forwards that as X-Forwarded-Proto, so Django can correctly tell
+# these requests are secure (needed for CSRF/session cookie behavior).
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
  
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
