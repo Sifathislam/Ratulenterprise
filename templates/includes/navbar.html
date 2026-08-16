@@ -316,10 +316,12 @@
         <div class="d-flex align-items-center gap-4 flex-shrink-0">
           <!-- Logo -->
           <div class="logo logo-width-1">
-            <a href="/" style="text-decoration: none"
-              ><span style="font-size: 28px; font-weight: 700; color: #212529"
-                >Ratulenterprise</span
-            ></a>
+            <a href="/"
+              ><img
+                src="{% static 'logo/ratulenterprise-logo.png' %}"
+                alt="Ratulenterprise"
+                style="height: 60px"
+            /></a>
           </div>
         </div>
 
@@ -402,10 +404,12 @@
         class="container-fluid d-flex align-items-center justify-content-between"
       >
         <div class="logo">
-          <a href="/" style="text-decoration: none"
-            ><span style="font-size: 22px; font-weight: 700; color: #212529"
-              >Ratulenterprise</span
-          ></a>
+          <a href="/"
+            ><img
+              src="{% static 'logo/ratulenterprise-logo.png' %}"
+              alt="Ratulenterprise"
+              style="height: 44px"
+          /></a>
         </div>
         <div>
           {% if user.is_authenticated %}
@@ -432,10 +436,12 @@
     <div class="navbar-mobile-menu" id="mobileNavbarMenu">
       <div class="navbar-mobile-top">
         <div class="logo">
-          <a href="/" style="text-decoration: none"
-            ><span style="font-size: 20px; font-weight: 700; color: #212529"
-              >Ratulenterprise</span
-          ></a>
+          <a href="/"
+            ><img
+              src="{% static 'logo/ratulenterprise-logo.png' %}"
+              alt="Ratulenterprise"
+              style="height: 40px"
+          /></a>
         </div>
         <button
           class="btn btn-link"
@@ -711,12 +717,13 @@
 >
   <div class="offcanvas-header border-bottom">
     <h5 class="offcanvas-title" id="offcanvasLabel">
-      <a href="/" style="text-decoration: none">
-        <span
+      <a href="/">
+        <img
+          src="{% static 'logo/ratulenterprise-logo.png' %}"
+          alt="Ratulenterprise"
           class="sidebar-logo"
-          style="font-size: 22px; font-weight: 700; color: #212529"
-          >Ratulenterprise</span
-        >
+          style="height: 44px"
+        />
       </a>
     </h5>
     <button
