@@ -7,8 +7,8 @@ __pycache__/
 .gitignore
 .env
 .env.*
-media/
-static/
+/media/
+/static/
 .DS_Store
 *.md
 .github/
