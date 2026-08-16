@@ -7130,8 +7130,7 @@ h6.post-title {
 }
 
 .logo.logo-width-1 a img {
-  width: 180px;
-  min-width: 180px;
+  width: 100px;
 }
 
 .search-style-1 form {
@@ -11325,8 +11324,7 @@ footer .hotline img {
             transform: translateX(-50%);
   }
   .logo.logo-width-1 a img {
-    width: 150px;
-    min-width: 150px;
+    width: 100px;
   }
   .header-bottom {
     padding: 20px 0;

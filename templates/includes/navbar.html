@@ -39,11 +39,13 @@
   .logout-icon {
     font-size: 20px;
   }
-  /* This Design for the Become a seller button  */
+  /* Login button styling (previously shared with the removed "Become a Seller" button) */
   .Become_a_seller_btn {
-    line-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    line-height: normal !important;
     border-radius: 5px !important;
-    padding: 0 20px !important;
+    padding: 8px 20px !important;
     font-family: "Quicksand", sans-serif !important;
     font-size: 16px !important;
   }
@@ -114,7 +116,7 @@
       margin-bottom: 1.5rem;
     }
     .navbar-mobile-top .logo img {
-      height: 55px;
+      width: 100px;
     }
     .mobile-category-btn {
       display: block;
@@ -190,7 +192,7 @@
     }
 
     .sidebar-logo {
-      height: 55px;
+      width: 100px;
     }
 
     .offcanvas.offcanvas-end {
@@ -308,7 +310,7 @@
     style="box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15)"
   >
     <!-- ... Desktop navbar unchanged ... -->
-    <div class="container-fluid">
+    <div class="container">
       <div
         class="d-flex align-items-center justify-content-between flex-wrap gap-3"
       >
@@ -320,7 +322,7 @@
               ><img
                 src="{% static 'logo/ratulenterprise-logo.png' %}"
                 alt="Ratulenterprise"
-                style="height: 60px"
+                style="width: 100px"
             /></a>
           </div>
         </div>
@@ -401,14 +403,14 @@
       style="background: #fff; border-bottom: 1px solid #ececec; padding: 7px 0"
     >
       <div
-        class="container-fluid d-flex align-items-center justify-content-between"
+        class="container d-flex align-items-center justify-content-between"
       >
         <div class="logo">
           <a href="/"
             ><img
               src="{% static 'logo/ratulenterprise-logo.png' %}"
               alt="Ratulenterprise"
-              style="height: 44px"
+              style="width: 100px"
           /></a>
         </div>
         <div>
@@ -440,7 +442,7 @@
             ><img
               src="{% static 'logo/ratulenterprise-logo.png' %}"
               alt="Ratulenterprise"
-              style="height: 40px"
+              style="width: 100px"
           /></a>
         </div>
         <button
@@ -722,7 +724,6 @@
           src="{% static 'logo/ratulenterprise-logo.png' %}"
           alt="Ratulenterprise"
           class="sidebar-logo"
-          style="height: 44px"
         />
       </a>
     </h5>
