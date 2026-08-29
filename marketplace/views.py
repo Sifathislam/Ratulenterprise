@@ -34,7 +34,7 @@ from collections import defaultdict
 from django.forms.models import model_to_dict
 from .utils import get_matching_variant_group,get_variant_combinations
 from django.core.serializers.json import DjangoJSONEncoder
-from .filters import PRICE_CHOICES, GENDER_CHOICES, DISCOUNT_CHOICES,GENDER_ALIAS_MAP
+from .filters import PRICE_CHOICES, DISCOUNT_CHOICES
 from django.db.models.functions import Lower
 from django.db.models import F, ExpressionWrapper, FloatField
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -74,10 +74,8 @@ def vendor_detail(request, vendor_slug, category_id=None, subcategory_id=None):
     search_query = request.GET.get('search', None)
     sort_type = request.GET.get('sort', None)
     price = request.GET.get('price', None)
-    gender = request.GET.get('gender', None)
     discount = request.GET.get('discount', None)
     brand = request.GET.get('brand', None)
-    size = request.GET.get('size', None)
     color = request.GET.get('color', None)
 
     # Annotate product count for each category
@@ -148,33 +146,6 @@ def vendor_detail(request, vendor_slug, category_id=None, subcategory_id=None):
             attr_value_lower=brand.lower()
         ).values_list("product_id", flat=True)
         products = products.filter(id__in=brand_ids)
-
-    if gender:
-        matched_aliases = None
-        for key, aliases in GENDER_ALIAS_MAP.items():
-            if gender.lower() in [a.lower() for a in aliases] or gender.lower() == key.lower():
-                matched_aliases = [a.lower() for a in aliases]
-                break
-
-        if matched_aliases:
-            gender_product_ids = ProductAttributeValue.objects.annotate(
-                value_lower=Lower("value")
-            ).filter(
-                attribute__name__iexact="gender",
-                value_lower__in=matched_aliases
-            ).values_list("product_id", flat=True)
-
-            products = products.filter(id__in=gender_product_ids)
-    # Filter by size (variant attribute)
-    if size:
-        size_ids = VariantAttributeValue.objects.annotate(
-            attr_name_lower=Lower('attribute__name'),
-            attr_value_lower=Lower('value'),
-        ).filter(
-            attr_name_lower='size',
-            attr_value_lower=size.lower(),
-        ).values_list("product_id", flat=True)
-        products = products.filter(id__in=size_ids)
 
     # Filter by color (variant attribute)
     if color:
@@ -311,16 +282,6 @@ def vendor_detail(request, vendor_slug, category_id=None, subcategory_id=None):
         .order_by("-count")  # Most used first
     )
     color_values = [item["normalized_color"] for item in most_used_colors]
-    most_used_sizes = (
-        VariantAttributeValue.objects
-        .filter(attribute__name__iexact="size",product__vendor=vendor)
-        .annotate(normalized_size=Lower("value"))
-        .values("normalized_size")
-        .annotate(count=Count("id"))
-        .order_by("-count")  # Most used first
-    )
-    size_values = [item["normalized_size"] for item in most_used_sizes]
-
 
     context = {
         'vendor': vendor,
@@ -335,11 +296,9 @@ def vendor_detail(request, vendor_slug, category_id=None, subcategory_id=None):
         'cart_items': cart_items,
         'total_vendor_products': products,
         'PRICE_CHOICES': PRICE_CHOICES,
-        'DISCOUNT_CHOICES': DISCOUNT_CHOICES, 
-        'GENDER_CHOICES': GENDER_CHOICES,
+        'DISCOUNT_CHOICES': DISCOUNT_CHOICES,
         'brand_values': brand_values,
         'color_values': color_values,
-        'size_values': size_values,
         "is_filter_active": bool(request.GET) or category_id or subcategory_id,
         "selected_category": category_id or subcategory_id,
 
@@ -1003,10 +962,8 @@ def All_products(request, category_id=None, subcategory_id=None):
     store_type = request.GET.get('store_type', None)
     sort_type = request.GET.get('sort', None)
     price = request.GET.get('price', None)
-    gender = request.GET.get('gender', None)
     discount = request.GET.get('discount', None)
     brand = request.GET.get('brand', None)
-    size = request.GET.get('size', None)
     color = request.GET.get('color', None)
     search_type = request.GET.get('type', 'products')
 
@@ -1111,33 +1068,6 @@ def All_products(request, category_id=None, subcategory_id=None):
                 attr_value_lower=brand.lower()
             ).values_list("product_id", flat=True)
             products = products.filter(id__in=brand_ids)
-
-        if gender:
-            matched_aliases = None
-            for key, aliases in GENDER_ALIAS_MAP.items():
-                if gender.lower() in [a.lower() for a in aliases] or gender.lower() == key.lower():
-                    matched_aliases = [a.lower() for a in aliases]
-                    break
-
-            if matched_aliases:
-                gender_product_ids = ProductAttributeValue.objects.annotate(
-                    value_lower=Lower("value")
-                ).filter(
-                    attribute__name__iexact="gender",
-                    value_lower__in=matched_aliases
-                ).values_list("product_id", flat=True)
-
-                products = products.filter(id__in=gender_product_ids)
-        # Filter by size (variant attribute)
-        if size:
-            size_ids = VariantAttributeValue.objects.annotate(
-                attr_name_lower=Lower('attribute__name'),
-                attr_value_lower=Lower('value')
-            ).filter(
-                attr_name_lower='size',
-                attr_value_lower=size.lower()
-            ).values_list("product_id", flat=True)
-            products = products.filter(id__in=size_ids)
 
         # Filter by color (variant attribute)
         if color:
@@ -1273,15 +1203,6 @@ def All_products(request, category_id=None, subcategory_id=None):
             .order_by("-count")  # Most used first
         )
         color_values = [item["normalized_color"] for item in most_used_colors]
-        most_used_sizes = (
-            VariantAttributeValue.objects
-            .filter(attribute__name__iexact="size")
-            .annotate(normalized_size=Lower("value"))
-            .values("normalized_size")
-            .annotate(count=Count("id"))
-            .order_by("-count")  # Most used first
-        )
-        size_values = [item["normalized_size"] for item in most_used_sizes]
 
         context.update({
             'products': page_obj,
@@ -1291,11 +1212,9 @@ def All_products(request, category_id=None, subcategory_id=None):
             'current_category_id': category_id,
             'total_vendor_products': products,
             'PRICE_CHOICES': PRICE_CHOICES,
-            'DISCOUNT_CHOICES': DISCOUNT_CHOICES, 
-            'GENDER_CHOICES': GENDER_CHOICES,
+            'DISCOUNT_CHOICES': DISCOUNT_CHOICES,
             'brand_values': brand_values,
             'color_values': color_values,
-            'size_values': size_values,
             "is_filter_active": bool(request.GET) or category_id or subcategory_id,
             "selected_category": category_id or subcategory_id,
         })

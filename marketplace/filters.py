@@ -17,17 +17,3 @@ DISCOUNT_CHOICES = [
     ('50-59', '50 - 59% Off'),
     ('60+', '60% Off or more'),
 ]
-GENDER_CHOICES = [
-    ('men', 'Men'),
-    ('women', 'Women'),
-    ('unisex', 'Unisex'),
-    ('kids', 'Kids'),
-]
-
-
-GENDER_ALIAS_MAP = {
-    'men': ['men', 'man', 'male','boys','boy', 'gentlemen', 'gents', 'guy', 'guys'],
-    'women': ['women', 'woman', 'female', 'lady','wemen','weman','ladies', 'girl', 'girls',],
-    'unisex': ['unisex','unisexed', 'unisexes', 'both', 'all','others','other'],
-    'kids': ['kids', 'child', 'children', 'kid', 'childs', 'children', 'toddler', 'toddlers', 'teen', 'teens', 'youth', 'youths'],
-}

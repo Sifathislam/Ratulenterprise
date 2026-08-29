@@ -574,35 +574,6 @@
                                     </form>
                                 </div>
                             </div>
-                            <!-- Gender Filter -->
-                            <div class="sidebar-dropdown {% if request.GET.gender %}open{% endif %}" id="dropdown-gender">
-                                <button class="dropdown-header" type="button">
-                                    Gender
-                                    <span class="chevron"><i class="fa fa-chevron-down"></i></span>
-                                </button>
-                                <div class="dropdown-content-list">
-                                    {% if request.GET.gender %}
-                                        <div class="text-end">
-                                        <a href="{{ request|remove_query_param:'gender' }}" class="text-danger text-decoration-none">Clear</a>
-                                        </div>
-                                    {% endif %}
-                                    <form id="gender-filter-form-m">
-                                        <ul class="filter-radio-list">
-                                            {% for val, label in GENDER_CHOICES %}
-                                            <li>
-                                                <label>
-                                                    <input type="radio" name="gender" value="{{ val }}"
-                                                        {% if request.GET.gender == val %}checked{% endif %}
-                                                        onchange="updateFilters('gender-filter-form-m')"
-                                                        style="width: 13px; height: 13px;">
-                                                    {{ label }}
-                                                </label>
-                                            </li>
-                                            {% endfor %}
-                                        </ul>
-                                    </form>
-                                </div>
-                            </div>
                         {% if brand_values|length > 0 %}
                              <!-- Brand Filter -->
                              <div class="sidebar-dropdown {% if request.GET.brand %}open{% endif %}" id="dropdown-brand-m">
@@ -637,41 +608,6 @@
                                     </div>
                                 </div>
                         {% endif %}
-
-                            {% if size_values|length > 0 %}
-                            <!-- Size Filter -->
-                                  <div class="sidebar-dropdown {% if request.GET.size %}open{% endif %}" id="dropdown-size-m">
-                                    <button class="dropdown-header" type="button">
-                                        Sizes
-                                        <span class="chevron"><i class="fa fa-chevron-down"></i></span>
-                                    </button>
-                                    <div class="dropdown-content-list">
-                                          {% if request.GET.size %}
-                                            <div class="text-end">
-                                            <a href="{{ request|remove_query_param:'size' }}" class="text-danger text-decoration-none">Clear</a>
-                                            </div>
-                                        {% endif %}
-                                        <form id="size-filter-form-m">
-                                            <ul class="filter-radio-list" id="size-filter-list-m">
-                                                {% for val in size_values %}
-                                                <li class="size-item-m {% if forloop.counter > 10 %}hidden{% endif %}">
-                                                    <label>
-                                                        <input type="radio" name="size" value="{{ val }}"
-                                                            {% if request.GET.size == val %}checked{% endif %}
-                                                            onchange="updateFilters('size-filter-form-m')"
-                                                            style="width: 13px; height: 13px;">
-                                                        {{ val|capfirst }}
-                                                    </label>
-                                                </li>
-                                                {% endfor %}
-                                            </ul>
-                                            {% if size_values|length > 10 %}
-                                            <button type="button" id="toggle-size-btn-m" class="filter-toggle-btn">Show more</button>
-                                            {% endif %}
-                                        </form>
-                                    </div>
-                                </div>
-                            {% endif %}
 
                             <!-- Color Filter -->
                         
@@ -1045,35 +981,6 @@
                                     </form>
                                 </div>
                             </div>
-                            <!-- Gender Filter -->
-                            <div class="sidebar-dropdown  {% if request.GET.gender %}open{% endif %}" id="dropdown-gender">
-                                <button class="dropdown-header" type="button">
-                                    Gender
-                                    <span class="chevron"><i class="fa fa-chevron-down"></i></span>
-                                </button>
-                                <div class="dropdown-content-list">
-                                      {% if request.GET.gender %}
-                                        <div class="text-end">
-                                        <a href="{{ request|remove_query_param:'gender' }}" class="text-danger text-decoration-none">Clear</a>
-                                        </div>
-                                    {% endif %}
-                                    <form id="gender-filter-form">
-                                        <ul class="filter-radio-list">
-                                            {% for val, label in GENDER_CHOICES %}
-                                            <li>
-                                                <label>
-                                                    <input type="radio" name="gender" value="{{ val }}"
-                                                        {% if request.GET.gender == val %}checked{% endif %}
-                                                        onchange="updateFilters('gender-filter-form')"
-                                                        style="width: 13px; height: 13px;">
-                                                    {{ label }}
-                                                </label>
-                                            </li>
-                                            {% endfor %}
-                                        </ul>
-                                    </form>
-                                </div>
-                            </div>
                         {% if brand_values|length > 0 %}
                              <!-- Brand Filter -->
                             <div class="sidebar-dropdown {% if request.GET.brand %}open{% endif %}" id="dropdown-brand">
@@ -1108,42 +1015,6 @@
                                     </div>
                                 </div>
                         {% endif %}
-
-                            {% if size_values|length > 0 %}
-                            <!-- Size Filter -->
-                            <div class="sidebar-dropdown {% if request.GET.size %}open{% endif %}" id="dropdown-size">
-                                <button class="dropdown-header" type="button">
-                                    Sizes
-                                    <span class="chevron"><i class="fa fa-chevron-down"></i></span>
-                                </button>
-                                <div class="dropdown-content-list">
-                                      {% if request.GET.size %}
-                                            <div class="text-end">
-                                            <a href="{{ request|remove_query_param:'size' }}" class="text-danger text-decoration-none">Clear</a>
-                                            </div>
-                                        {% endif %}
-                                    <form id="size-filter-form">
-                                        <ul class="filter-radio-list" id="size-filter-list">
-                                            {% for val in size_values %}
-                                            <li class="size-item {% if forloop.counter > 10 %}hidden{% endif %}">
-                                                <label>
-                                                    <input type="radio" name="size" value="{{ val }}"
-                                                        {% if request.GET.size == val %}checked{% endif %}
-                                                        onchange="updateFilters('size-filter-form')"
-                                                        style="width: 13px; height: 13px;">
-                                                    {{ val|capfirst }}
-                                                </label>
-                                            </li>
-                                            {% endfor %}
-                                        </ul>
-                                        {% if size_values|length > 10 %}
-                                        <button type="button" id="toggle-size-btn" class="filter-toggle-btn">Show more</button>
-                                        {% endif %}
-                                    </form>
-                                </div>
-                            </div>
-
-                            {% endif %}
 
                             <!-- Color Filter -->
                         
@@ -1372,11 +1243,9 @@ function setupToggle(buttonId, itemClass) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    setupToggle('toggle-size-btn', 'size-item');
     setupToggle('toggle-color-btn', 'color-item');
-    setupToggle('toggle-brand-btn', 'brand-item'); 
+    setupToggle('toggle-brand-btn', 'brand-item');
     setupToggle('toggle-brand-btn-m', 'brand-item-m');
-    setupToggle('toggle-size-btn-m', 'size-item-m');
     setupToggle('toggle-color-btn-m', 'color-item-m');
 });
 </script>
