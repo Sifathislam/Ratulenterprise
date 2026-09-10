@@ -9,14 +9,27 @@
   position: relative;
 }
 
+.product-content-wrap {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 6px;
+}
 
+.product-info-left {
+  flex: 1 1 auto;
+  min-width: 0;
+}
 
+.product-info-right {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+}
 
-.product-img-wrap .button-add-to-cart {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  z-index: 2;
+.product-info-right .button-add-to-cart {
+  position: static;
+  display: inline-block;
   padding: 3px 11px;
   font-size: 12px;
   background-color: #1b216a;
@@ -25,6 +38,7 @@
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .category-item {
@@ -86,10 +100,10 @@
 	padding-left: 5px;
 	 padding-right: 5px;
   }
-  .quantity-box {
-    position: absolute;
-    bottom: 0;
-    right: 0;
+  .product-info-right .quantity-box {
+    position: static;
+    display: flex;
+    align-items: center;
     z-index: 2;
     font-size: 12px;
     background-color: #ed3595; /* or #f53ca4 */
@@ -98,6 +112,7 @@
     font-weight: bold;
     color: #ffdff0;
     gap: 8px;
+    white-space: nowrap;
 }
 
 .quantity-box a {
@@ -236,8 +251,28 @@
                       <img class="product-img" src="{% static 'images/placeholder.jpg' %}" alt="No image available" />
                     </a>
                   {% endif %}
+                </div>
+									{% if product.get_discount_percentage > 0 %}
+										<div class="product-badges product-badges-position product-badges-mrg">
+											<span class="hot">{{product.get_discount_percentage}}%</span>
+										</div>
+									{% endif %}
+								</div>
+								<div class="product-content-wrap">
+									<div class="product-info-left">
+										<div class="product-category">
+											<small class="text-muted" style="font-size: 12px;">{{product.category}}</small>
+										</div>
+										<h2><a href="{% url 'view_product' product.vendor.vendor_slug product.slug %}">{{product.product_name | truncatechars:30}}</a></h2>
 
-                    <div>
+										<div>
+											<div class="product-price">
+												<span>৳{{ product.sales_price|floatformat:0 }}</span>
+												<span class="old-price">৳{{ product.regular_price|floatformat:0 }}</span>
+											</div>
+										</div>
+									</div>
+									<div class="product-info-right">
                       {% if product.variants and product.variants.all|length > 0 %}
                       <!-- ADD button -->
                        <a href="{% url 'view_product' product.vendor.vendor_slug product.slug %}" class="button-add-to-cart text-white update_color">
@@ -271,26 +306,6 @@
                     </div>
                     {% endif %}
                   </div>
-                </div>
-									{% if product.get_discount_percentage > 0 %}
-										<div class="product-badges product-badges-position product-badges-mrg">
-											<span class="hot">{{product.get_discount_percentage}}%</span>
-										</div>
-									{% endif %}
-								</div>
-								<div class="product-content-wrap">
-									<div class="product-category">
-										<small class="text-muted" style="font-size: 12px;">{{product.category}}</small>
-									</div>
-									<h2><a href="{% url 'view_product' product.vendor.vendor_slug product.slug %}">{{product.product_name | truncatechars:30}}</a></h2>
-									
-									<div>
-										<div class="product-price">
-											<span>৳{{ product.sales_price|floatformat:0 }}</span>
-											<span class="old-price">৳{{ product.regular_price|floatformat:0 }}</span>
-										</div>
-									</div>
-									 
 								</div>
 							</div>
 						</div>
@@ -409,8 +424,25 @@
                         <img class="product-img" src="{% static 'images/placeholder.jpg' %}" alt="No image available" />
                       {% endif %}
                     </a>
-
-                      <div>
+                    </div>
+                    {% if product.get_discount_percentage > 0 %}
+                    <div class="product-badges product-badges-position product-badges-mrg">
+                      <span class="hot">{{ product.get_discount_percentage }}%</span>
+                    </div>
+                    {% endif %}
+                  </div>
+                  <div class="product-content-wrap">
+                    <div class="product-info-left">
+                      <div class="product-category">
+                        <small class="text-muted" style="font-size: 12px;">{{ product.category }}</small>
+                      </div>
+                      <h2><a href="{% url 'view_product' product.vendor.vendor_slug product.slug %}">{{ product.product_name | truncatechars:30 }}</a></h2>
+                      <div class="product-price">
+                        <span>৳{{ product.sales_price|floatformat:0 }}</span>
+                        <span class="old-price">৳{{ product.regular_price|floatformat:0 }}</span>
+                      </div>
+                    </div>
+                    <div class="product-info-right">
                       {% if product.variants and product.variants.all|length > 0 %}
                        <a href="{% url 'view_product' product.vendor.vendor_slug product.slug %}" class="button-add-to-cart text-white update_color">
                           View
@@ -443,22 +475,6 @@
                         </a>
                       </div>
                       {% endif %}
-                    </div>
-                    </div>
-                    {% if product.get_discount_percentage > 0 %}
-                    <div class="product-badges product-badges-position product-badges-mrg">
-                      <span class="hot">{{ product.get_discount_percentage }}%</span>
-                    </div>
-                    {% endif %}
-                  </div>
-                  <div class="product-content-wrap">
-                    <div class="product-category">
-                      <small class="text-muted" style="font-size: 12px;">{{ product.category }}</small>
-                    </div>
-                    <h2><a href="{% url 'view_product' product.vendor.vendor_slug product.slug %}">{{ product.product_name | truncatechars:30 }}</a></h2>
-                    <div class="product-price">
-                      <span>৳{{ product.sales_price|floatformat:0 }}</span>
-                      <span class="old-price">৳{{ product.regular_price|floatformat:0 }}</span>
                     </div>
                   </div>
                 </div>
