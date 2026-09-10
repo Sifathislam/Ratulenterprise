@@ -824,7 +824,7 @@
                   ? `<div class="d-flex align-items-center gap-1 text-muted" style="font-size: 13px;">
                       ${item.name}
                     </div><small class="text-muted">Visit Store</small>`
-                  : `<div>${item.name.length > 25 ? item.name.slice(0, 45) + '...' : item.name}</div><small>৳${item.price}</small>`;
+                  : `<div>${item.name.length > 25 ? item.name.slice(0, 45) + '...' : item.name}</div><small>৳${Math.round(parseFloat(item.price))}</small>`;
 
                 li.innerHTML = `
                   <a href="${link}" class="d-flex align-items-center text-dark text-decoration-none">

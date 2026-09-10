@@ -286,8 +286,8 @@
 									
 									<div>
 										<div class="product-price">
-											<span>৳{{ product.sales_price }}</span>
-											<span class="old-price">৳{{ product.regular_price }}</span>
+											<span>৳{{ product.sales_price|floatformat:0 }}</span>
+											<span class="old-price">৳{{ product.regular_price|floatformat:0 }}</span>
 										</div>
 									</div>
 									 
@@ -457,8 +457,8 @@
                     </div>
                     <h2><a href="{% url 'view_product' product.vendor.vendor_slug product.slug %}">{{ product.product_name | truncatechars:30 }}</a></h2>
                     <div class="product-price">
-                      <span>৳{{ product.sales_price }}</span>
-                      <span class="old-price">৳{{ product.regular_price }}</span>
+                      <span>৳{{ product.sales_price|floatformat:0 }}</span>
+                      <span class="old-price">৳{{ product.regular_price|floatformat:0 }}</span>
                     </div>
                   </div>
                 </div>

@@ -42,13 +42,13 @@ Register | Ratulenterprise Retail POS
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                <strong>Sub Total : </strong>{{ total|sub:tax_total|floatformat:2 }}
+                                <strong>Sub Total : </strong>{{ total|sub:tax_total|floatformat:0 }}
                             </div>
                             <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                <strong>Tax Total : </strong>{{ tax_total|floatformat:2 }}</div>
+                                <strong>Tax Total : </strong>{{ tax_total|floatformat:0 }}</div>
                             <div class="text-xl font-weight-bold text-success text-uppercase mb-1">
                                 <strong>Total : </strong></div>
-                            <div class="h3 mb-0 font-weight-bold text-gray-800" style="text-align:right;" >{{ total|floatformat:2 }}</div>
+                            <div class="h3 mb-0 font-weight-bold text-gray-800" style="text-align:right;" >{{ total|floatformat:0 }}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-rupee-sign fa-3x text-gray-300"></i>
@@ -129,9 +129,9 @@ Register | Ratulenterprise Retail POS
                                 <td>{{ value.quantity }}  {% if value.unit_type == 'm2' %} m² {% else %} {{value.unit_type}} {% endif %}</td>
                             {% endif %}
                                 
-                            <td>{{ value.price }}</td>
-                            <td>{{ value.tax_value }}</td>
-                            <td>{{ value.line_total }}</td>
+                            <td>{{ value.price|floatformat:0 }}</td>
+                            <td>{{ value.tax_value|floatformat:0 }}</td>
+                            <td>{{ value.line_total|floatformat:0 }}</td>
                         </tr>
                         {% endfor %}
                     </table> 
@@ -277,7 +277,7 @@ Register | Ratulenterprise Retail POS
                                 <img src="${product.img_url}" alt="${product.name}" style="width:40px; height: 40px; object-fit: cover; border-radius: 5px; margin-right: 15px;">
                                 <div>
                                     <p style="margin: 0; font-weight: bold; font-size: 0.85rem; color: #333;">${product.name}</p>                                    
-                                    <p style="margin: 5px 0; font-size: 0.7em; color: #555;"><span style="color: #000;">৳${product.sales_price || product.regular_price} / ${product.unit_type}</span></p>
+                                    <p style="margin: 5px 0; font-size: 0.7em; color: #555;"><span style="color: #000;">৳${Math.round(parseFloat(product.sales_price || product.regular_price))} / ${product.unit_type}</span></p>
                                 </div>
                               </div>
                             `).join('');

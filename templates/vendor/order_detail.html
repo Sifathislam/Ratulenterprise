@@ -136,7 +136,7 @@
                                                         </td>
                                                         <td >{{ item.product }}</td>
                                                         <td>{{ item.quantity }} QTY</td>
-                                                        <td>৳{{ item.price }}</td>
+                                                        <td>৳{{ item.price|floatformat:0 }}</td>
                                                         <td>{{ item.product.tax_category }}</td>
                                                         <td>
                                                             <form class="update-product-status-form">
@@ -183,7 +183,7 @@
                                                         Subtotal
                                                         <span class="price float-right">
                                                             <span class="currency">৳</span>
-                                                            <span id="subtotal">{{ subtotal |floatformat:2 }}</span>
+                                                            <span id="subtotal">{{ subtotal |floatformat:0 }}</span>
                                                         </span>
                                                     </li>
                                                     
@@ -211,7 +211,7 @@
                                                                     
                                                                     <span class="price float-right">
                                                                         <span class="currency">৳</span>
-                                                                        <span id="tax-{{ single_tax_dict.product_id }}">{{ value |floatformat:2 }}</span>
+                                                                        <span id="tax-{{ single_tax_dict.product_id }}">{{ value |floatformat:0 }}</span>
                                                                     </span>
                                                                 </li>
                                                                 
@@ -223,7 +223,7 @@
                                                         TOTAL
                                                         <span class="price float-right ">
                                                             <span class="currency">৳</span>
-                                                            <span id="total">{{ grand_total |floatformat:2 }}</span>
+                                                            <span id="total">{{ grand_total |floatformat:0 }}</span>
                                                         </span>
                                                     </li>
                                                     </ul>

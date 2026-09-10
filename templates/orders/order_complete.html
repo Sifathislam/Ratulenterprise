@@ -134,7 +134,7 @@
                     </td>
                     <td>{{ item.product.vendor.vendor_name }}</td>
                     <td>{{ item.quantity }}</td>
-                    <td>৳{{ item.price }}</td>
+                    <td>৳{{ item.price|floatformat:0 }}</td>
                     <td>{{ item.product.tax_category }}</td>
                     <td>{{ item.status }}</td>
                     </tr>
@@ -168,7 +168,7 @@
                     <div style="margin-left: 15px;">Vendor: {{ item.product.vendor.vendor_name }}</div>
                     <div style="margin-left: 15px;">Qty: {{ item.quantity }}</div>
                     <div style="margin-left: 15px;">
-                    Price: ৳{{ item.price }}
+                    Price: ৳{{ item.price|floatformat:0 }}
                     </div>
                     <div style="margin-left: 15px;">Tax: {{ item.product.tax_category }}</div>
                     <div style="margin-left: 15px;">Status: {{ item.status }}</div>
@@ -190,7 +190,7 @@
                             <li style="list-style-type: none;" class="d-flex justify-content-between align-items-center">
                                 Subtotal
                                 <span class="price float-right">
-                                    ৳{{ subtotal|floatformat:2 }}
+                                    ৳{{ subtotal|floatformat:0 }}
                                 </span>
                             </li>
 
@@ -216,7 +216,7 @@
                                             </div>
                                             <span class="price float-right">
                                                 <span class="currency">৳</span>
-                                                <span id="tax-{{ single_tax_dict.product_id }}">{{ value }}</span>
+                                                <span id="tax-{{ single_tax_dict.product_id }}">{{ value|floatformat:0 }}</span>
                                             </span>
                                         </li>
                                         {% endif %}
@@ -226,7 +226,7 @@
                             <li style="list-style-type: none; font-weight: 600;" class="d-flex justify-content-between align-items-center">
                                 TOTAL
                                 <span class="price float-right ">
-                                    ৳{{ order.total |floatformat:2 }}
+                                    ৳{{ order.total |floatformat:0 }}
                                 </span>
                             </li>
                         </ul>

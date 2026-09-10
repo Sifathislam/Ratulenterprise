@@ -55,9 +55,9 @@
   
           <div class="mb-3">
             {% if product.sales_price != product.regular_price %}
-              <span class="text-dark h5">Price: <span style="text-decoration: line-through;">৳{{ product.regular_price }}</span> &nbsp; ৳{{ product.sales_price }}</span>
+              <span class="text-dark h5">Price: <span style="text-decoration: line-through;">৳{{ product.regular_price|floatformat:0 }}</span> &nbsp; ৳{{ product.sales_price|floatformat:0 }}</span>
             {% else %}
-              <span class="text-dark h5">Price: ৳ {{ product.regular_price }}</span>
+              <span class="text-dark h5">Price: ৳ {{ product.regular_price|floatformat:0 }}</span>
             {% endif %}
           </div>
   
@@ -165,9 +165,9 @@
                       <div class="ml-3">
                         <a href="{% url 'view_product' similar_product.vendor.vendor_slug similar_product.slug %}" class="mb-1">{{ similar_product.product_name }}</a>
                         {% if similar_product.sales_price %}
-                          <p><strong class="text-dark">Price: ৳{{ similar_product.sales_price }}</strong></p>
+                          <p><strong class="text-dark">Price: ৳{{ similar_product.sales_price|floatformat:0 }}</strong></p>
                         {% else %}
-                          <p><strong class="text-dark">Price: ৳{{ similar_product.regular_price }}</strong></p>
+                          <p><strong class="text-dark">Price: ৳{{ similar_product.regular_price|floatformat:0 }}</strong></p>
                         {% endif %}
                       </div>
                     </div>

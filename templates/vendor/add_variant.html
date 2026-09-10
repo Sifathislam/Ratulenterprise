@@ -142,7 +142,7 @@
                                 <span class="text-muted">No Image</span>
                               {% endif %}
                               </td>
-                              <td>{{ group.price }}</td>
+                              <td>{{ group.price|floatformat:0 }}</td>
                               <td>{{ group.stock }}</td>
                               <td>{{ group.sku }}</td>
                               <td>

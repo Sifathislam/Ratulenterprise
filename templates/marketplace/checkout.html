@@ -133,12 +133,12 @@
                                         Quantity: x {{ item.quantity }} |
                                         Price:
                                         {% if item.product_variant_group and item.product_variant_group.price %}
-                                            {{ item.product_variant_group.price }}
+                                            {{ item.product_variant_group.price|floatformat:0 }}
                                         {% else %}
                                             {% if item.product.sales_price %}
-                                                {{ item.product.sales_price }}
+                                                {{ item.product.sales_price|floatformat:0 }}
                                             {% else %}
-                                                {{ item.product.regular_price }}
+                                                {{ item.product.regular_price|floatformat:0 }}
                                             {% endif %}
                                         {% endif %}
                                     </div>
@@ -152,12 +152,12 @@
                                 <!-- Price (sm and up) -->
                                 <div class="d-none d-sm-block text-end" style="width: 90px;">
                                     {% if item.product_variant_group and item.product_variant_group.price %}
-                                        {{ item.product_variant_group.price }}
+                                        {{ item.product_variant_group.price|floatformat:0 }}
                                     {% else %}
                                         {% if item.product.sales_price %}
-                                            {{ item.product.sales_price }}
+                                            {{ item.product.sales_price|floatformat:0 }}
                                         {% else %}
-                                            {{ item.product.regular_price }}
+                                            {{ item.product.regular_price|floatformat:0 }}
                                         {% endif %}
                                     {% endif %}
                                 </div>
@@ -175,7 +175,7 @@
             <span >Subtotal</span>
             <span class="price text-end">
                 <span class="currency">৳</span>
-                <span id="subtotal">{{ subtotal }}</span>
+                <span id="subtotal">{{ subtotal|floatformat:0 }}</span>
             </span>
         </li>
 
@@ -213,7 +213,7 @@
                             </div>
 
                             <div>
-                                <span class="currency">৳</span>{{ value }}
+                                <span class="currency">৳</span>{{ value|floatformat:0 }}
                             </div>
                         </div>
                     </li>
@@ -226,7 +226,7 @@
         <li class="order-summary-item total d-flex justify-content-between align-items-center text-start  mt-3 fw-bold">
             <strong>TOTAL</strong>
             <span class="price fw-bolder">
-                <span id="total">{{ grand_total }}</span>
+                <span id="total">{{ grand_total|floatformat:0 }}</span>
             </span>
         </li>
 

@@ -74,12 +74,12 @@
                                                     </div>
                                                     <div class="price-holder">
                                                    {% if item.product_variant_group and item.product_variant_group.price %}
-                                                        <span class="bold">৳ {{ item.product_variant_group.price }}</span>
+                                                        <span class="bold">৳ {{ item.product_variant_group.price|floatformat:0 }}</span>
                                                    {% else %}
                                                             {% if item.product.sales_price %}
-                                                                <span class="bold">৳ {{ item.product.sales_price }}</span>
+                                                                <span class="bold">৳ {{ item.product.sales_price|floatformat:0 }}</span>
                                                                 {% else %}
-                                                                <span class="bold">৳ {{ item.product.regular_price }}</span>
+                                                                <span class="bold">৳ {{ item.product.regular_price|floatformat:0 }}</span>
                                                             {% endif %}
                                                         {% endif %}
                                                         {% if item.cart_id %}
@@ -145,7 +145,7 @@
                                                 Subtotal
                                                 <span class="price float-right">
                                                     <span class="currency">৳</span>
-                                                    <span id="subtotal">{{ subtotal }}</span>
+                                                    <span id="subtotal">{{ subtotal|floatformat:0 }}</span>
                                                 </span>
                                             </li>
 
@@ -169,7 +169,7 @@
 
                                                         <span class="price float-right">
                                                             <span class="currency">৳</span>
-                                                            <span id="tax-{{ single_tax_dict.product_id }}">{{ value }}</span>
+                                                            <span id="tax-{{ single_tax_dict.product_id }}">{{ value|floatformat:0 }}</span>
                                                         </span>
                                                     </li>
                                                 {% endif %}
@@ -181,7 +181,7 @@
                                                 TOTAL
                                                 <span class="price float-right">
                                                     <span class="currency">৳</span>
-                                                    <span id="total">{{ grand_total }}</span>
+                                                    <span id="total">{{ grand_total|floatformat:0 }}</span>
                                                 </span>
                                             </li>
 
