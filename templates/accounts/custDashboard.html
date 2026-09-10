@@ -64,7 +64,7 @@
                                                   <tr>
                                                     <td><a href="{% url 'order_detail' order.order_number %}" class="text-dark"><b>{{ order.order_number }}</b></a></td>
                                                     <td>{{ order.name }}</td>
-                                                    <td>₹{{ order.total }}</td>
+                                                    <td>৳{{ order.total }}</td>
                                                     <td class="status-value">{{ order.status }}</td>
                                                     <td class="date_field_value">{{ order.created_at }}</td>
                                                     <td><a href="{% url 'order_detail' order.order_number %}" class="btn  update_color">Details</a></td>

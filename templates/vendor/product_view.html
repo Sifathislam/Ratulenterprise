@@ -262,12 +262,12 @@
                                         
                                         <div class="clearfix product-price-cover">
                                             <div class="product-price primary-color float-left" style="margin-bottom:10px; margin-top:10px;">
-                                                <span class="current-price text-brand">₹{{ product.sales_price }}</span>
+                                                <span class="current-price text-brand">৳{{ product.sales_price }}</span>
                                                 <span>
                                                   {% if product.get_discount_percentage > 0 %}
                                                     <span class="save-price font-md color3 ml-15">{{product.get_discount_percentage}}% Off</span>
                                                   {% endif %}
-                                                    <span class="old-price font-md ml-15">₹{{ product.regular_price }}</span>
+                                                    <span class="old-price font-md ml-15">৳{{ product.regular_price }}</span>
                                                 </span>
                                             </div>
                                         </div>
@@ -320,7 +320,7 @@
                                                 </div>
                                                 </div>
                                             <div class="cart-bar-inner">
-                                                <span class="mrp-label">MRP <b>₹{{ product.sales_price }}</b></span>
+                                                <span class="mrp-label">MRP <b>৳{{ product.sales_price }}</b></span>
                                                 {% if product.qty > 0 %}
                                                 <button  class="button add-to-cart-btn add_to_cart"  style="{% if product.id in cart_product_ids %}display:none;{% endif %}" id="mb-add_to_cart_btn-{{product.id}}" data-id="{{ product.id }}" data-url="{% url 'add_to_cart' product.id %}"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
                                                   <!-- Quantity controls -->
@@ -472,8 +472,8 @@
                                                     <h2><a href="{% url 'view_product' product.vendor.vendor_slug similar_product.slug %}" tabindex="0">{{ similar_product.product_name|truncatechars:30 }}</a></h2>
                                                     
                                                     <div class="product-price">
-                                                        <span>₹{{similar_product.sales_price}}</span>
-                                                        <span class="old-price">₹{{similar_product.regular_price}}</span>
+                                                        <span>৳{{similar_product.sales_price}}</span>
+                                                        <span class="old-price">৳{{similar_product.regular_price}}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -918,7 +918,7 @@ function disabledZeroStockButtons() {
   // Update product details when variant changes
   function updateProductDetails(variantData) {
     // Update price
-    document.querySelector('.current-price').textContent = `₹${variantData.price || defaultProductPrice}`;
+    document.querySelector('.current-price').textContent = `৳${variantData.price || defaultProductPrice}`;
     
     // Update image if available
     if (variantData.image) {

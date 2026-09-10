@@ -679,8 +679,8 @@
                                 
                                 <div class="product-card-bottom d-block mt-0">
                                     <div class="product-price">
-                                        <span>₹{{ product.sales_price }}</span>
-                                        <span class="old-price">₹{{ product.regular_price }}</span>
+                                        <span>৳{{ product.sales_price }}</span>
+                                        <span class="old-price">৳{{ product.regular_price }}</span>
                                     </div>
                                           {% if product.qty > 0 %}
                                             <div>
@@ -1103,7 +1103,7 @@
                     <img src="${product.image || '/static/images/placeholder.jpg'}" alt="${product.name}" style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px; border-radius: 4px;">
                     <div style="font-size: 13px;">
                     <div>${product.name}</div>
-                    <small>₹${product.price}</small>
+                    <small>৳${product.price}</small>
                     </div>
                 </a>
                 `;

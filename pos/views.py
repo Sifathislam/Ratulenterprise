@@ -509,9 +509,9 @@ def user_logout(request):
 
 #     # Format data for display
 #     for key, data in aggregated_data.items():
-#         data['total_value'] = f"₹{float(data['total_value']):.2f}"
-#         data['total_tax_amount'] = f"₹{(data['total_tax_amount'])} ({data['tax_category']} {(data['tax_percentage']):.0f}%)"
-#         data['sales_price'] = f"₹{float(data['sales_price']):.2f}"
+#         data['total_value'] = f"৳{float(data['total_value']):.2f}"
+#         data['total_tax_amount'] = f"৳{(data['total_tax_amount'])} ({data['tax_category']} {(data['tax_percentage']):.0f}%)"
+#         data['sales_price'] = f"৳{float(data['sales_price']):.2f}"
 
 #     # Convert aggregated data to a list
 #     data = list(aggregated_data.values())
@@ -631,9 +631,9 @@ def product_sales_report(request):
         )
         data['total_tax_amount'] = round(data['total_tax_amount'], 2)
         data['total_value'] = round(data['total_value'], 2)
-        data['sales_price'] = f"₹{float(data['sales_price']):.2f}"
-        data['total_tax_amount'] = f"₹{data['total_tax_amount']} ({data['tax_category']} {data['tax_percentage']}%)"
-        data['total_value'] = f"₹{data['total_value']:.2f}"
+        data['sales_price'] = f"৳{float(data['sales_price']):.2f}"
+        data['total_tax_amount'] = f"৳{data['total_tax_amount']} ({data['tax_category']} {data['tax_percentage']}%)"
+        data['total_value'] = f"৳{data['total_value']:.2f}"
 
     # Convert aggregated data to a list
     data = list(aggregated_data.values())
@@ -760,9 +760,9 @@ def product_sales_report_download(request):
             )
             data['total_tax_amount'] = round(data['total_tax_amount'], 2)
             data['total_value'] = round(data['total_value'], 2)
-            data['sales_price'] = f"₹{float(data['sales_price']):.2f}"
-            data['total_tax_amount'] = f"₹{data['total_tax_amount']} ({data['tax_category']} {data['tax_percentage']}%)"
-            data['total_value'] = f"₹{data['total_value']:.2f}"
+            data['sales_price'] = f"৳{float(data['sales_price']):.2f}"
+            data['total_tax_amount'] = f"৳{data['total_tax_amount']} ({data['tax_category']} {data['tax_percentage']}%)"
+            data['total_value'] = f"৳{data['total_value']:.2f}"
 
         # Create an Excel workbook and sheet
         workbook = openpyxl.Workbook()

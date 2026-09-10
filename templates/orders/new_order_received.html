@@ -91,7 +91,7 @@
               </td>
             </td>
             <td>{{ food.quantity }}</td>
-            <td>₹{{ food.price }}</td>
+            <td>৳{{ food.price }}</td>
 
         </tr>
         {% endfor %}
@@ -117,7 +117,7 @@
                           {% endfor %}
                           
                           <span class="price float-right">
-                              <span class="currency">₹</span>
+                              <span class="currency">৳</span>
                               <span id="tax-{{ single_tax_dict.product_id }}">{{ tax_amount }}</span>
                           </span>
                       </td>
@@ -127,8 +127,8 @@
       {% endfor %}
     </tr>
     <tr>
-      <td>Subtotal: ₹{{ vendor_subtotal }}</td>
-      <td>Grand total: ₹{{ vendor_grand_total }}</td>
+      <td>Subtotal: ৳{{ vendor_subtotal }}</td>
+      <td>Grand total: ৳{{ vendor_grand_total }}</td>
     </tr>
       </tbody>
   </table>

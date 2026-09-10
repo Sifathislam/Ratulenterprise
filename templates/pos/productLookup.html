@@ -81,7 +81,7 @@ Product Information | Ratulenterprise Retail POS
                                     <p style="margin: 0; font-weight: bold; font-size: 1.1em; color: #333;">${product.name}</p>
                                     ${product.id == product.barcode ? `<p style="margin: 5px 0; font-size: 0.9em; color: #555;">ID: <span style="color: #000;">${product.barcode}</span></p>` : `<p style="margin: 5px 0; font-size: 0.9em; color: #555;">Barcode: <span style="color: #000;">${product.barcode}</span></p>`}
                                     <p style="margin: 5px 0; font-size: 0.9em; color: #555;">Price: <span style="color: #000;">Qty: ${product.qty}</span></p>
-                                    <p style="margin: 5px 0; font-size: 0.9em; color: #555;">Price: <span style="color: #000;">₹${product.sales_price || product.regular_price}</span></p>
+                                    <p style="margin: 5px 0; font-size: 0.9em; color: #555;">Price: <span style="color: #000;">৳${product.sales_price || product.regular_price}</span></p>
                                 </div>
                               </div>
                             `).join('');
