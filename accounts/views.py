@@ -61,10 +61,12 @@ def registerUser(request):
                     return redirect('login')
                 else:
                     # Case 2: Not active → resend activation link
-                    messages.success(request, 'Your account is already registered. We have sent the verification mail again, please check your email.')
                     mail_subject = 'Please activate your account'
                     email_template = 'accounts/emails/account_verification_email.html'
-                    send_verification_email(request, user, mail_subject, email_template)
+                    if send_verification_email(request, user, mail_subject, email_template):
+                        messages.success(request, 'Your account is already registered. We have sent the verification mail again, please check your email.')
+                    else:
+                        messages.warning(request, 'Your account is already registered, but we could not send the verification email right now. Please try again later or contact support.')
                     return redirect('registerUser')
             else:
                 # Case 3: New user → register fresh
@@ -86,10 +88,12 @@ def registerUser(request):
                 user.role = User.CUSTOMER
                 user.save()
 
-                messages.success(request, 'Please check your email to activate your account.')
                 mail_subject = 'Please activate your account'
                 email_template = 'accounts/emails/account_verification_email.html'
-                send_verification_email(request, user, mail_subject, email_template)
+                if send_verification_email(request, user, mail_subject, email_template):
+                    messages.success(request, 'Please check your email to activate your account.')
+                else:
+                    messages.warning(request, 'Your account has been created, but we could not send the verification email right now. Please try again later or contact support.')
                 return redirect('registerUser')
         else:
             print('invalid form')
@@ -296,9 +300,10 @@ def forgot_password(request):
             # send reset password email
             mail_subject = 'Reset Your Password'
             email_template = 'accounts/emails/reset_password_email.html'
-            send_verification_email(request, user, mail_subject, email_template)
-
-            messages.success(request, 'Password reset link has been sent to your email address.')
+            if send_verification_email(request, user, mail_subject, email_template):
+                messages.success(request, 'Password reset link has been sent to your email address.')
+            else:
+                messages.error(request, 'We could not send the password reset email right now. Please try again later or contact support.')
         else:
             messages.error(request, 'Account does not exist')
             return redirect('forgot_password')

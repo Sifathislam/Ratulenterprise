@@ -5,6 +5,8 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage, message
 from django.conf import settings
+import logging
+from smtplib import SMTPException
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from django.core.files.storage import default_storage
@@ -32,7 +34,10 @@ from reportlab.lib import colors
 import io
 from reportlab.lib.enums import TA_LEFT
 from reportlab.lib.enums import TA_RIGHT
-# from orders.models import OrderedFood 
+# from orders.models import OrderedFood
+logger = logging.getLogger(__name__)
+
+
 def detectUser(user):
     if user.role == 1:
         redirectUrl = 'vendorDashboard'
@@ -46,6 +51,7 @@ def detectUser(user):
 
     
 def send_verification_email(request, user, mail_subject, email_template):
+    """Returns True if the email was sent, False if sending failed (e.g. bad SMTP credentials)."""
     from_email = settings.DEFAULT_FROM_EMAIL
     current_site = get_current_site(request)
     message = render_to_string(email_template, {
@@ -57,7 +63,12 @@ def send_verification_email(request, user, mail_subject, email_template):
     to_email = user.email
     mail = EmailMessage(mail_subject, message, from_email, to=[to_email])
     mail.content_subtype = "html"
-    mail.send()
+    try:
+        mail.send()
+        return True
+    except SMTPException:
+        logger.exception('Failed to send email "%s" to %s', mail_subject, to_email)
+        return False
 
 
 def send_notification(mail_subject, mail_template, context,pdf_file=None):
